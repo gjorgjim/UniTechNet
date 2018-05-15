@@ -1,3 +1,9 @@
 <resources>
   <string name="app_name">UniTechNet</string>
+  <string name="email_hint">Email</string>
+  <string name="password_hint">Password</string>
+  <string name="sign_in_button_text">Sign In</string>
+  <string name="sign_in_info">*Sign in with the email provided by your university</string>
+  <string name="edit_text_empty_error">This field cannot be empty</string>
+  <string name="invalid_email_error">The email address is not valid</string>
 </resources>
