@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -34,6 +35,7 @@ public class LoginActivity extends AppCompatActivity {
     setContentView(R.layout.activity_login);
 
     authenticationService = AuthenticationService.getInstance();
+    authenticationService.setMyActivity(this);
 
     emailIl = findViewById(R.id.emailIl);
     emailEt = findViewById(R.id.emailEt);
@@ -63,62 +65,7 @@ public class LoginActivity extends AppCompatActivity {
   }
 
   boolean validateInput() {
-    return validateEmail() && validatePassword();
-  }
-
-  boolean validateEmail(){
-    if(emailEt.getText().toString().trim().isEmpty()) {
-      emailIl.setError(getString(R.string.edit_text_empty_error));
-      requestFocus(emailEt);
-      return false;
-    } else {
-      if(!isEmailValid(emailEt.getText().toString().trim())) {
-        emailIl.setError(getString(R.string.invalid_email_error));
-        requestFocus(emailEt);
-        return false;
-      } else {
-        emailIl.setErrorEnabled(false);
-      }
-    }
-
-    return true;
-  }
-
-  public boolean isEmailValid(String email)
-  {
-    String regExpn =
-      "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
-        +"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
-        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
-        +"([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
-        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
-        +"([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$";
-
-    CharSequence inputStr = email;
-
-    Pattern pattern = Pattern.compile(regExpn,Pattern.CASE_INSENSITIVE);
-    Matcher matcher = pattern.matcher(inputStr);
-
-    if(matcher.matches())
-      return true;
-    else
-      return false;
-  }
-
-  boolean validatePassword() {
-    if(passwordEt.getText().toString().trim().isEmpty()) {
-      passwordIl.setError(getString(R.string.edit_text_empty_error));
-      requestFocus(passwordEt);
-      return false;
-    } else {
-      passwordIl.setErrorEnabled(false);
-    }
-    return true;
-  }
-
-  private void requestFocus(View view) {
-    if (view.requestFocus()) {
-      getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-    }
+    return Validator.validateEmail(emailIl, emailEt, this)
+      && Validator.validatePassword(passwordIl, passwordEt, this);
   }
 }
