@@ -5,10 +5,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.regex.Matcher;
@@ -20,6 +22,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
 
 public class LoginActivity extends AppCompatActivity {
 
+  private AppCompatImageView logoIv;
   private TextInputLayout emailIl;
   private AppCompatEditText emailEt;
   private TextInputLayout passwordIl;
@@ -37,12 +40,18 @@ public class LoginActivity extends AppCompatActivity {
     authenticationService = AuthenticationService.getInstance();
     authenticationService.setMyActivity(this);
 
+    logoIv = findViewById(R.id.logoIv);
     emailIl = findViewById(R.id.emailIl);
     emailEt = findViewById(R.id.emailEt);
     passwordIl = findViewById(R.id.passwordIl);
     passwordEt = findViewById(R.id.passwordEt);
     signInBtn = findViewById(R.id.signInBtn);
     incorrectInfoTv = findViewById(R.id.incorrectInfoTv);
+
+    Glide.with(this)
+            .load(R.drawable.utn_logo)
+            .fitCenter()
+            .into(logoIv);
 
     signInBtn.setOnClickListener(v -> {
       if(incorrectInfoTv.getVisibility() == View.VISIBLE) {
