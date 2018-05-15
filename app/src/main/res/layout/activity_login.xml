@@ -5,7 +5,7 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  tools:context="mk.edu.ukim.feit.gjorgjim.unitechnet.LoginActivity">
+  tools:context="mk.edu.ukim.feit.gjorgjim.unitechnet.ui.login_activity.LoginActivity">
 
   <android.support.v7.widget.AppCompatImageView
     android:layout_width="wrap_content"

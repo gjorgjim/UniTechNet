@@ -1,4 +1,4 @@
-package mk.edu.ukim.feit.gjorgjim.unitechnet;
+package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.login_activity;
 
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +10,8 @@ import android.view.WindowManager;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 
 public class LoginActivity extends AppCompatActivity {
 
