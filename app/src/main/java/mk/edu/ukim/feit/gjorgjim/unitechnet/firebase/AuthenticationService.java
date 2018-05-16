@@ -44,7 +44,7 @@ public class AuthenticationService {
     mAuth.signInWithEmailAndPassword(email, password)
       .addOnCompleteListener(myActivity, (@NonNull Task<AuthResult> task) -> {
         if(task.isSuccessful()) {
-          user = mAuth.getCurrentUser();
+          user = getCurrentUser();
         }
       });
 

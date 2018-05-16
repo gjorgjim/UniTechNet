@@ -8,4 +8,9 @@
   <string name="edit_text_empty_error">This field cannot be empty</string>
   <string name="invalid_email_error">The email address is not valid</string>
   <string name="incorrect_email_or_password">Incorrect email or password</string>
+  <string name="title_activity_navigation">NavigationActivity</string>
+  <string name="title_courses">Courses</string>
+  <string name="title_feed">Feed</string>
+  <string name="title_notifications">Notifications</string>
+  <string name="title_messages">Messages</string>
 </resources>
