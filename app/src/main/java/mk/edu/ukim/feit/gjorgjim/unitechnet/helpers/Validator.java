@@ -51,13 +51,13 @@ public class Validator {
     return matcher.matches();
   }
 
-  public static boolean validatePassword(TextInputLayout passwordIl, AppCompatEditText passwordEt, Activity activity) {
-    if(passwordEt.getText().toString().trim().isEmpty()) {
-      passwordIl.setError(activity.getString(R.string.edit_text_empty_error));
-      requestFocus(passwordEt, activity);
+  public static boolean validateInput(TextInputLayout inputLayout, AppCompatEditText editText, Activity activity) {
+    if(editText.getText().toString().trim().isEmpty()) {
+      inputLayout.setError(activity.getString(R.string.edit_text_empty_error));
+      requestFocus(editText, activity);
       return false;
     } else {
-      passwordIl.setErrorEnabled(false);
+      inputLayout.setErrorEnabled(false);
     }
     return true;
   }

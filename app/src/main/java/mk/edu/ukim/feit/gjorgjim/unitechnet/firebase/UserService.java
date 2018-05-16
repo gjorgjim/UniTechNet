@@ -1,5 +1,7 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.firebase;
 
+import android.util.Log;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -12,6 +14,8 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.User;
  */
 
 public class UserService {
+
+  private static final String TAG = "UserService";
 
   private AuthenticationService authenticationService;
 
@@ -42,6 +46,7 @@ public class UserService {
     ValueEventListener valueEventListener = new ValueEventListener() {
       @Override
       public void onDataChange(DataSnapshot dataSnapshot) {
+        Log.d(TAG, dataSnapshot.exists() + "");
         exists = dataSnapshot.exists();
       }
 
@@ -55,7 +60,7 @@ public class UserService {
       .getUid())
       .addListenerForSingleValueEvent(valueEventListener);
 
-    return exists;
+    return !exists;
   }
 
   public User getCurrentUser() {

@@ -26,11 +26,11 @@ public class DatabaseService {
     reference = FirebaseDatabase.getInstance().getReference();
   }
 
-  DatabaseReference usersReference() {
+  public DatabaseReference usersReference() {
     return reference.child("users");
   }
 
-  DatabaseReference userReference(String UID) {
+  public DatabaseReference userReference(String UID) {
     return reference.child("users").child(UID);
   }
 }

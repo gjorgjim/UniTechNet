@@ -19,4 +19,12 @@
   <string name="last_name">Last Name</string>
   <string name="username">Username</string>
   <string name="birthday">Birthday</string>
+  <string name="save">save</string>
+
+  <string-array name="gender_array">
+    <item>Not Specified</item>
+    <item>Male</item>
+    <item>Female</item>
+  </string-array>
+
 </resources>

@@ -9,13 +9,9 @@ import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
-import android.view.WindowManager;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseUser;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
@@ -77,6 +73,6 @@ public class LoginActivity extends AppCompatActivity {
 
   boolean validateInput() {
     return Validator.validateEmail(emailIl, emailEt, this)
-      && Validator.validatePassword(passwordIl, passwordEt, this);
+      && Validator.validateInput(passwordIl, passwordEt, this);
   }
 }

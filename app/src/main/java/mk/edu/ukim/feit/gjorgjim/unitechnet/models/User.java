@@ -2,7 +2,7 @@ package mk.edu.ukim.feit.gjorgjim.unitechnet.models;
 
 import java.util.Date;
 
-import mk.edu.ukim.feit.gjorgjim.unitechnet.models.enums.UserSex;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.enums.UserGender;
 
 /**
  * Created by gjmarkov on 15.5.2018.
@@ -14,7 +14,7 @@ public class User {
   private String lastName;
   private String email;
   private Date birthday;
-  private UserSex sex;
+  private UserGender gender;
 
   public User() {
   }
@@ -63,11 +63,11 @@ public class User {
     this.birthday = birthday;
   }
 
-  public UserSex getSex() {
-    return sex;
+  public UserGender getGender() {
+    return gender;
   }
 
-  public void setSex(UserSex sex) {
-    this.sex = sex;
+  public void setGender(UserGender gender) {
+    this.gender = gender;
   }
 }
