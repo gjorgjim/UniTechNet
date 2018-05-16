@@ -1,5 +1,6 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.login_activity;
 
+import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.NavigationActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -63,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
           passwordEt.getText().toString().trim()
         );
         if(user != null) {
-          //TODO: Start new activity
+          startActivity(new Intent(LoginActivity.this, NavigationActivity.class));
         } else {
           incorrectInfoTv.setVisibility(View.VISIBLE);
           emailEt.setText(getString(R.string.empty_string));

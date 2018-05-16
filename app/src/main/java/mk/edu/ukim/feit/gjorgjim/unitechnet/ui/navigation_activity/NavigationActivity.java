@@ -5,14 +5,21 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatImageView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.CoursesFragment;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.FeedFragment;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.MessagesFragment;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.NotificationsFragment;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.ProfileFragment;
 
 public class NavigationActivity extends AppCompatActivity {
 
@@ -20,6 +27,11 @@ public class NavigationActivity extends AppCompatActivity {
   private FeedFragment feedFragment;
   private NotificationsFragment notificationsFragment;
   private MessagesFragment messagesFragment;
+  private ProfileFragment profileFragment;
+
+  private BottomNavigationView navigation;
+  private Toolbar toolbar;
+  private MaterialSearchView searchView;
 
   private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -39,6 +51,9 @@ public class NavigationActivity extends AppCompatActivity {
         case R.id.navigation_notification:
           transaction.replace(R.id.container, notificationsFragment).commit();
           return true;
+        case R.id.navigation_profile:
+          transaction.replace(R.id.container, profileFragment).commit();
+          return true;
       }
       return false;
     }
@@ -49,15 +64,29 @@ public class NavigationActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_navigation);
 
+    navigation = findViewById(R.id.navigation);
+    //profileIv = findViewById(R.id.profileIv);
+    toolbar = findViewById(R.id.toolbar);
+    searchView = findViewById(R.id.searchview);
+
+    setSupportActionBar(toolbar);
+
     coursesFragment = CoursesFragment.getInstance();
     feedFragment = FeedFragment.getInstance();
     notificationsFragment = NotificationsFragment.getInstance();
     messagesFragment = MessagesFragment.getInstance();
+    profileFragment = ProfileFragment.getInstance();
 
-    //mTextMessage = (TextView) findViewById(R.id.message);
-    BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
     navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     navigation.setSelectedItemId(R.id.navigation_feed);
+
   }
 
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu_item, menu);
+    MenuItem item = menu.findItem(R.id.action_search);
+    searchView.setMenuItem(item);
+    return true;
+  }
 }
