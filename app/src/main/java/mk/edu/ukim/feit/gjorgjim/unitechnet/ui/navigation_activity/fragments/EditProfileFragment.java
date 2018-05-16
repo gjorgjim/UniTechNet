@@ -1,6 +1,7 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +19,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -37,6 +45,8 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.enums.UserGender;
  */
 
 public class EditProfileFragment extends Fragment {
+
+  private static final String TAG = "EditProfileFragment";
 
   private static final EditProfileFragment instance = new EditProfileFragment();
 
@@ -177,6 +187,26 @@ public class EditProfileFragment extends Fragment {
         user.setBirthday(new Date(calendar.getTimeInMillis()));
       }
       userService.saveUser(user);
+
+      FirebaseStorage storage = FirebaseStorage.getInstance();
+      StorageReference imageReference = storage
+        .getReference()
+        .child("images")
+        .child(authenticationService.getCurrentUser().getUid())
+        .child("pp.jpg");
+
+      profilePictureIv.setDrawingCacheEnabled(true);
+      profilePictureIv.buildDrawingCache();
+      Bitmap bitmap = profilePictureIv.getDrawingCache();
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+      byte[] data = baos.toByteArray();
+
+      UploadTask uploadTask = imageReference.putBytes(data);
+      uploadTask.addOnSuccessListener((UploadTask.TaskSnapshot taskSnapshot) -> {
+        Log.d(TAG, "Image upload successful");
+      });
+
       fragmentChangingListener.changeToUserFragment();
     });
 
