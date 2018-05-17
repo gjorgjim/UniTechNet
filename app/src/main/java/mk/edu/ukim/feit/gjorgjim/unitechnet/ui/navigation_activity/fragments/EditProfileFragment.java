@@ -1,14 +1,17 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.AppCompatTextView;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.bumptech.glide.Glide;
+import com.esafirm.imagepicker.features.ImagePicker;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -39,6 +43,8 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.User;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.enums.UserGender;
+
+import static mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.NavigationActivity.PICK_IMAGE_REQUEST;
 
 /**
  * Created by gjmarkov on 16.5.2018.
@@ -76,6 +82,7 @@ public class EditProfileFragment extends Fragment {
   private AppCompatEditText birthdayEt;
   private Spinner genderSpinner;
   private CircleImageView profilePictureIv;
+  private AppCompatTextView changeProfilePictureTv;
   private AppCompatButton saveBtn;
 
   private User user;
@@ -108,6 +115,7 @@ public class EditProfileFragment extends Fragment {
     birthdayIl = view.findViewById(R.id.birthdayIl);
     birthdayEt = view.findViewById(R.id.birthdayEt);
     profilePictureIv = view.findViewById(R.id.profilePictureIv);
+    changeProfilePictureTv = view.findViewById(R.id.changeProfilePictureTv);
     genderSpinner = view.findViewById(R.id.genderSpinner);
     saveBtn = view.findViewById(R.id.saveBtn);
 
@@ -142,8 +150,17 @@ public class EditProfileFragment extends Fragment {
     Glide
       .with(getActivity())
       .load(R.drawable.profile)
-      .override(250, 250)
       .into(profilePictureIv);
+
+    Snackbar
+      .make(getActivity().findViewById(android.R.id.content), "Set up your profile", Snackbar.LENGTH_INDEFINITE)
+      .setAction("GOT IT", v -> {
+      })
+      .show();
+
+    changeProfilePictureTv.setOnClickListener(v -> {
+      chooseImage();
+    });
 
     birthdayEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
       birthdayEt.setOnClickListener(v1 -> {
@@ -181,7 +198,7 @@ public class EditProfileFragment extends Fragment {
         Calendar calendar = Calendar.getInstance();
         calendar.set(
           Integer.parseInt(birthday[2]),
-          Integer.parseInt(birthday[1]) - 1,
+          Integer.parseInt(birthday[1]) + 1,
           Integer.parseInt(birthday[0])
         );
         user.setBirthday(new Date(calendar.getTimeInMillis()));
@@ -217,6 +234,14 @@ public class EditProfileFragment extends Fragment {
     birthdayEt.setText(day + "/" + month + "/" + year);
   }
 
+  public void setNewProfilePicture(Bitmap image) {
+    Log.d(TAG, "setNewProfilePicture called");
+    Glide
+      .with(getActivity())
+      .load(image)
+      .into(profilePictureIv);
+  }
+
   private boolean validateInput() {
     return Validator.validateInput(firstNameIl, firstNameEt, getActivity())
       && Validator.validateInput(lastNameIl, lastNameEt, getActivity())
@@ -224,4 +249,12 @@ public class EditProfileFragment extends Fragment {
       && Validator.validateEmail(emailIl, emailEt, getActivity())
       && Validator.validateInput(birthdayIl, birthdayEt, getActivity());
   }
+
+  private void chooseImage() {
+    ImagePicker.create(getActivity())
+      .folderMode(true)
+      .limit(1)
+      .start();
+  }
+
 }

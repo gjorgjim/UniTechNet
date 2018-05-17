@@ -47,9 +47,10 @@ public class LoginActivity extends AppCompatActivity {
     incorrectInfoTv = findViewById(R.id.incorrectInfoTv);
 
     Glide.with(this)
-            .load(R.drawable.utn_logo)
-            .fitCenter()
-            .into(logoIv);
+      .load(R.drawable.utn_logo)
+      .into(logoIv);
+
+    logoIv.setAdjustViewBounds(true);
 
     signInBtn.setOnClickListener(v -> {
       if(incorrectInfoTv.getVisibility() == View.VISIBLE) {

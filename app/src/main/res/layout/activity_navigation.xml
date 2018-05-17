@@ -35,8 +35,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:paddingTop="?attr/actionBarSize"
-    android:paddingBottom="?attr/actionBarSize"
+    android:layout_marginTop="?attr/actionBarSize"
+    android:layout_marginBottom="?attr/actionBarSize"
     app:layout_constraintBottom_toTopOf="@id/navigation"
     app:layout_constraintTop_toBottomOf="@id/toolbar">
   </LinearLayout>
