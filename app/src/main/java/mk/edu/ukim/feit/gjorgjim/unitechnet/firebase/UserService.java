@@ -42,12 +42,13 @@ public class UserService {
     userReference.setValue(user);
   }
 
-  public boolean isFirstSignIn() {
+  public void isFirstSignIn() {
     ValueEventListener valueEventListener = new ValueEventListener() {
       @Override
       public void onDataChange(DataSnapshot dataSnapshot) {
         Log.d(TAG, dataSnapshot.exists() + "");
         exists = dataSnapshot.exists();
+
       }
 
       @Override
@@ -59,8 +60,6 @@ public class UserService {
       .getCurrentUser()
       .getUid())
       .addListenerForSingleValueEvent(valueEventListener);
-
-    return !exists;
   }
 
   public User getCurrentUser() {
