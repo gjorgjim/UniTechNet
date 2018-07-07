@@ -5,6 +5,7 @@ import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -21,6 +22,8 @@ import android.view.MenuItem;
 import android.view.animation.AnimationSet;
 import android.widget.TextView;
 
+import com.bluehomestudio.progresswindow.ProgressWindow;
+import com.bluehomestudio.progresswindow.ProgressWindowConfiguration;
 import com.bumptech.glide.Glide;
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.model.Image;
@@ -36,6 +39,7 @@ import java.io.IOException;
 import java.util.List;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
@@ -48,15 +52,13 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.Not
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.ProfileFragment;
 
 public class NavigationActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,
-  FragmentChangingListener {
+  FragmentChangingListener, DatabaseCallback<Boolean> {
 
   private static final String TAG = "NavigationActivity";
 
-  public static final int PICK_IMAGE_REQUEST = 1;
-
-  private UserService userService;
   private DatabaseService databaseService;
   private AuthenticationService authenticationService;
+  private UserService userService;
 
   private CoursesFragment coursesFragment;
   private FeedFragment feedFragment;
@@ -65,12 +67,12 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
   private ProfileFragment profileFragment;
   private EditProfileFragment editProfileFragment;
 
+  private ProgressWindow window;
+
   private BottomNavigationView navigation;
   private Toolbar toolbar;
   private MaterialSearchView searchView;
   private FloatingActionButton fab;
-
-  private Uri filePath;
 
   private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -118,9 +120,11 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_navigation);
 
-    userService = UserService.getInstance();
+    showWaitingDialog();
+
     databaseService = DatabaseService.getInstance();
     authenticationService = AuthenticationService.getInstance();
+    userService = UserService.getInstance();
 
     navigation = findViewById(R.id.navigation);
     //profileIv = findViewById(R.id.profileIv);
@@ -134,36 +138,15 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
     feedFragment = FeedFragment.getInstance();
     notificationsFragment = NotificationsFragment.getInstance();
     messagesFragment = MessagesFragment.getInstance();
-    profileFragment = ProfileFragment.getInstance();
-    editProfileFragment = EditProfileFragment.getInstance();
+    profileFragment = new ProfileFragment();
+    editProfileFragment = new EditProfileFragment();
 
     navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
     navigation.setSelectedItemId(R.id.navigation_feed);
 
-    ValueEventListener valueEventListener = new ValueEventListener() {
-      @Override
-      public void onDataChange(DataSnapshot dataSnapshot) {
-        Log.d(TAG, dataSnapshot.exists() + "");
-        if(!dataSnapshot.exists()) {
-          Log.d(TAG, "Is First Sign In");
-          navigation.setSelectedItemId(R.id.navigation_profile);
-          FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-          transaction.replace(R.id.container, editProfileFragment).commit();
-          fab.hide();
-        }
-      }
-
-      @Override
-      public void onCancelled(DatabaseError databaseError) {
-
-      }
-    };
-
-    databaseService.usersReference().child(authenticationService
-      .getCurrentUser()
-      .getUid())
-      .addListenerForSingleValueEvent(valueEventListener);
+    userService.setFirstSignInCallback(this);
+    userService.isFirstSignIn();
   }
 
   @Override
@@ -198,5 +181,34 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
       }
     }
     super.onActivityResult(requestCode, resultCode, data);
+  }
+
+  @Override
+  public void onSuccess(Boolean aBoolean) {
+    hideWaitingDialog();
+    if(aBoolean){
+      navigation.setSelectedItemId(R.id.navigation_profile);
+      FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+      transaction.replace(R.id.container, editProfileFragment).commit();
+      fab.hide();
+    }
+  }
+
+  @Override
+  public void onFailure(String message) {
+    hideWaitingDialog();
+  }
+
+  private void showWaitingDialog(){
+    window = ProgressWindow.getInstance(this);
+    ProgressWindowConfiguration configuration = new ProgressWindowConfiguration();
+    configuration.progressColor = Color.parseColor("#F44336");
+    configuration.backgroundColor = R.color.colorPrimary;
+    window.setConfiguration(configuration);
+    window.showProgress();
+  }
+
+  private void hideWaitingDialog(){
+    window.hideProgress();
   }
 }

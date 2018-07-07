@@ -1,7 +1,6 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,28 +22,23 @@ import android.widget.Spinner;
 
 import com.bumptech.glide.Glide;
 import com.esafirm.imagepicker.features.ImagePicker;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.models.User;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.enums.UserGender;
-
-import static mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.NavigationActivity.PICK_IMAGE_REQUEST;
 
 /**
  * Created by gjmarkov on 16.5.2018.
@@ -53,12 +47,6 @@ import static mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.Naviga
 public class EditProfileFragment extends Fragment {
 
   private static final String TAG = "EditProfileFragment";
-
-  private static final EditProfileFragment instance = new EditProfileFragment();
-
-  public static EditProfileFragment getInstance() {
-    return instance;
-  }
 
   public EditProfileFragment() {
     authenticationService = AuthenticationService.getInstance();
@@ -74,6 +62,8 @@ public class EditProfileFragment extends Fragment {
   private AppCompatEditText firstNameEt;
   private TextInputLayout lastNameIl;
   private AppCompatEditText lastNameEt;
+  private TextInputLayout titleIl;
+  private AppCompatEditText titleEt;
   private TextInputLayout usernameIl;
   private AppCompatEditText usernameEt;
   private TextInputLayout emailIl;
@@ -87,12 +77,12 @@ public class EditProfileFragment extends Fragment {
 
   private User user;
 
-  com.tsongkha.spinnerdatepicker.DatePickerDialog.OnDateSetListener listener;
+  private DatePickerDialog.OnDateSetListener listener;
 
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
-    listener = (com.tsongkha.spinnerdatepicker.DatePickerDialog.OnDateSetListener) context;
+    listener = (DatePickerDialog.OnDateSetListener) context;
     fragmentChangingListener = (FragmentChangingListener) context;
   }
 
@@ -108,6 +98,8 @@ public class EditProfileFragment extends Fragment {
     firstNameEt = view.findViewById(R.id.firstNameEt);
     lastNameIl = view.findViewById(R.id.lastNameIl);
     lastNameEt = view.findViewById(R.id.lastNameEt);
+    titleIl = view.findViewById(R.id.titleIl);
+    titleEt = view.findViewById(R.id.titleEt);
     usernameIl = view.findViewById(R.id.usernameIl);
     usernameEt = view.findViewById(R.id.usernameEt);
     emailIl = view.findViewById(R.id.emailIl);
@@ -170,8 +162,8 @@ public class EditProfileFragment extends Fragment {
           .spinnerTheme(R.style.NumberPickerStyle)
           .showTitle(true)
           .defaultDate(2017, 0, 1)
-          .maxDate(2020, 0, 1)
-          .minDate(2000, 0, 1)
+          .maxDate(2005, 0, 1)
+          .minDate(1980, 0, 1)
           .build().show();
         });
     });
@@ -183,8 +175,8 @@ public class EditProfileFragment extends Fragment {
         .spinnerTheme(R.style.NumberPickerStyle)
         .showTitle(true)
         .defaultDate(2017, 0, 1)
-        .maxDate(2020, 0, 1)
-        .minDate(2000, 0, 1)
+        .maxDate(2005, 0, 1)
+        .minDate(1980, 0, 1)
         .build()
         .show();
     });
@@ -194,14 +186,11 @@ public class EditProfileFragment extends Fragment {
         user.setFirstName(firstNameEt.getText().toString().trim());
         user.setLastName(lastNameEt.getText().toString().trim());
         user.setUsername(usernameEt.getText().toString().trim());
+        user.setTitle(titleEt.getText().toString().trim());
         String[] birthday = birthdayEt.getText().toString().trim().split("/");
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(
-          Integer.parseInt(birthday[2]),
-          Integer.parseInt(birthday[1]) + 1,
-          Integer.parseInt(birthday[0])
-        );
-        user.setBirthday(new Date(calendar.getTimeInMillis()));
+        user.setBirthday(new Date(Integer.parseInt(birthday[2]),
+          Integer.parseInt(birthday[1]),
+          Integer.parseInt(birthday[0])));
       }
       userService.saveUser(user);
 
@@ -231,7 +220,7 @@ public class EditProfileFragment extends Fragment {
   }
 
   public void setDateTextView(int year, int month, int day) {
-    birthdayEt.setText(day + "/" + month + "/" + year);
+    birthdayEt.setText(String.format(new Locale("en"), "%d/%d/%d", day, month + 1, year));
   }
 
   public void setNewProfilePicture(Bitmap image) {
@@ -247,7 +236,8 @@ public class EditProfileFragment extends Fragment {
       && Validator.validateInput(lastNameIl, lastNameEt, getActivity())
       && Validator.validateInput(usernameIl, usernameEt, getActivity())
       && Validator.validateEmail(emailIl, emailEt, getActivity())
-      && Validator.validateInput(birthdayIl, birthdayEt, getActivity());
+      && Validator.validateInput(birthdayIl, birthdayEt, getActivity())
+      && Validator.validateInput(titleIl, titleEt, getActivity());
   }
 
   private void chooseImage() {

@@ -1,7 +1,8 @@
-package mk.edu.ukim.feit.gjorgjim.unitechnet.models;
+package mk.edu.ukim.feit.gjorgjim.unitechnet.models.user;
 
-import java.util.Date;
+import java.util.List;
 
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.enums.UserGender;
 
 /**
@@ -12,9 +13,13 @@ public class User {
   private String username;
   private String firstName;
   private String lastName;
+  private String title;
   private String email;
   private Date birthday;
   private UserGender gender;
+  private List<Course> courses;
+  private List<Experience> experiences;
+  private List<Education> educations;
 
   public User() {
   }
@@ -69,5 +74,37 @@ public class User {
 
   public void setGender(UserGender gender) {
     this.gender = gender;
+  }
+
+  public List<Experience> getExperiences() {
+    return experiences;
+  }
+
+  public void setExperiences(List<Experience> experiences) {
+    this.experiences = experiences;
+  }
+
+  public List<Education> getEducations() {
+    return educations;
+  }
+
+  public void setEducations(List<Education> educations) {
+    this.educations = educations;
+  }
+
+  public List<Course> getCourses() {
+    return courses;
+  }
+
+  public void setCourses(List<Course> courses) {
+    this.courses = courses;
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
   }
 }

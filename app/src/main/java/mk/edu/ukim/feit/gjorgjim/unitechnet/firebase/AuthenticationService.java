@@ -1,13 +1,16 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.firebase;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.AuthenticationCallback;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.login_activity.LoginActivity;
 
 /**
  * Created by gjmarkov on 15.5.2018.
@@ -15,11 +18,13 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class AuthenticationService {
 
+  private static final String LOG_TAG = AuthenticationService.class.getSimpleName();
+
   private FirebaseAuth mAuth;
 
-  private Activity myActivity;
-
   private FirebaseUser user;
+
+  private AuthenticationCallback callback;
 
   private static final AuthenticationService ourInstance = new AuthenticationService();
 
@@ -32,26 +37,27 @@ public class AuthenticationService {
     user = null;
   }
 
-  public void setMyActivity(Activity activity) {
-    myActivity = activity;
-  }
-
   public FirebaseUser getCurrentUser() {
     return mAuth.getCurrentUser();
   }
 
-  public FirebaseUser signIn(String email, String password) {
+  public void signIn(String email, String password, Activity activity) {
     mAuth.signInWithEmailAndPassword(email, password)
-      .addOnCompleteListener(myActivity, (@NonNull Task<AuthResult> task) -> {
-        if(task.isSuccessful()) {
-          user = getCurrentUser();
+      .addOnCompleteListener(activity, (@NonNull Task<AuthResult> task) -> {
+        if(task.isSuccessful()){
+          callback.onSuccess(task.getResult().getUser());
+        } else {
+          callback.onFailure("Username or password incorrect");
         }
       });
-
-    return user;
   }
 
-  public void signOut() {
+  public void signOut(Activity activity) {
     mAuth.signOut();
+    activity.startActivity(new Intent(activity, LoginActivity.class));
+  }
+
+  public void setCallback(AuthenticationCallback callback) {
+    this.callback = callback;
   }
 }

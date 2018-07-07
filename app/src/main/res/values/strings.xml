@@ -20,6 +20,20 @@
   <string name="username">Username</string>
   <string name="birthday">Birthday</string>
   <string name="save">save</string>
+  <string name="name_profile_placeholder">Gjorgji\n     Markov</string>
+  <string name="title_profile_fragment">Title</string>
+  <string name="username_profile_placeholder">gjorgjim</string>
+  <string name="birthday_profile_placeholder">11/12/1995</string>
+  <string name="courses_profile">Courses</string>
+  <string name="experience_profile">Experience</string>
+  <string name="education_profile">Education</string>
+  <string name="title_profile_list_placeholder">Software Engineer</string>
+  <string name="date_profile_placeholder">Jun 2017 - present</string>
+  <string name="description_profile_placeholder">Netcetera</string>
+  <string name="school_hint">School</string>
+  <string name="title_hint">Title</string>
+  <string name="company_hint">Company</string>
+  <string name="startdate_hint">StartDate</string>
 
   <string-array name="gender_array">
     <item>Not Specified</item>

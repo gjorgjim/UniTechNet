@@ -7,7 +7,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-import mk.edu.ukim.feit.gjorgjim.unitechnet.models.User;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 
 /**
  * Created by gjmarkov on 15.5.2018.
@@ -24,6 +25,10 @@ public class UserService {
   private boolean exists;
 
   private User currentUser;
+
+  private DatabaseCallback<User> userCallback;
+
+  private DatabaseCallback<Boolean> firstSignInCallback;
 
   private static final UserService ourInstance = new UserService();
 
@@ -47,13 +52,16 @@ public class UserService {
       @Override
       public void onDataChange(DataSnapshot dataSnapshot) {
         Log.d(TAG, dataSnapshot.exists() + "");
-        exists = dataSnapshot.exists();
-
+        if(!dataSnapshot.exists()) {
+          firstSignInCallback.onSuccess(true);
+        } else {
+          firstSignInCallback.onSuccess(false);
+        }
       }
 
       @Override
       public void onCancelled(DatabaseError databaseError) {
-
+        firstSignInCallback.onFailure(databaseError.getMessage());
       }
     };
     databaseService.usersReference().child(authenticationService
@@ -62,30 +70,36 @@ public class UserService {
       .addListenerForSingleValueEvent(valueEventListener);
   }
 
-  public User getCurrentUser() {
-    if(currentUser != null) {
-      return currentUser;
-    } else {
+  public void findCurrentUser() {
+    if(currentUser == null) {
       ValueEventListener valueEventListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-          if(dataSnapshot.exists()) {
+          if (dataSnapshot.exists()) {
             currentUser = dataSnapshot.getValue(User.class);
+            userCallback.onSuccess(currentUser);
           }
         }
 
         @Override
         public void onCancelled(DatabaseError databaseError) {
-
+            userCallback.onFailure(databaseError.getMessage());
         }
       };
       databaseService.usersReference().child(authenticationService
         .getCurrentUser()
         .getUid())
         .addListenerForSingleValueEvent(valueEventListener);
+    } else {
+      userCallback.onSuccess(currentUser);
     }
-
-    return currentUser;
   }
 
+  public void setUserCallback(DatabaseCallback<User> userCallback){
+    this.userCallback = userCallback;
+  }
+
+  public void setFirstSignInCallback(DatabaseCallback<Boolean> firstSignInCallback) {
+    this.firstSignInCallback = firstSignInCallback;
+  }
 }
