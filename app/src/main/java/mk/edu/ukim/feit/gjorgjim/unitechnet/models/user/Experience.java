@@ -13,11 +13,10 @@ public class Experience {
   public Experience() {
   }
 
-  public Experience(String jobTitle, String company, Date startDate, Date endDate) {
+  public Experience(String jobTitle, String company, Date startDate) {
     this.jobTitle = jobTitle;
     this.company = company;
     this.startDate = startDate;
-    this.endDate = endDate;
   }
 
   public String getJobTitle() {

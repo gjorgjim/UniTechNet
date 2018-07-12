@@ -1,6 +1,7 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -35,10 +36,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DatePickerDialogIdentifier;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.enums.UserGender;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.WaitingDialog;
 
 /**
  * Created by gjmarkov on 16.5.2018.
@@ -78,6 +81,7 @@ public class EditProfileFragment extends Fragment {
   private User user;
 
   private DatePickerDialog.OnDateSetListener listener;
+  private WaitingDialog waitingDialog;
 
   @Override
   public void onAttach(Context context) {
@@ -93,6 +97,8 @@ public class EditProfileFragment extends Fragment {
     View view = inflater.inflate(R.layout.fragment_edit_profile, container, false);
 
     user = new User(authenticationService.getCurrentUser().getEmail());
+
+    waitingDialog = new WaitingDialog(getActivity());
 
     firstNameIl = view.findViewById(R.id.firstNameIl);
     firstNameEt = view.findViewById(R.id.firstNameEt);
@@ -154,34 +160,34 @@ public class EditProfileFragment extends Fragment {
       chooseImage();
     });
 
+    DatePickerDialog datePicker = new SpinnerDatePickerDialogBuilder()
+      .context(getActivity())
+      .callback(listener)
+      .spinnerTheme(R.style.NumberPickerStyle)
+      .showTitle(true)
+      .maxDate(2005, 11, 31)
+      .minDate(1980, 0, 1)
+      .defaultDate(2017, 0, 1)
+      .build();
+    datePicker.setOnShowListener(new DialogInterface.OnShowListener() {
+      @Override
+      public void onShow(DialogInterface dialog) {
+        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.BIRTHDAY_EDIT_PROFILE);
+      }
+    });
+
     birthdayEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
       birthdayEt.setOnClickListener(v1 -> {
-        new SpinnerDatePickerDialogBuilder()
-          .context(getActivity())
-          .callback(listener)
-          .spinnerTheme(R.style.NumberPickerStyle)
-          .showTitle(true)
-          .defaultDate(2017, 0, 1)
-          .maxDate(2005, 0, 1)
-          .minDate(1980, 0, 1)
-          .build().show();
+          datePicker.show();
         });
     });
 
     birthdayEt.setOnClickListener(v -> {
-      new SpinnerDatePickerDialogBuilder()
-        .context(getActivity())
-        .callback(listener)
-        .spinnerTheme(R.style.NumberPickerStyle)
-        .showTitle(true)
-        .defaultDate(2017, 0, 1)
-        .maxDate(2005, 0, 1)
-        .minDate(1980, 0, 1)
-        .build()
-        .show();
+      datePicker.show();
     });
 
     saveBtn.setOnClickListener(v -> {
+      waitingDialog.showDialog("Saving user details...");
       if(validateInput()) {
         user.setFirstName(firstNameEt.getText().toString().trim());
         user.setLastName(lastNameEt.getText().toString().trim());
@@ -191,29 +197,29 @@ public class EditProfileFragment extends Fragment {
         user.setBirthday(new Date(Integer.parseInt(birthday[2]),
           Integer.parseInt(birthday[1]),
           Integer.parseInt(birthday[0])));
+
+        userService.saveUser(user);
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference imageReference = storage
+          .getReference()
+          .child("images")
+          .child(authenticationService.getCurrentUser().getUid())
+          .child("pp.jpg");
+
+        profilePictureIv.setDrawingCacheEnabled(true);
+        profilePictureIv.buildDrawingCache();
+        Bitmap bitmap = profilePictureIv.getDrawingCache();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = imageReference.putBytes(data);
+        uploadTask.addOnSuccessListener((UploadTask.TaskSnapshot taskSnapshot) -> {
+          waitingDialog.hideDialog();
+          fragmentChangingListener.changeToUserFragment();
+        });
       }
-      userService.saveUser(user);
-
-      FirebaseStorage storage = FirebaseStorage.getInstance();
-      StorageReference imageReference = storage
-        .getReference()
-        .child("images")
-        .child(authenticationService.getCurrentUser().getUid())
-        .child("pp.jpg");
-
-      profilePictureIv.setDrawingCacheEnabled(true);
-      profilePictureIv.buildDrawingCache();
-      Bitmap bitmap = profilePictureIv.getDrawingCache();
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-      byte[] data = baos.toByteArray();
-
-      UploadTask uploadTask = imageReference.putBytes(data);
-      uploadTask.addOnSuccessListener((UploadTask.TaskSnapshot taskSnapshot) -> {
-        Log.d(TAG, "Image upload successful");
-      });
-
-      fragmentChangingListener.changeToUserFragment();
     });
 
     return view;

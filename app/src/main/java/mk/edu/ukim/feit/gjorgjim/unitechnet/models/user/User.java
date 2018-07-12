@@ -1,5 +1,6 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.models.user;
 
+import java.util.HashMap;
 import java.util.List;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
@@ -18,7 +19,7 @@ public class User {
   private Date birthday;
   private UserGender gender;
   private List<Course> courses;
-  private List<Experience> experiences;
+  private HashMap<String, Experience> experiences;
   private List<Education> educations;
 
   public User() {
@@ -76,11 +77,11 @@ public class User {
     this.gender = gender;
   }
 
-  public List<Experience> getExperiences() {
+  public HashMap<String, Experience> getExperiences() {
     return experiences;
   }
 
-  public void setExperiences(List<Experience> experiences) {
+  public void setExperiences(HashMap<String, Experience> experiences) {
     this.experiences = experiences;
   }
 

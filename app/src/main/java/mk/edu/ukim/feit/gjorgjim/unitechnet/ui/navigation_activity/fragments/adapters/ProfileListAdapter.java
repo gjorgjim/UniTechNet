@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Locale;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
@@ -42,9 +43,9 @@ public class ProfileListAdapter<T> extends ArrayAdapter<Object> {
       view = LayoutInflater.from(getContext()).inflate(R.layout.profile_list_item_layout, null);
     }
 
-    titleTv = convertView.findViewById(R.id.titleTv);
-    descriptionTv = convertView.findViewById(R.id.descriptionTv);
-    dateTv = convertView.findViewById(R.id.dateTv);
+    titleTv = view.findViewById(R.id.titleTv);
+    descriptionTv = view.findViewById(R.id.descriptionTv);
+    dateTv = view.findViewById(R.id.dateTv);
 
     if(list.size() > 0) {
       if(list.get(position) instanceof Course) {
@@ -56,7 +57,20 @@ public class ProfileListAdapter<T> extends ArrayAdapter<Object> {
         Experience current = (Experience) list.get(position);
         titleTv.setText(current.getJobTitle());
         descriptionTv.setText(current.getCompany());
-        dateTv.setText("");
+        String startDate = String.format(new Locale("en"),
+          "%d/%d",
+          current.getStartDate().getMonth(),
+          current.getStartDate().getYear() % 100 );
+        String endDate;
+        if(current.getEndDate() == null) {
+          endDate = "present";
+        } else {
+          endDate = String.format(new Locale("en"),
+            "%d/%d",
+            current.getEndDate().getMonth(),
+            current.getEndDate().getYear());
+        }
+        dateTv.setText(String.format(new Locale("en"), "%s - %s", startDate, endDate));
       } else if(list.get(position) instanceof Education) {
         Education current = (Education) list.get(position);
         titleTv.setText(current.getDegree());

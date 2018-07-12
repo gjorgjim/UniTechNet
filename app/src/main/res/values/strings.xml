@@ -33,7 +33,10 @@
   <string name="school_hint">School</string>
   <string name="title_hint">Title</string>
   <string name="company_hint">Company</string>
-  <string name="startdate_hint">StartDate</string>
+  <string name="startdate_hint">Start Date</string>
+  <string name="end_date_hint">End Date</string>
+  <string name="present_label">present</string>
+  <string name="add_button">Add</string>
 
   <string-array name="gender_array">
     <item>Not Specified</item>

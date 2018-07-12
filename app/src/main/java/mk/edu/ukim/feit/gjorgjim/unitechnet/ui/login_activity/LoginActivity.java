@@ -20,6 +20,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.AuthenticationCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.WaitingDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.NavigationActivity;
 
 public class LoginActivity extends AppCompatActivity implements AuthenticationCallback {
@@ -32,7 +33,7 @@ public class LoginActivity extends AppCompatActivity implements AuthenticationCa
   private AppCompatButton signInBtn;
   private AppCompatTextView incorrectInfoTv;
 
-  private ProgressWindow window;
+  private WaitingDialog waitingDialog;
 
   private AuthenticationService authenticationService;
 
@@ -46,6 +47,8 @@ public class LoginActivity extends AppCompatActivity implements AuthenticationCa
     if(authenticationService.getCurrentUser() != null){
       startActivity(new Intent(LoginActivity.this, NavigationActivity.class));
     }
+
+    waitingDialog = new WaitingDialog(LoginActivity.this);
 
     logoIv = findViewById(R.id.logoIv);
     emailIl = findViewById(R.id.emailIl);
@@ -98,15 +101,10 @@ public class LoginActivity extends AppCompatActivity implements AuthenticationCa
   }
 
   private void showWaitingDialog(){
-    window = ProgressWindow.getInstance(this);
-    ProgressWindowConfiguration configuration = new ProgressWindowConfiguration();
-    configuration.progressColor = Color.parseColor("#F44336");
-    configuration.backgroundColor = R.color.colorPrimary;
-    window.setConfiguration(configuration);
-    window.showProgress();
+    waitingDialog.showDialog("Logging in...");
   }
 
   private void hideWaitingDialog(){
-    window.hideProgress();
+    waitingDialog.hideDialog();
   }
 }

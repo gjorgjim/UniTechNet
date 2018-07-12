@@ -1,5 +1,6 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments;
 
+import android.app.DatePickerDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -7,10 +8,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.ListView;
 
 import com.bluehomestudio.progresswindow.ProgressWindow;
@@ -25,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -38,12 +43,13 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Education;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.adapters.ProfileListAdapter;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dialogs.NewExperienceDialog;
 
 /**
  * Created by gjmarkov on 16.5.2018.
  */
 
-public class ProfileFragment extends Fragment implements DatabaseCallback<User>{
+public class ProfileFragment extends Fragment{
 
   private UserService userService;
   private AuthenticationService authenticationService;
@@ -56,8 +62,14 @@ public class ProfileFragment extends Fragment implements DatabaseCallback<User>{
   private AppCompatTextView usernameTv;
   private AppCompatTextView birthdayTv;
   private CircleImageView profilePictureIv;
+  private AppCompatImageView plusExperienceIv;
+  private AppCompatImageView plusCourseIv;
+  private AppCompatImageView plusEducationIv;
 
-  private ProgressWindow window;
+  private NewExperienceDialog experienceDialog;
+
+  ProfileListAdapter<Experience> experienceAdapter;
+  private ArrayList<Experience> experiences;
 
   public ProfileFragment() {
     userService = UserService.getInstance();
@@ -70,8 +82,6 @@ public class ProfileFragment extends Fragment implements DatabaseCallback<User>{
     @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-    showWaitingDialog();
-
     courseLv = view.findViewById(R.id.coursesLv);
     educationLv = view.findViewById(R.id.educationLv);
     experienceLv = view.findViewById(R.id.experienceLv);
@@ -80,25 +90,22 @@ public class ProfileFragment extends Fragment implements DatabaseCallback<User>{
     usernameTv = view.findViewById(R.id.usernameTv);
     birthdayTv = view.findViewById(R.id.birthdayTv);
     profilePictureIv = view.findViewById(R.id.profilePictureIv);
+    plusCourseIv = view.findViewById(R.id.coursePlusIv);
+    plusExperienceIv = view.findViewById(R.id.experiencePlusIv);
+    plusEducationIv = view.findViewById(R.id.educationPlusIv);
 
     profilePictureIv.setOnClickListener(v -> {
       authenticationService.signOut(getActivity());
     });
 
-    userService.setUserCallback(this);
-    userService.findCurrentUser();
+    plusExperienceIv.setOnClickListener(v -> {
+      experienceDialog = new NewExperienceDialog(getContext());
+      experienceDialog.show();
+    });
+
+    setUserUI(userService.getCurrentUser());
 
     return view;
-  }
-
-  @Override
-  public void onSuccess(User user) {
-    setUserUI(user);
-  }
-
-  @Override
-  public void onFailure(String message) {
-
   }
 
   private void setUserUI(User user){
@@ -123,8 +130,7 @@ public class ProfileFragment extends Fragment implements DatabaseCallback<User>{
       imageReference.getFile(localFile).addOnSuccessListener(taskSnapshot -> {
         Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
         profilePictureIv.setImageBitmap(bitmap);
-      }).addOnFailureListener(Throwable::printStackTrace)
-      .addOnCompleteListener(task -> hideWaitingDialog());
+      }).addOnFailureListener(Throwable::printStackTrace);
     } catch (IOException e ) {
       e.printStackTrace();
     }
@@ -161,12 +167,12 @@ public class ProfileFragment extends Fragment implements DatabaseCallback<User>{
     }
     educationLv.setAdapter(educationAdapter);
 
-    ProfileListAdapter<Experience> experienceAdapter;
     if(user.getExperiences() != null) {
+      experiences = new ArrayList<>(user.getExperiences().values());
       experienceAdapter = new ProfileListAdapter<>(
         getContext(),
         R.layout.profile_list_item_layout,
-        user.getExperiences()
+        experiences
       );
     } else {
       experienceAdapter = new ProfileListAdapter<>(
@@ -178,16 +184,19 @@ public class ProfileFragment extends Fragment implements DatabaseCallback<User>{
     experienceLv.setAdapter(experienceAdapter);
   }
 
-  private void showWaitingDialog(){
-    window = ProgressWindow.getInstance(getActivity());
-    ProgressWindowConfiguration configuration = new ProgressWindowConfiguration();
-    configuration.progressColor = Color.parseColor("#F44336");
-    configuration.backgroundColor = R.color.colorPrimary;
-    window.setConfiguration(configuration);
-    window.showProgress();
+  public void setStartDateExperience(int year, int month, int day) {
+    experienceDialog.setStartDate(year, month, day);
   }
 
-  private void hideWaitingDialog(){
-    window.hideProgress();
+  public void setEndDateExperience(int year, int month, int day) {
+    experienceDialog.setEndDate(year, month, day);
+  }
+
+  public void updateExperience() {
+    if(experienceAdapter != null) {
+      experiences = new ArrayList<>(userService.getCurrentUser().getExperiences().values());
+      Log.d("ProfileFragment", userService.getCurrentUser().getExperiences().values().toString());
+      experienceAdapter.notifyDataSetChanged();
+    }
   }
 }

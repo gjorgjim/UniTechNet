@@ -2,6 +2,7 @@ package mk.edu.ukim.feit.gjorgjim.unitechnet.helpers;
 
 import android.app.Activity;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
 import android.view.WindowManager;
@@ -53,6 +54,20 @@ public class Validator {
 
   public static boolean validateInput(TextInputLayout inputLayout, AppCompatEditText editText, Activity activity) {
     if(editText.getText().toString().trim().isEmpty()) {
+      inputLayout.setError(activity.getString(R.string.edit_text_empty_error));
+      requestFocus(editText, activity);
+      return false;
+    } else {
+      inputLayout.setErrorEnabled(false);
+    }
+    return true;
+  }
+
+  public static boolean validateInput(TextInputLayout inputLayout,
+    AppCompatEditText editText,
+    Activity activity,
+    AppCompatCheckBox checkBox) {
+    if(editText.getText().toString().trim().isEmpty() && !checkBox.isChecked()) {
       inputLayout.setError(activity.getString(R.string.edit_text_empty_error));
       requestFocus(editText, activity);
       return false;

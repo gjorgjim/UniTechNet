@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -43,6 +44,9 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DatePickerDialogIdentifier;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.WaitingDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.CoursesFragment;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.EditProfileFragment;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.FeedFragment;
@@ -52,9 +56,9 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.Not
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.ProfileFragment;
 
 public class NavigationActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,
-  FragmentChangingListener, DatabaseCallback<Boolean> {
+  FragmentChangingListener, DatabaseCallback<User> {
 
-  private static final String TAG = "NavigationActivity";
+  private static final String LOG_TAG = "NavigationActivity";
 
   private DatabaseService databaseService;
   private AuthenticationService authenticationService;
@@ -67,7 +71,7 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
   private ProfileFragment profileFragment;
   private EditProfileFragment editProfileFragment;
 
-  private ProgressWindow window;
+  private WaitingDialog waitingDialog;
 
   private BottomNavigationView navigation;
   private Toolbar toolbar;
@@ -81,31 +85,31 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
       FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
       switch (item.getItemId()) {
         case R.id.navigation_courses:
-          transaction.replace(R.id.container, coursesFragment).commit();
+          transaction.replace(R.id.container, coursesFragment).commitAllowingStateLoss();
           if(fab.isShown()) {
             fab.hide();
           }
           return true;
         case R.id.navigation_messages:
-          transaction.replace(R.id.container, messagesFragment).commit();
+          transaction.replace(R.id.container, messagesFragment).commitAllowingStateLoss();
           if(fab.isShown()) {
             fab.hide();
           }
           return true;
         case R.id.navigation_feed:
-          transaction.replace(R.id.container, feedFragment).commit();
+          transaction.replace(R.id.container, feedFragment).commitAllowingStateLoss();
           if(!fab.isShown()) {
             fab.show();
           }
           return true;
         case R.id.navigation_notification:
-          transaction.replace(R.id.container, notificationsFragment).commit();
+          transaction.replace(R.id.container, notificationsFragment).commitAllowingStateLoss();
           if(fab.isShown()) {
             fab.hide();
           }
           return true;
         case R.id.navigation_profile:
-          transaction.replace(R.id.container, profileFragment).commit();
+          transaction.replace(R.id.container, profileFragment).commitAllowingStateLoss();
           if(fab.isShown()) {
             fab.hide();
           }
@@ -120,11 +124,11 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_navigation);
 
-    showWaitingDialog();
-
     databaseService = DatabaseService.getInstance();
     authenticationService = AuthenticationService.getInstance();
     userService = UserService.getInstance();
+
+    waitingDialog = new WaitingDialog(NavigationActivity.this);
 
     navigation = findViewById(R.id.navigation);
     //profileIv = findViewById(R.id.profileIv);
@@ -134,18 +138,9 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
 
     setSupportActionBar(toolbar);
 
-    coursesFragment = CoursesFragment.getInstance();
-    feedFragment = FeedFragment.getInstance();
-    notificationsFragment = NotificationsFragment.getInstance();
-    messagesFragment = MessagesFragment.getInstance();
-    profileFragment = new ProfileFragment();
-    editProfileFragment = new EditProfileFragment();
+    showWaitingDialog("Fetching your data...");
 
-    navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-    navigation.setSelectedItemId(R.id.navigation_feed);
-
-    userService.setFirstSignInCallback(this);
+    userService.setUserCallback(this);
     userService.isFirstSignIn();
   }
 
@@ -159,13 +154,22 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
 
   @Override
   public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-    editProfileFragment.setDateTextView(year, monthOfYear, dayOfMonth);
+    if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.BIRTHDAY_EDIT_PROFILE)) {
+      editProfileFragment.setDateTextView(year, monthOfYear, dayOfMonth);
+    } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.STARTDATE_EXPERIENCE)) {
+      profileFragment.setStartDateExperience(year, monthOfYear, dayOfMonth);
+    } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.ENDDATE_EXPERIENCE)) {
+      profileFragment.setEndDateExperience(year, monthOfYear, dayOfMonth);
+    }
   }
 
   @Override
   public void changeToUserFragment() {
     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    profileFragment = new ProfileFragment();
     transaction.replace(R.id.container, profileFragment).commit();
+
+    userService.listenForUserDetailsChanges();
   }
 
   @Override
@@ -175,7 +179,6 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
       try {
         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.fromFile(new File(image.getPath())));
         editProfileFragment.setNewProfilePicture(bitmap);
-        Log.d(TAG, "Calling setNewProfilePicture");
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -184,13 +187,31 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
   }
 
   @Override
-  public void onSuccess(Boolean aBoolean) {
-    hideWaitingDialog();
-    if(aBoolean){
-      navigation.setSelectedItemId(R.id.navigation_profile);
-      FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-      transaction.replace(R.id.container, editProfileFragment).commit();
-      fab.hide();
+  public void onSuccess(CallBackTag tag, User user) {
+    if(tag == CallBackTag.FIRST_SIGN_IN) {
+      hideWaitingDialog();
+      if(user == null){
+        Log.d(LOG_TAG, "User is null");
+        editProfileFragment = new EditProfileFragment();
+        navigation.setSelectedItemId(R.id.navigation_profile);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, editProfileFragment).commit();
+        fab.hide();
+      } else {
+        coursesFragment = CoursesFragment.getInstance();
+        feedFragment = FeedFragment.getInstance();
+        notificationsFragment = NotificationsFragment.getInstance();
+        messagesFragment = MessagesFragment.getInstance();
+        profileFragment = new ProfileFragment();
+
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        navigation.setSelectedItemId(R.id.navigation_feed);
+
+        userService.listenForUserDetailsChanges();
+      }
+    } else if(tag == CallBackTag.EXPERIENCE_CHANGES){
+      profileFragment.updateExperience();
     }
   }
 
@@ -199,16 +220,11 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
     hideWaitingDialog();
   }
 
-  private void showWaitingDialog(){
-    window = ProgressWindow.getInstance(this);
-    ProgressWindowConfiguration configuration = new ProgressWindowConfiguration();
-    configuration.progressColor = Color.parseColor("#F44336");
-    configuration.backgroundColor = R.color.colorPrimary;
-    window.setConfiguration(configuration);
-    window.showProgress();
+  private void showWaitingDialog(String message){
+    waitingDialog.showDialog("Fetching your data...");
   }
 
   private void hideWaitingDialog(){
-    window.hideProgress();
+    waitingDialog.hideDialog();
   }
 }
