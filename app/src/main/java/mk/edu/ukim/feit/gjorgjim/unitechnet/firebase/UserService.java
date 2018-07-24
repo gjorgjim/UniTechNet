@@ -8,10 +8,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Executable;
 import java.util.HashMap;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ProfileChangeCallback;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Education;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 
@@ -30,6 +32,8 @@ public class UserService {
   private User currentUser;
 
   private DatabaseCallback<User> userCallback;
+
+  private ProfileChangeCallback profileChangeCallback;
 
   private static final UserService ourInstance = new UserService();
 
@@ -56,10 +60,10 @@ public class UserService {
       public void onDataChange(DataSnapshot dataSnapshot) {
         Log.d(TAG, dataSnapshot.exists() + "");
         if(!dataSnapshot.exists()) {
-          userCallback.onSuccess(DatabaseCallback.CallBackTag.FIRST_SIGN_IN, null);
+          userCallback.onSuccess(null);
         } else {
           currentUser = dataSnapshot.getValue(User.class);
-          userCallback.onSuccess(DatabaseCallback.CallBackTag.FIRST_SIGN_IN, currentUser);
+          userCallback.onSuccess(currentUser);
         }
       }
 
@@ -75,53 +79,124 @@ public class UserService {
   }
 
   public void listenForUserDetailsChanges() {
-    ChildEventListener childEventListener = new ChildEventListener() {
+    setCoursesListener();
+
+    setExperiencesListener();
+
+    setEducationListener();
+  }
+
+  private void setCoursesListener() {
+    ChildEventListener coursesEventListener = new ChildEventListener() {
       @Override
       public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-        Log.d("User Service Added", dataSnapshot.getKey());
-        Log.d("User Service Added", dataSnapshot.getValue().toString());
-        if(dataSnapshot.getKey().equals("experiences")) {
-          for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
-            Experience experience = snapshot.getValue(Experience.class);
-            if(currentUser.getExperiences() == null) {
-              currentUser.setExperiences(new HashMap<>());
-            }
-            HashMap<String, Experience> hashMap = currentUser.getExperiences();
-            hashMap.put(snapshot.getKey(), snapshot.getValue(Experience.class));
-            currentUser.setExperiences(hashMap);
-            userCallback.onSuccess(DatabaseCallback.CallBackTag.EXPERIENCE_CHANGES, null);
-          }
+        Course course = dataSnapshot.getValue(Course.class);
+        if(currentUser.getCourses() == null) {
+          currentUser.setCourses(new HashMap<>());
+        }
+        if(!currentUser.getCourses().containsKey(dataSnapshot.getKey())) {
+          HashMap<String, Course> hashMap = currentUser.getCourses();
+          hashMap.put(dataSnapshot.getKey(), course);
+          currentUser.setCourses(hashMap);
+          profileChangeCallback.onCourseAdded(course);
         }
       }
 
       @Override
-      public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-        Log.d("User Service Changed", dataSnapshot.getValue().toString());
-      }
-
+      public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
       @Override
       public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+        currentUser.getCourses().remove(dataSnapshot.getKey());
+        profileChangeCallback.onCourseRemoved(dataSnapshot.getValue(Course.class));
       }
-
       @Override
-      public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-      }
-
+      public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
       @Override
-      public void onCancelled(DatabaseError databaseError) {
-
-      }
+      public void onCancelled(DatabaseError databaseError) {}
     };
     databaseService.usersReference().child(authenticationService
-    .getCurrentUser()
-    .getUid())
-      .addChildEventListener(childEventListener);
+      .getCurrentUser()
+      .getUid())
+      .child("courses")
+      .addChildEventListener(coursesEventListener);
+  }
+
+  private void setExperiencesListener() {
+    ChildEventListener experiencesEventListener = new ChildEventListener() {
+      @Override
+      public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+        Experience experience = dataSnapshot.getValue(Experience.class);
+        if(currentUser.getExperiences() == null) {
+          currentUser.setExperiences(new HashMap<>());
+        }
+        if(!currentUser.getExperiences().containsKey(dataSnapshot.getKey())) {
+          HashMap<String, Experience> hashMap = currentUser.getExperiences();
+          hashMap.put(dataSnapshot.getKey(), experience);
+          currentUser.setExperiences(hashMap);
+          profileChangeCallback.onExperienceAdded(experience);
+        }
+      }
+
+      @Override
+      public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+      @Override
+      public void onChildRemoved(DataSnapshot dataSnapshot) {
+        currentUser.getExperiences().remove(dataSnapshot.getKey());
+        profileChangeCallback.onExperienceRemoved(dataSnapshot.getValue(Experience.class));
+      }
+      @Override
+      public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+      @Override
+      public void onCancelled(DatabaseError databaseError) {}
+    };
+    databaseService.usersReference().child(authenticationService
+      .getCurrentUser()
+      .getUid())
+      .child("experiences")
+      .addChildEventListener(experiencesEventListener);
+  }
+
+  private void setEducationListener() {
+    ChildEventListener educationsEventListener = new ChildEventListener() {
+      @Override
+      public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+        Education education = dataSnapshot.getValue(Education.class);
+        if(currentUser.getEducations() == null) {
+          currentUser.setEducations(new HashMap<>());
+        }
+        if(!currentUser.getEducations().containsKey(dataSnapshot.getKey())) {
+          HashMap<String, Education> hashMap = currentUser.getEducations();
+          hashMap.put(dataSnapshot.getKey(), education);
+          currentUser.setEducations(hashMap);
+          profileChangeCallback.onEducationAdded(education);
+        }
+      }
+
+      @Override
+      public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+      @Override
+      public void onChildRemoved(DataSnapshot dataSnapshot) {
+        currentUser.getEducations().remove(dataSnapshot.getKey());
+        profileChangeCallback.onEducationRemoved(dataSnapshot.getValue(Education.class));
+      }
+      @Override
+      public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+      @Override
+      public void onCancelled(DatabaseError databaseError) {}
+    };
+    databaseService.usersReference().child(authenticationService
+      .getCurrentUser()
+      .getUid())
+      .child("educations")
+      .addChildEventListener(educationsEventListener);
   }
 
   public void setUserCallback(DatabaseCallback<User> userCallback){
     this.userCallback = userCallback;
+  }
+
+  public void setProfileChangeCallback(ProfileChangeCallback profileChangeCallback) {
+    this.profileChangeCallback = profileChangeCallback;
   }
 
   public User getCurrentUser(){

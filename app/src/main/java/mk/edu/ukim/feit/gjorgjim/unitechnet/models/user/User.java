@@ -18,9 +18,9 @@ public class User {
   private String email;
   private Date birthday;
   private UserGender gender;
-  private List<Course> courses;
+  private HashMap<String, Course> courses;
   private HashMap<String, Experience> experiences;
-  private List<Education> educations;
+  private HashMap<String, Education> educations;
 
   public User() {
   }
@@ -85,19 +85,19 @@ public class User {
     this.experiences = experiences;
   }
 
-  public List<Education> getEducations() {
+  public HashMap<String, Education> getEducations() {
     return educations;
   }
 
-  public void setEducations(List<Education> educations) {
+  public void setEducations(HashMap<String, Education> educations) {
     this.educations = educations;
   }
 
-  public List<Course> getCourses() {
+  public HashMap<String, Course> getCourses() {
     return courses;
   }
 
-  public void setCourses(List<Course> courses) {
+  public void setCourses(HashMap<String, Course> courses) {
     this.courses = courses;
   }
 

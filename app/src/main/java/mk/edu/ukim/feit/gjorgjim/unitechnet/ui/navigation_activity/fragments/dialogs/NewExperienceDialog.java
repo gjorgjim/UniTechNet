@@ -180,6 +180,7 @@ public class NewExperienceDialog extends Dialog {
   }
 
   public void setEndDate(int year, int month, int day) {
+    presentCb.setChecked(false);
     endDateEt.setText(String.format(new Locale("en"),"%d/%d/%d", day, month + 1, year));
   }
 }

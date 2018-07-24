@@ -1,50 +1,39 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity;
 
-import android.animation.AnimatorInflater;
-import android.animation.AnimatorSet;
-import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.animation.AnimationSet;
-import android.widget.TextView;
 
-import com.bluehomestudio.progresswindow.ProgressWindow;
-import com.bluehomestudio.progresswindow.ProgressWindowConfiguration;
-import com.bumptech.glide.Glide;
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.model.Image;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ProfileChangeCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DatePickerDialogIdentifier;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Education;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.WaitingDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.CoursesFragment;
@@ -56,7 +45,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.Not
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.ProfileFragment;
 
 public class NavigationActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,
-  FragmentChangingListener, DatabaseCallback<User> {
+  FragmentChangingListener, DatabaseCallback<User>, ProfileChangeCallback {
 
   private static final String LOG_TAG = "NavigationActivity";
 
@@ -68,7 +57,7 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
   private FeedFragment feedFragment;
   private NotificationsFragment notificationsFragment;
   private MessagesFragment messagesFragment;
-  private ProfileFragment profileFragment;
+  private ProfileFragment profileFragment = null;
   private EditProfileFragment editProfileFragment;
 
   private WaitingDialog waitingDialog;
@@ -131,7 +120,6 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
     waitingDialog = new WaitingDialog(NavigationActivity.this);
 
     navigation = findViewById(R.id.navigation);
-    //profileIv = findViewById(R.id.profileIv);
     toolbar = findViewById(R.id.toolbar);
     searchView = findViewById(R.id.searchview);
     fab = findViewById(R.id.fab);
@@ -142,6 +130,8 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
 
     userService.setUserCallback(this);
     userService.isFirstSignIn();
+
+    userService.setProfileChangeCallback(this);
   }
 
   @Override
@@ -187,37 +177,75 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
   }
 
   @Override
-  public void onSuccess(CallBackTag tag, User user) {
-    if(tag == CallBackTag.FIRST_SIGN_IN) {
-      hideWaitingDialog();
-      if(user == null){
-        Log.d(LOG_TAG, "User is null");
-        editProfileFragment = new EditProfileFragment();
-        navigation.setSelectedItemId(R.id.navigation_profile);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, editProfileFragment).commit();
-        fab.hide();
-      } else {
-        coursesFragment = CoursesFragment.getInstance();
-        feedFragment = FeedFragment.getInstance();
-        notificationsFragment = NotificationsFragment.getInstance();
-        messagesFragment = MessagesFragment.getInstance();
-        profileFragment = new ProfileFragment();
+  public void onSuccess(User user) {
+    hideWaitingDialog();
+    if(user == null){
+      Log.d(LOG_TAG, "User is null");
+      editProfileFragment = new EditProfileFragment();
+      navigation.setSelectedItemId(R.id.navigation_profile);
+      FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+      transaction.replace(R.id.container, editProfileFragment).commit();
+      fab.hide();
+    } else {
+      coursesFragment = CoursesFragment.getInstance();
+      feedFragment = FeedFragment.getInstance();
+      notificationsFragment = NotificationsFragment.getInstance();
+      messagesFragment = MessagesFragment.getInstance();
+      profileFragment = new ProfileFragment();
 
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+      navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        navigation.setSelectedItemId(R.id.navigation_feed);
+      navigation.setSelectedItemId(R.id.navigation_feed);
 
-        userService.listenForUserDetailsChanges();
-      }
-    } else if(tag == CallBackTag.EXPERIENCE_CHANGES){
-      profileFragment.updateExperience();
+      userService.listenForUserDetailsChanges();
     }
   }
 
   @Override
   public void onFailure(String message) {
     hideWaitingDialog();
+  }
+
+  @Override
+  public void onCourseAdded(Course course) {
+    if(profileFragment != null) {
+      profileFragment.addCourse(course);
+    }
+  }
+
+  @Override
+  public void onCourseRemoved(Course course) {
+    if(profileFragment != null) {
+      profileFragment.removeCourse(course);
+    }
+  }
+
+  @Override
+  public void onExperienceAdded(Experience experience) {
+    if(profileFragment != null) {
+      profileFragment.addExperience(experience);
+    }
+  }
+
+  @Override
+  public void onExperienceRemoved(Experience experience) {
+    if(profileFragment != null) {
+      profileFragment.removeExperience(experience);
+    }
+  }
+
+  @Override
+  public void onEducationAdded(Education education) {
+    if(profileFragment != null) {
+      profileFragment.addEducation(education);
+    }
+  }
+
+  @Override
+  public void onEducationRemoved(Education education) {
+    if(profileFragment != null) {
+      profileFragment.removeEducation(education);
+    }
   }
 
   private void showWaitingDialog(String message){
