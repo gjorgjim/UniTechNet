@@ -37,6 +37,8 @@
   <string name="end_date_hint">End Date</string>
   <string name="present_label">present</string>
   <string name="add_button">Add</string>
+  <string name="degree_hint">Degree</string>
+  <string name="grade_hint">Grade</string>
 
   <string-array name="gender_array">
     <item>Not Specified</item>

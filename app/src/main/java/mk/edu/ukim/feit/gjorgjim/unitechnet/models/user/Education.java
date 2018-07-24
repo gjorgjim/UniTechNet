@@ -22,6 +22,13 @@ public class Education {
     this.endDate = endDate;
   }
 
+  public Education(String school, String degree, String grade, Date startDate) {
+    this.school = school;
+    this.degree = degree;
+    this.grade = grade;
+    this.startDate = startDate;
+  }
+
   public String getSchool() {
     return school;
   }

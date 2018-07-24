@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
-  xmlns:tools="http://schemas.android.com/tools"
   android:id="@+id/mainLayout"
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
@@ -97,7 +96,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp">
 
-        <android.support.constraint.ConstraintLayout
+        <RelativeLayout
           android:id="@+id/courseCardRl"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
@@ -110,16 +109,24 @@
             android:id="@+id/courseTitleTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            card_view:layout_constraintTop_toTopOf="parent"
+            android:layout_alignParentTop="true"
             style="@style/PrimaryTextStyle"
             android:text="@string/courses_profile"/>
+
+          <View
+            android:id="@+id/courseUnderline"
+            android:background="@color/colorPrimary"
+            android:layout_height="1dp"
+            android:layout_width="fill_parent"
+            android:layout_marginTop="8dp"
+            android:layout_below="@+id/courseTitleTv"/>
 
           <android.support.v7.widget.AppCompatImageView
             android:id="@+id/coursePlusIv"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            card_view:layout_constraintTop_toTopOf="parent"
-            card_view:layout_constraintEnd_toEndOf="parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
             android:src="@drawable/plus"/>
 
           <LinearLayout
@@ -127,10 +134,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            card_view:layout_constraintTop_toBottomOf="@id/courseTitleTv">
+            android:layout_below="@+id/courseUnderline">
           </LinearLayout>
 
-        </android.support.constraint.ConstraintLayout>
+        </RelativeLayout>
 
       </android.support.v7.widget.CardView>
 
@@ -159,6 +166,14 @@
             style="@style/PrimaryTextStyle"
             android:text="@string/experience_profile"/>
 
+          <View
+            android:id="@+id/experienceUnderline"
+            android:background="@color/colorPrimary"
+            android:layout_height="1dp"
+            android:layout_width="fill_parent"
+            android:layout_marginTop="8dp"
+            android:layout_below="@+id/experienceTitleTv"/>
+
           <android.support.v7.widget.AppCompatImageView
             android:id="@+id/experiencePlusIv"
             android:layout_width="24dp"
@@ -172,8 +187,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="16dp"
-            card_view:layout_constraintTop_toBottomOf="@id/experienceTitleTv">
+            android:layout_below="@id/experienceUnderline">
           </LinearLayout>
 
         </RelativeLayout>
@@ -188,7 +202,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp">
 
-        <android.support.constraint.ConstraintLayout
+        <RelativeLayout
           android:id="@+id/educationCardRl"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
@@ -201,16 +215,24 @@
             android:id="@+id/educationTitleTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            card_view:layout_constraintTop_toTopOf="parent"
+            android:layout_alignParentTop="true"
             style="@style/PrimaryTextStyle"
             android:text="@string/education_profile"/>
+
+          <View
+            android:id="@+id/educationUnderline"
+            android:background="@color/colorPrimary"
+            android:layout_height="1dp"
+            android:layout_width="fill_parent"
+            android:layout_marginTop="8dp"
+            android:layout_below="@id/educationTitleTv"/>
 
           <android.support.v7.widget.AppCompatImageView
             android:id="@+id/educationPlusIv"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            card_view:layout_constraintTop_toTopOf="parent"
-            card_view:layout_constraintEnd_toEndOf="parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
             android:src="@drawable/plus"/>
 
           <LinearLayout
@@ -218,10 +240,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            card_view:layout_constraintTop_toBottomOf="@id/educationTitleTv">
+            android:layout_below="@id/educationUnderline">
           </LinearLayout>
 
-        </android.support.constraint.ConstraintLayout>
+        </RelativeLayout>
 
       </android.support.v7.widget.CardView>
 

@@ -1,7 +1,9 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.views;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatTextView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -33,6 +35,12 @@ public class ProfileItemView<T> extends RelativeLayout {
     View view = inflate(context, R.layout.profile_list_item_layout, this);
 
     view.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+    setClickable(true);
+
+    setOnLongClickListener(v -> {
+      Log.d("ProfileItemView", "onLongClick");
+      return true;
+    });
 
     titleTv = view.findViewById(R.id.titleTv);
     descriptionTv = view.findViewById(R.id.descriptionTv);
@@ -49,16 +57,16 @@ public class ProfileItemView<T> extends RelativeLayout {
       titleTv.setText(current.getJobTitle());
       descriptionTv.setText(current.getCompany());
       String startDate = String.format(new Locale("en"),
-        "%d/%d",
-        current.getStartDate().getMonth(),
-        current.getStartDate().getYear() % 100 );
+        "%s/%d",
+        formatMonth(current.getStartDate().getMonth()),
+        current.getStartDate().getYear());
       String endDate;
       if(current.getEndDate() == null) {
         endDate = "present";
       } else {
         endDate = String.format(new Locale("en"),
-          "%d/%d",
-          current.getEndDate().getMonth(),
+          "%s/%d",
+          formatMonth(current.getEndDate().getMonth()),
           current.getEndDate().getYear());
       }
       dateTv.setText(String.format(new Locale("en"), "%s - %s", startDate, endDate));
@@ -66,12 +74,43 @@ public class ProfileItemView<T> extends RelativeLayout {
       Education current = (Education) item;
       titleTv.setText(current.getDegree());
       descriptionTv.setText(current.getSchool());
-      dateTv.setVisibility(GONE);
+      String startDate = String.format(new Locale("en"),
+        "%s/%d",
+        formatMonth(current.getStartDate().getMonth()),
+        current.getStartDate().getYear());
+      String endDate;
+      if(current.getEndDate() == null) {
+        endDate = "present";
+      } else {
+        endDate = String.format(new Locale("en"),
+          "%s/%d",
+          formatMonth(current.getEndDate().getMonth()),
+          current.getEndDate().getYear());
+      }
+      dateTv.setText(String.format(new Locale("en"), "%s - %s", startDate, endDate));
     }
   }
 
   public void setItem(T item) {
     this.item = item;
     init();
+  }
+
+  private String formatMonth(int month) {
+    switch (month) {
+      case 1: return "Jan";
+      case 2: return "Feb";
+      case 3: return "Mar";
+      case 4: return "Apr";
+      case 5: return "May";
+      case 6: return "Jun";
+      case 7: return "Jul";
+      case 8: return "Aug";
+      case 9: return "Sep";
+      case 10: return "Oct";
+      case 11: return "Nov";
+      case 12: return "Dec";
+      default: return "";
+    }
   }
 }

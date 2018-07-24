@@ -176,6 +176,7 @@ public class UserService {
       public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
       @Override
       public void onChildRemoved(DataSnapshot dataSnapshot) {
+        Log.d("UserService", "Education removed");
         currentUser.getEducations().remove(dataSnapshot.getKey());
         profileChangeCallback.onEducationRemoved(dataSnapshot.getValue(Education.class));
       }

@@ -72,6 +72,7 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
       FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+      transaction.setCustomAnimations(R.animator.enter, R.animator.exit);
       switch (item.getItemId()) {
         case R.id.navigation_courses:
           transaction.replace(R.id.container, coursesFragment).commitAllowingStateLoss();
@@ -150,6 +151,10 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
       profileFragment.setStartDateExperience(year, monthOfYear, dayOfMonth);
     } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.ENDDATE_EXPERIENCE)) {
       profileFragment.setEndDateExperience(year, monthOfYear, dayOfMonth);
+    } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.STARTDATE_EDUCATION)) {
+      profileFragment.setStartDateEducation(year, monthOfYear, dayOfMonth);
+    } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.ENDDATE_EDUCATION)) {
+      profileFragment.setEndDateEducation(year, monthOfYear, dayOfMonth);
     }
   }
 
@@ -160,6 +165,11 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
     transaction.replace(R.id.container, profileFragment).commit();
 
     userService.listenForUserDetailsChanges();
+  }
+
+  @Override
+  public void changeToCoursesFragment() {
+    navigation.setSelectedItemId(R.id.navigation_courses);
   }
 
   @Override
@@ -243,6 +253,7 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
 
   @Override
   public void onEducationRemoved(Education education) {
+    Log.d("NavigationActivity", "Education removed");
     if(profileFragment != null) {
       profileFragment.removeEducation(education);
     }

@@ -6,4 +6,5 @@ package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments;
 
 public interface FragmentChangingListener {
   void changeToUserFragment();
+  void changeToCoursesFragment();
 }

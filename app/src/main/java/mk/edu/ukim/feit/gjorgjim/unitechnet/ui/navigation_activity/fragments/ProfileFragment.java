@@ -1,5 +1,6 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +32,8 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Education;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.NavigationActivity;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dialogs.NewEducationDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dialogs.NewExperienceDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.views.ProfileItemView;
 
@@ -59,11 +63,19 @@ public class ProfileFragment extends Fragment{
   private HashMap<String, ProfileItemView<Education>> educationViews;
 
   private NewExperienceDialog experienceDialog;
+  private NewEducationDialog educationDialog;
 
+  private FragmentChangingListener listener;
 
   public ProfileFragment() {
     userService = UserService.getInstance();
     authenticationService = AuthenticationService.getInstance();
+  }
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    listener = (FragmentChangingListener) context;
   }
 
   @Nullable
@@ -95,6 +107,15 @@ public class ProfileFragment extends Fragment{
     plusExperienceIv.setOnClickListener(v -> {
       experienceDialog = new NewExperienceDialog(getContext());
       experienceDialog.show();
+    });
+
+    plusEducationIv.setOnClickListener(v -> {
+      educationDialog = new NewEducationDialog(getContext());
+      educationDialog.show();
+    });
+
+    plusCourseIv.setOnClickListener(v -> {
+      listener.changeToCoursesFragment();
     });
 
     setUserUI(userService.getCurrentUser());
@@ -169,6 +190,14 @@ public class ProfileFragment extends Fragment{
     experienceDialog.setEndDate(year, month, day);
   }
 
+  public void setStartDateEducation(int year, int month, int day) {
+    educationDialog.setStartDate(year, month, day);
+  }
+
+  public void setEndDateEducation(int year, int month, int day) {
+    educationDialog.setEndDate(year, month, day);
+  }
+
   public void addCourse(Course course) {
     if(getContext() != null) {
       ProfileItemView<Course> profileItemView = new ProfileItemView<>(getContext());
@@ -216,8 +245,9 @@ public class ProfileFragment extends Fragment{
   }
 
   public void removeEducation(Education education) {
+    Log.d("ProfileFragment", "Education removed");
     if(getContext() != null) {
-      educationsLl.removeView(experienceViews.get(
+      educationsLl.removeView(educationViews.get(
         String.format("%s/%s", education.getDegree(), education.getSchool()))
       );
       educationViews.remove(String.format("%s/%s", education.getDegree(), education.getSchool()));

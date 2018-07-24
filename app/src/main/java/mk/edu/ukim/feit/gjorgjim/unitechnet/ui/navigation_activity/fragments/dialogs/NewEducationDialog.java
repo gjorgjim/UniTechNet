@@ -10,6 +10,7 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
+import android.view.Window;
 
 import com.google.firebase.database.DatabaseReference;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
@@ -17,42 +18,44 @@ import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import java.util.Locale;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DatePickerDialogIdentifier;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Education;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
 
 /**
- * Created by gjmarkov on 11.7.2018.
+ * Created by gjmarkov on 24.7.2018.
  */
 
-public class NewExperienceDialog extends Dialog {
+public class NewEducationDialog extends Dialog {
 
   private Activity activity;
 
-  private TextInputLayout titleIl;
-  private AppCompatEditText titleEt;
-  private TextInputLayout companyIl;
-  private AppCompatEditText companyEt;
+  private TextInputLayout schoolIl;
+  private AppCompatEditText schoolEt;
+  private TextInputLayout degreeIl;
+  private AppCompatEditText degreeEt;
+  private TextInputLayout gradeIl;
+  private AppCompatEditText gradeEt;
   private TextInputLayout startDateIl;
   private AppCompatEditText startDateEt;
   private TextInputLayout endDateIl;
   private AppCompatEditText endDateEt;
   private AppCompatCheckBox presentCb;
-  private AppCompatButton addExperienceBtn;
-
-  private DatePickerDialog.OnDateSetListener listener;
+  private AppCompatButton addEducationBtn;
 
   private DatabaseService databaseService;
   private AuthenticationService authenticationService;
 
-  public NewExperienceDialog(@NonNull Context context) {
+  private DatePickerDialog.OnDateSetListener listener;
+
+  public NewEducationDialog(@NonNull Context context) {
     super(context);
     activity = (Activity) context;
     listener = (DatePickerDialog.OnDateSetListener) context;
@@ -61,23 +64,25 @@ public class NewExperienceDialog extends Dialog {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.dialog_new_experience);
+    setContentView(R.layout.dialog_new_education);
 
-    setTitle("Add Experience");
+    setTitle("Add Education");
 
     databaseService = DatabaseService.getInstance();
     authenticationService = AuthenticationService.getInstance();
 
-    titleIl = findViewById(R.id.titleIl);
-    titleEt = findViewById(R.id.titleEt);
-    companyIl = findViewById(R.id.companyIl);
-    companyEt = findViewById(R.id.companyEt);
+    schoolIl = findViewById(R.id.schoolIl);
+    schoolEt = findViewById(R.id.schoolEt);
+    degreeIl = findViewById(R.id.degreeIl);
+    degreeEt = findViewById(R.id.degreeEt);
+    gradeIl = findViewById(R.id.gradeIl);
+    gradeEt = findViewById(R.id.gradeEt);
     startDateIl = findViewById(R.id.startDateIl);
-    startDateEt = findViewById(R.id.startDateyEt);
+    startDateEt = findViewById(R.id.startDateEt);
     endDateIl = findViewById(R.id.endDateIl);
     endDateEt = findViewById(R.id.endDateyEt);
     presentCb = findViewById(R.id.endDatePresentCb);
-    addExperienceBtn = findViewById(R.id.newExperienceBtn);
+    addEducationBtn = findViewById(R.id.newEducationBtn);
 
     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", new Locale("en"));
     java.util.Date date = new java.util.Date();
@@ -99,44 +104,39 @@ public class NewExperienceDialog extends Dialog {
 
     startDateEt.setOnClickListener(v -> {
       datePicker.setOnShowListener(dialog -> {
-        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.STARTDATE_EXPERIENCE);
+        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.STARTDATE_EDUCATION);
       });
       datePicker.show();
     });
 
     startDateEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
       datePicker.setOnShowListener(dialog -> {
-        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.STARTDATE_EXPERIENCE);
+        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.STARTDATE_EDUCATION);
       });
       datePicker.show();
     });
 
     endDateEt.setOnClickListener(v -> {
       datePicker.setOnShowListener(dialog -> {
-        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.ENDDATE_EXPERIENCE);
+        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.ENDDATE_EDUCATION);
       });
       datePicker.show();
     });
 
     endDateEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
       datePicker.setOnShowListener(dialog -> {
-        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.ENDDATE_EXPERIENCE);
+        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.ENDDATE_EDUCATION);
       });
       datePicker.show();
     });
 
-    presentCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
-      if(isChecked) {
-        endDateEt.setText("");
-      }
-    });
-
-    addExperienceBtn.setOnClickListener(v -> {
+    addEducationBtn.setOnClickListener(v -> {
       if(validateInput()) {
         String[] startDate = startDateEt.getText().toString().split("/");
-        Experience experience = new Experience(
-          titleEt.getText().toString().trim(),
-          companyEt.getText().toString().trim(),
+        Education education = new Education(
+          schoolEt.getText().toString().trim(),
+          degreeEt.getText().toString().trim(),
+          gradeEt.getText().toString().trim(),
           new Date(
             Integer.parseInt(startDate[2]),
             Integer.parseInt(startDate[1]),
@@ -144,10 +144,10 @@ public class NewExperienceDialog extends Dialog {
           )
         );
         if(presentCb.isChecked()) {
-          experience.setEndDate(null);
+          education.setEndDate(null);
         } else {
           String[] endDate = endDateEt.getText().toString().split("/");
-          experience.setEndDate(new Date(
+          education.setEndDate(new Date(
             Integer.parseInt(endDate[2]),
             Integer.parseInt(endDate[1]),
             Integer.parseInt(endDate[0])
@@ -157,18 +157,18 @@ public class NewExperienceDialog extends Dialog {
           authenticationService
             .getCurrentUser()
             .getUid()
-        ).child("experiences");
+        ).child("educations");
         String key = experienceRef.push().getKey();
-        experienceRef.child(key).setValue(experience);
+        experienceRef.child(key).setValue(education);
         dismiss();
       }
     });
-
   }
 
   private boolean validateInput() {
-    return Validator.validateInput(titleIl, titleEt, activity)
-      && Validator.validateInput(companyIl, companyEt, activity)
+    return Validator.validateInput(schoolIl, schoolEt, activity)
+      && Validator.validateInput(degreeIl, degreeEt, activity)
+      && Validator.validateInput(gradeIl, gradeEt, activity)
       && Validator.validateInput(startDateIl, startDateEt, activity)
       && (Validator.validateInput(endDateIl, endDateEt, activity, presentCb));
   }
