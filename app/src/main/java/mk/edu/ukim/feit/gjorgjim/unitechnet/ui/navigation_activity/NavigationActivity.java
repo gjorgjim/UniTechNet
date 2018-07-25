@@ -155,6 +155,14 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
       profileFragment.setStartDateEducation(year, monthOfYear, dayOfMonth);
     } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.ENDDATE_EDUCATION)) {
       profileFragment.setEndDateEducation(year, monthOfYear, dayOfMonth);
+    } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.STARTDATE_EDIT_EDUCATION)) {
+      profileFragment.setStartDateEditEducation(year, monthOfYear, dayOfMonth);
+    } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.ENDDATE_EDIT_EDUCATION)) {
+      profileFragment.setEndDateEditEducation(year, monthOfYear, dayOfMonth);
+    } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.STARTDATE_EDIT_EXPERIENCE)) {
+      profileFragment.setStartDateEditExperience(year, monthOfYear, dayOfMonth);
+    } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.ENDDATE_EDIT_EXPERIENCE)) {
+      profileFragment.setEndDateEditExperience(year, monthOfYear, dayOfMonth);
     }
   }
 
@@ -217,45 +225,45 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
   }
 
   @Override
-  public void onCourseAdded(Course course) {
+  public void onCourseAdded(String key, Course course) {
     if(profileFragment != null) {
-      profileFragment.addCourse(course);
+      profileFragment.addCourse(key, course);
     }
   }
 
   @Override
-  public void onCourseRemoved(Course course) {
+  public void onCourseRemoved(String key) {
     if(profileFragment != null) {
-      profileFragment.removeCourse(course);
+      profileFragment.removeCourse(key);
     }
   }
 
   @Override
-  public void onExperienceAdded(Experience experience) {
+  public void onExperienceAdded(String key, Experience experience) {
     if(profileFragment != null) {
-      profileFragment.addExperience(experience);
+      profileFragment.addExperience(key, experience);
     }
   }
 
   @Override
-  public void onExperienceRemoved(Experience experience) {
+  public void onExperienceRemoved(String key) {
     if(profileFragment != null) {
-      profileFragment.removeExperience(experience);
+      profileFragment.removeExperience(key);
     }
   }
 
   @Override
-  public void onEducationAdded(Education education) {
+  public void onEducationAdded(String key, Education education) {
     if(profileFragment != null) {
-      profileFragment.addEducation(education);
+      profileFragment.addEducation(key, education);
     }
   }
 
   @Override
-  public void onEducationRemoved(Education education) {
+  public void onEducationRemoved(String key) {
     Log.d("NavigationActivity", "Education removed");
     if(profileFragment != null) {
-      profileFragment.removeEducation(education);
+      profileFragment.removeEducation(key);
     }
   }
 

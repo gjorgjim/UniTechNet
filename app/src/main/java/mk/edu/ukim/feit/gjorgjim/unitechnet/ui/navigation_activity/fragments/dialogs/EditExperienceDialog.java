@@ -17,22 +17,21 @@ import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import java.util.Locale;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DatePickerDialogIdentifier;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
 
 /**
- * Created by gjmarkov on 11.7.2018.
+ * Created by gjmarkov on 25.7.2018.
  */
 
-public class NewExperienceDialog extends Dialog {
+public class EditExperienceDialog extends Dialog {
 
   private Activity activity;
 
@@ -45,14 +44,18 @@ public class NewExperienceDialog extends Dialog {
   private TextInputLayout endDateIl;
   private AppCompatEditText endDateEt;
   private AppCompatCheckBox presentCb;
-  private AppCompatButton addExperienceBtn;
+  private AppCompatButton saveExperienceBtn;
+  private AppCompatButton deleteExperienceBtn;
 
   private DatePickerDialog.OnDateSetListener listener;
 
   private DatabaseService databaseService;
   private AuthenticationService authenticationService;
 
-  public NewExperienceDialog(@NonNull Context context) {
+  private String key;
+  private Experience currentExperience;
+
+  public EditExperienceDialog(@NonNull Context context) {
     super(context);
     activity = (Activity) context;
     listener = (DatePickerDialog.OnDateSetListener) context;
@@ -61,7 +64,7 @@ public class NewExperienceDialog extends Dialog {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.dialog_new_experience);
+    setContentView(R.layout.dialog_edit_experience);
 
     setTitle("Add Experience");
 
@@ -77,7 +80,10 @@ public class NewExperienceDialog extends Dialog {
     endDateIl = findViewById(R.id.endDateIl);
     endDateEt = findViewById(R.id.endDateyEt);
     presentCb = findViewById(R.id.endDatePresentCb);
-    addExperienceBtn = findViewById(R.id.newExperienceBtn);
+    saveExperienceBtn = findViewById(R.id.addExperienceBtn);
+    deleteExperienceBtn = findViewById(R.id.deleteExperienceBtn);
+
+    setupUi();
 
     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", new Locale("en"));
     java.util.Date date = new java.util.Date();
@@ -99,28 +105,28 @@ public class NewExperienceDialog extends Dialog {
 
     startDateEt.setOnClickListener(v -> {
       datePicker.setOnShowListener(dialog -> {
-        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.STARTDATE_EXPERIENCE);
+        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.STARTDATE_EDIT_EXPERIENCE);
       });
       datePicker.show();
     });
 
     startDateEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
       datePicker.setOnShowListener(dialog -> {
-        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.STARTDATE_EXPERIENCE);
+        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.STARTDATE_EDIT_EXPERIENCE);
       });
       datePicker.show();
     });
 
     endDateEt.setOnClickListener(v -> {
       datePicker.setOnShowListener(dialog -> {
-        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.ENDDATE_EXPERIENCE);
+        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.ENDDATE_EDIT_EXPERIENCE);
       });
       datePicker.show();
     });
 
     endDateEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
       datePicker.setOnShowListener(dialog -> {
-        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.ENDDATE_EXPERIENCE);
+        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.ENDDATE_EDIT_EXPERIENCE);
       });
       datePicker.show();
     });
@@ -131,7 +137,7 @@ public class NewExperienceDialog extends Dialog {
       }
     });
 
-    addExperienceBtn.setOnClickListener(v -> {
+    saveExperienceBtn.setOnClickListener(v -> {
       if(validateInput()) {
         String[] startDate = startDateEt.getText().toString().split("/");
         Experience experience = new Experience(
@@ -158,10 +164,21 @@ public class NewExperienceDialog extends Dialog {
             .getCurrentUser()
             .getUid()
         ).child("experiences");
-        String key = experienceRef.push().getKey();
+        experienceRef.child(key).removeValue();
         experienceRef.child(key).setValue(experience);
         dismiss();
       }
+    });
+
+    deleteExperienceBtn.setOnClickListener(v -> {
+      databaseService.userReference(
+        authenticationService
+          .getCurrentUser()
+          .getUid()
+      ).child("experiences")
+        .child(key)
+        .removeValue();
+      dismiss();
     });
 
     presentCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -185,5 +202,29 @@ public class NewExperienceDialog extends Dialog {
   public void setEndDate(int year, int month, int day) {
     presentCb.setChecked(false);
     endDateEt.setText(String.format(new Locale("en"),"%d/%d/%d", day, month + 1, year));
+  }
+
+  public void setExperience(String key, Experience experience) {
+    this.key = key;
+    currentExperience = experience;
+  }
+
+  private void setupUi() {
+    titleEt.setText(currentExperience.getJobTitle());
+    companyEt.setText(currentExperience.getCompany());
+    startDateEt.setText(String.format(new Locale("en"),
+      "%d/%d/%d",
+      currentExperience.getStartDate().getDay(),
+      currentExperience.getStartDate().getMonth(),
+      currentExperience.getStartDate().getYear()));
+    if(currentExperience.getEndDate() != null) {
+      endDateEt.setText(String.format(new Locale("en"),
+        "%d/%d/%d",
+        currentExperience.getEndDate().getDay(),
+        currentExperience.getEndDate().getMonth(),
+        currentExperience.getEndDate().getYear()));
+    } else {
+      presentCb.setChecked(true);
+    }
   }
 }

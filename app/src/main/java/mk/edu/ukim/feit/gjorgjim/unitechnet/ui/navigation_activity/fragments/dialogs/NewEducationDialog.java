@@ -11,6 +11,7 @@ import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
 import android.view.Window;
+import android.widget.CompoundButton;
 
 import com.google.firebase.database.DatabaseReference;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
@@ -161,6 +162,12 @@ public class NewEducationDialog extends Dialog {
         String key = experienceRef.push().getKey();
         experienceRef.child(key).setValue(education);
         dismiss();
+      }
+    });
+
+    presentCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
+      if(isChecked) {
+        endDateEt.setText("");
       }
     });
   }

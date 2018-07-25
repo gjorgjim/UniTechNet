@@ -98,7 +98,7 @@ public class UserService {
           HashMap<String, Course> hashMap = currentUser.getCourses();
           hashMap.put(dataSnapshot.getKey(), course);
           currentUser.setCourses(hashMap);
-          profileChangeCallback.onCourseAdded(course);
+          profileChangeCallback.onCourseAdded(dataSnapshot.getKey(), course);
         }
       }
 
@@ -107,7 +107,7 @@ public class UserService {
       @Override
       public void onChildRemoved(DataSnapshot dataSnapshot) {
         currentUser.getCourses().remove(dataSnapshot.getKey());
-        profileChangeCallback.onCourseRemoved(dataSnapshot.getValue(Course.class));
+        profileChangeCallback.onCourseRemoved(dataSnapshot.getKey());
       }
       @Override
       public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
@@ -133,7 +133,7 @@ public class UserService {
           HashMap<String, Experience> hashMap = currentUser.getExperiences();
           hashMap.put(dataSnapshot.getKey(), experience);
           currentUser.setExperiences(hashMap);
-          profileChangeCallback.onExperienceAdded(experience);
+          profileChangeCallback.onExperienceAdded(dataSnapshot.getKey(), experience);
         }
       }
 
@@ -142,7 +142,7 @@ public class UserService {
       @Override
       public void onChildRemoved(DataSnapshot dataSnapshot) {
         currentUser.getExperiences().remove(dataSnapshot.getKey());
-        profileChangeCallback.onExperienceRemoved(dataSnapshot.getValue(Experience.class));
+        profileChangeCallback.onExperienceRemoved(dataSnapshot.getKey());
       }
       @Override
       public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
@@ -168,7 +168,7 @@ public class UserService {
           HashMap<String, Education> hashMap = currentUser.getEducations();
           hashMap.put(dataSnapshot.getKey(), education);
           currentUser.setEducations(hashMap);
-          profileChangeCallback.onEducationAdded(education);
+          profileChangeCallback.onEducationAdded(dataSnapshot.getKey(), education);
         }
       }
 
@@ -178,7 +178,7 @@ public class UserService {
       public void onChildRemoved(DataSnapshot dataSnapshot) {
         Log.d("UserService", "Education removed");
         currentUser.getEducations().remove(dataSnapshot.getKey());
-        profileChangeCallback.onEducationRemoved(dataSnapshot.getValue(Education.class));
+        profileChangeCallback.onEducationRemoved(dataSnapshot.getKey());
       }
       @Override
       public void onChildMoved(DataSnapshot dataSnapshot, String s) {}

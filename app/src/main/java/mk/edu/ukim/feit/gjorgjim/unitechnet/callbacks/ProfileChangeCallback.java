@@ -8,12 +8,12 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
  * Created by gjmarkov on 24.7.2018.
  */
 public interface ProfileChangeCallback {
-  void onCourseAdded(Course course);
-  void onCourseRemoved(Course course);
+  void onCourseAdded(String key, Course course);
+  void onCourseRemoved(String key);
 
-  void onExperienceAdded(Experience experience);
-  void onExperienceRemoved(Experience experience);
+  void onExperienceAdded(String key, Experience experience);
+  void onExperienceRemoved(String key);
 
-  void onEducationAdded(Education education);
-  void onEducationRemoved(Education education);
+  void onEducationAdded(String key, Education education);
+  void onEducationRemoved(String key);
 }

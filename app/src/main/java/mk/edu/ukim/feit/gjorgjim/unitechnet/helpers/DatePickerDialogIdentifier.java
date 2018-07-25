@@ -7,8 +7,12 @@ public class DatePickerDialogIdentifier {
   public static String BIRTHDAY_EDIT_PROFILE = "birthdayEditProfile";
   public static String STARTDATE_EXPERIENCE = "startDateExperience";
   public static String ENDDATE_EXPERIENCE = "endDateExperience";
+  public static String STARTDATE_EDIT_EXPERIENCE = "startDateEditExperience";
+  public static String ENDDATE_EDIT_EXPERIENCE = "endDateEditExperience";
   public static String STARTDATE_EDUCATION = "statDateEducation";
   public static String ENDDATE_EDUCATION = "endDateEducation";
+  public static String STARTDATE_EDIT_EDUCATION = "statDateEditEducation";
+  public static String ENDDATE_EDIT_EDUCATION = "endDateEditEducation";
 
   private static String currentDatePicker;
 

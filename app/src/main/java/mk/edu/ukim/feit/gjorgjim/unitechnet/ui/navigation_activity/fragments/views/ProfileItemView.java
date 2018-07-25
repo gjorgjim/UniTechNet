@@ -1,9 +1,8 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatTextView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -14,21 +13,33 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Education;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.ProfileFragment;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dialogs.EditEducationDialog;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dialogs.EditExperienceDialog;
 
 /**
  * Created by gjmarkov on 24.7.2018.
  */
+@SuppressLint("ViewConstructor")
 public class ProfileItemView<T> extends RelativeLayout {
   private Context context;
   private T item;
+  private ProfileFragment profileFragment;
 
   private AppCompatTextView titleTv;
   private AppCompatTextView descriptionTv;
   private AppCompatTextView dateTv;
 
-  public ProfileItemView(Context context) {
+  private String key;
+
+  private EditEducationDialog educationDialog;
+  private EditExperienceDialog experienceDialog;
+
+  public ProfileItemView(Context context, String key, ProfileFragment profileFragment) {
     super(context);
     this.context = context;
+    this.key = key;
+    this.profileFragment = profileFragment;
   }
 
   private void init() {
@@ -38,7 +49,17 @@ public class ProfileItemView<T> extends RelativeLayout {
     setClickable(true);
 
     setOnLongClickListener(v -> {
-      Log.d("ProfileItemView", "onLongClick");
+      if(item instanceof Education) {
+        educationDialog = new EditEducationDialog(context);
+        educationDialog.setEducation(key, (Education) item);
+        profileFragment.setCurrentEducation((ProfileItemView<Education>) this);
+        educationDialog.show();
+      } else if(item instanceof Experience) {
+        experienceDialog = new EditExperienceDialog(context);
+        experienceDialog.setExperience(key, (Experience) item);
+        profileFragment.setCurrentExperience((ProfileItemView<Experience>) this);
+        experienceDialog.show();
+      }
       return true;
     });
 
@@ -112,5 +133,21 @@ public class ProfileItemView<T> extends RelativeLayout {
       case 12: return "Dec";
       default: return "";
     }
+  }
+
+  public void setStartDateEducation(int year, int month, int day) {
+    educationDialog.setStartDate(year, month, day);
+  }
+
+  public void setEndDateEducation(int year, int month, int day) {
+    educationDialog.setEndDate(year, month, day);
+  }
+
+  public void setStartDateExperience(int year, int month, int day) {
+    experienceDialog.setStartDate(year, month, day);
+  }
+
+  public void setEndDateExperience(int year, int month, int day) {
+    experienceDialog.setEndDate(year, month, day);
   }
 }
