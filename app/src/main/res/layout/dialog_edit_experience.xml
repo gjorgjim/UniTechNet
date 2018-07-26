@@ -4,13 +4,23 @@
                 android:layout_height="match_parent"
                 android:padding="16dp">
 
+  <android.support.v7.widget.AppCompatTextView
+    android:id="@+id/dialogTitleTv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_centerHorizontal="true"
+    android:text="@string/edit_experience_dialog_title"
+    style="@style/PrimaryTextStyle"
+    android:textColor="@color/colorPrimary"/>
+
   <android.support.design.widget.TextInputLayout
     android:id="@+id/titleIl"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:paddingTop="8dp"
     android:layout_centerHorizontal="true"
-    android:layout_alignParentTop="true">
+    android:layout_below="@id/dialogTitleTv">
 
     <android.support.v7.widget.AppCompatEditText
       android:id="@+id/titleEt"

@@ -41,6 +41,11 @@
   <string name="grade_hint">Grade</string>
   <string name="save_button">Save</string>
   <string name="delete_button">Delete</string>
+  <string name="edit_your_details">Edit your details</string>
+  <string name="add_education">Add Education</string>
+  <string name="add_experience">Add Experience</string>
+  <string name="edit_experience_dialog_title">Edit Experience</string>
+  <string name="edit_education_dialog_title">Edit Education</string>
 
   <string-array name="gender_array">
     <item>Not Specified</item>

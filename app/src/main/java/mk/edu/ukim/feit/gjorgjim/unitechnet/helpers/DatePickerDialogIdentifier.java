@@ -13,6 +13,7 @@ public class DatePickerDialogIdentifier {
   public static String ENDDATE_EDUCATION = "endDateEducation";
   public static String STARTDATE_EDIT_EDUCATION = "statDateEditEducation";
   public static String ENDDATE_EDIT_EDUCATION = "endDateEditEducation";
+  public static String BIRTHDAY_CHANGE_DETAILS = "birthdayChangeDetails";
 
   private static String currentDatePicker;
 

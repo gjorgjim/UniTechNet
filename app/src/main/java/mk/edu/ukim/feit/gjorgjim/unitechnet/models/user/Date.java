@@ -41,4 +41,17 @@ public class Date {
   public void setDay(int day) {
     this.day = day;
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if(obj instanceof Date) {
+      Date date = (Date) obj;
+      if(year == date.getYear() &&
+        month == date.getMonth() &&
+        day == date.getDay()) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

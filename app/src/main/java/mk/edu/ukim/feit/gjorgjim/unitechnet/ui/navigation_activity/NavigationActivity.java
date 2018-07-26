@@ -163,6 +163,8 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
       profileFragment.setStartDateEditExperience(year, monthOfYear, dayOfMonth);
     } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.ENDDATE_EDIT_EXPERIENCE)) {
       profileFragment.setEndDateEditExperience(year, monthOfYear, dayOfMonth);
+    } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.BIRTHDAY_CHANGE_DETAILS)) {
+      profileFragment.setBirthDayDetails(year, monthOfYear, dayOfMonth);
     }
   }
 

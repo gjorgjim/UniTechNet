@@ -20,6 +20,7 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -32,6 +33,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Education;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dialogs.EditUserDetailsDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dialogs.NewEducationDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dialogs.NewExperienceDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.views.ProfileItemView;
@@ -56,6 +58,7 @@ public class ProfileFragment extends Fragment{
   private LinearLayout coursesLl;
   private LinearLayout experiencesLl;
   private LinearLayout educationsLl;
+  private AppCompatImageView editDetailsIv;
 
   private HashMap<String, ProfileItemView<Course>> courseViews;
   private HashMap<String, ProfileItemView<Experience>> experienceViews;
@@ -63,6 +66,7 @@ public class ProfileFragment extends Fragment{
 
   private NewExperienceDialog experienceDialog;
   private NewEducationDialog educationDialog;
+  private EditUserDetailsDialog userDetailsDialog;
 
   private FragmentChangingListener listener;
 
@@ -97,6 +101,7 @@ public class ProfileFragment extends Fragment{
     coursesLl = view.findViewById(R.id.coursesLl);
     experiencesLl = view.findViewById(R.id.experiencesLl);
     educationsLl = view.findViewById(R.id.educationsLl);
+    editDetailsIv = view.findViewById(R.id.editIv);
 
     courseViews = new HashMap<>();
     experienceViews = new HashMap<>();
@@ -120,6 +125,13 @@ public class ProfileFragment extends Fragment{
       listener.changeToCoursesFragment();
     });
 
+    editDetailsIv.setOnClickListener(v ->  {
+      userDetailsDialog = new EditUserDetailsDialog(getContext());
+      userDetailsDialog.setProfileFragment(this);
+
+      userDetailsDialog.show();
+    });
+
     setUserUI(userService.getCurrentUser());
 
     return view;
@@ -135,22 +147,7 @@ public class ProfileFragment extends Fragment{
       "%d/%d/%d", birthday.getDay(), birthday.getMonth(), birthday.getYear())
     );
 
-    FirebaseStorage storage = FirebaseStorage.getInstance();
-    StorageReference imageReference = storage
-      .getReference()
-      .child("images")
-      .child(authenticationService.getCurrentUser().getUid())
-      .child("pp.jpg");
-
-    try {
-      final File localFile = File.createTempFile("images", "jpg");
-      imageReference.getFile(localFile).addOnSuccessListener(taskSnapshot -> {
-        Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-        profilePictureIv.setImageBitmap(bitmap);
-      }).addOnFailureListener(Throwable::printStackTrace);
-    } catch (IOException e ) {
-      e.printStackTrace();
-    }
+    profilePictureIv.setImageBitmap(userService.getBitmapFromMemCache("profilePicture"));
 
     if(user.getCourses() != null) {
       for(Map.Entry<String, Course> current : user.getCourses().entrySet()) {
@@ -184,6 +181,15 @@ public class ProfileFragment extends Fragment{
 
   }
 
+  public void setUserDetails(List<String> details, Date birthday){
+    nameTv.setText(String.format("%s\n    %s", details.get(0), details.get(1)));
+    titleTv.setText(details.get(2));
+    usernameTv.setText(details.get(3));
+    birthdayTv.setText(String.format(new Locale("en"),
+      "%d/%d/%d", birthday.getDay(), birthday.getMonth(), birthday.getYear())
+    );
+  }
+
   public void setStartDateExperience(int year, int month, int day) {
     experienceDialog.setStartDate(year, month, day);
   }
@@ -198,6 +204,10 @@ public class ProfileFragment extends Fragment{
 
   public void setEndDateEducation(int year, int month, int day) {
     educationDialog.setEndDate(year, month, day);
+  }
+
+  public void setBirthDayDetails(int year, int month, int day) {
+    userDetailsDialog.setBirthday(year, month, day);
   }
 
   public void setStartDateEditEducation(int year, int month, int day) {

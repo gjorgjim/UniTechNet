@@ -1,13 +1,20 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.firebase;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.util.LruCache;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
@@ -34,6 +41,8 @@ public class UserService {
   private DatabaseCallback<User> userCallback;
 
   private ProfileChangeCallback profileChangeCallback;
+
+  private LruCache mMemoryCache;
 
   private static final UserService ourInstance = new UserService();
 
@@ -63,7 +72,8 @@ public class UserService {
           userCallback.onSuccess(null);
         } else {
           currentUser = dataSnapshot.getValue(User.class);
-          userCallback.onSuccess(currentUser);
+
+          cacheProfilePicture();
         }
       }
 
@@ -76,6 +86,48 @@ public class UserService {
       .getCurrentUser()
       .getUid())
       .addListenerForSingleValueEvent(valueEventListener);
+  }
+
+  private void cacheProfilePicture() {
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference imageReference = storage
+      .getReference()
+      .child("images")
+      .child(authenticationService.getCurrentUser().getUid())
+      .child("pp.jpg");
+
+    try {
+      final File localFile = File.createTempFile("images", "jpg");
+      imageReference.getFile(localFile).addOnSuccessListener(taskSnapshot -> {
+        Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+        final int cacheSize = maxMemory / 8;
+
+        mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
+          @Override
+          protected int sizeOf(String key, Bitmap bitmap) {
+            return bitmap.getByteCount() / 1024;
+          }
+        };
+
+        addBitmapToMemoryCache("profilePicture", bitmap);
+
+        userCallback.onSuccess(currentUser);
+      }).addOnFailureListener(Throwable::printStackTrace);
+    } catch (IOException e ) {
+      e.printStackTrace();
+    }
+  }
+
+  public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+    if (getBitmapFromMemCache(key) == null) {
+      mMemoryCache.put(key, bitmap);
+    }
+  }
+
+  public Bitmap getBitmapFromMemCache(String key) {
+    return (Bitmap) mMemoryCache.get(key);
   }
 
   public void listenForUserDetailsChanges() {
@@ -202,5 +254,9 @@ public class UserService {
 
   public User getCurrentUser(){
     return currentUser;
+  }
+
+  public void changeCurrentUserDetails(User user) {
+    this.currentUser = user;
   }
 }
