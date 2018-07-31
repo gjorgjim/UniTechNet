@@ -207,7 +207,7 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
       transaction.replace(R.id.container, editProfileFragment).commit();
       fab.hide();
     } else {
-      coursesFragment = CoursesFragment.getInstance();
+      coursesFragment = new CoursesFragment();
       feedFragment = FeedFragment.getInstance();
       notificationsFragment = NotificationsFragment.getInstance();
       messagesFragment = MessagesFragment.getInstance();

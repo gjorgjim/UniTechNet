@@ -46,6 +46,13 @@
   <string name="add_experience">Add Experience</string>
   <string name="edit_experience_dialog_title">Edit Experience</string>
   <string name="edit_education_dialog_title">Edit Education</string>
+  <string name="calculus_placeholder">Calculus</string>
+  <string name="course_description_placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras congue semper sapien et facilisis. Suspendisse non pharetra leo. In hac habitasse platea dictumst. Quisque metus nisl, fringilla id semper sit amet, gravida fermentum purus. Donec sed tellus interdum nisi molestie blandit at tristique dui. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin tellus ex, ultrices id enim sed, dignissim rutrum diam. Donec sed purus metus.</string>
+  <string name="subscribe_button">Subscribe</string>
+  <string name="unsubscribe_button">Unsubscribe</string>
+  <string name="subscribed_placeholder">subscribed</string>
+  <string name="subscribed_users_placeholder">Subscribed users</string>
+  <string name="solved_problems_placeholder">Solved problems</string>
 
   <string-array name="gender_array">
     <item>Not Specified</item>

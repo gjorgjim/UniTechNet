@@ -2,11 +2,26 @@
 <android.support.constraint.ConstraintLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
-  android:layout_height="match_parent">
+  android:layout_height="match_parent"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:padding="8dp">
 
-  <android.support.v7.widget.AppCompatTextView
+  <GridView
+    android:id="@+id/courseGv"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:numColumns="2"
+    android:verticalSpacing="10dp"
+    android:horizontalSpacing="10dp"
+    android:visibility="gone">
+  </GridView>
+
+  <ProgressBar
+    android:id="@+id/coursePb"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="COURSES"/>
-
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    android:layout_marginTop="32dp"/>
 </android.support.constraint.ConstraintLayout>

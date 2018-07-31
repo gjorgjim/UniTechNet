@@ -28,4 +28,12 @@ public class DatabaseService {
   public DatabaseReference userReference(String UID) {
     return reference.child("users").child(UID);
   }
+
+  public DatabaseReference coursesReference() {
+    return reference.child("courses");
+  }
+
+  public DatabaseReference courseReference(String courseId) {
+    return reference.child("courses").child(courseId);
+  }
 }

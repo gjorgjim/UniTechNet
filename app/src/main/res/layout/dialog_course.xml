@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp">
+
+  <android.support.v7.widget.AppCompatTextView
+    android:id="@+id/courseNameTv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_centerHorizontal="true"
+    android:text="@string/calculus_placeholder"
+    android:textColor="@color/colorPrimary"
+    style="@style/PrimaryTextStyle"/>
+
+  <android.support.v7.widget.AppCompatTextView
+    android:id="@+id/courseDescriptionTv"
+    android:layout_width="200dp"
+    android:layout_height="wrap_content"
+    android:maxHeight="250dp"
+    android:layout_centerHorizontal="true"
+    android:layout_below="@id/courseNameTv"
+    android:layout_marginTop="16dp"
+    android:scrollbars="vertical"
+    android:padding="4dp"/>
+
+  <android.support.v7.widget.AppCompatTextView
+    android:id="@+id/subscribedUsersTv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentStart="true"
+    android:layout_below="@id/courseDescriptionTv"
+    android:layout_marginTop="8dp"
+    style="@style/SecondaryTextStyle"
+    android:textColor="@color/colorPrimary"
+    android:text="@string/subscribed_users_placeholder"/>
+
+  <android.support.v7.widget.AppCompatTextView
+    android:id="@+id/solvedProblemsTv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentStart="true"
+    android:layout_below="@id/subscribedUsersTv"
+    android:layout_marginTop="8dp"
+    style="@style/SecondaryTextStyle"
+    android:textColor="@color/colorPrimary"
+    android:text="@string/solved_problems_placeholder"/>
+
+  <android.support.v7.widget.AppCompatButton
+    android:id="@+id/subscribeBtn"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentEnd="true"
+    android:layout_below="@id/solvedProblemsTv"
+    android:layout_marginTop="8dp"
+    style="@style/ButtonPrimaryTextStyle"
+    android:background="@color/colorAccent"
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp"
+    android:text="@string/subscribe_button"/>
+
+</RelativeLayout>

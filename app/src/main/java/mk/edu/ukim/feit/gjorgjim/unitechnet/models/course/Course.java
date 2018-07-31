@@ -1,5 +1,6 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.models.course;
 
+import java.util.HashMap;
 import java.util.List;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
@@ -9,13 +10,22 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
  */
 
 public class Course {
+  private String courseId;
   private String name;
   private String description;
-  private List<User> subscribedUsers;
-  private List<Problem> solvedProblems;
-  private List<Problem> unsolvedProblems;
+  private HashMap<String, User> subscribedUsers;
+  private HashMap<String, Problem> solvedProblems;
+  private HashMap<String, Problem> unsolvedProblems;
 
   public Course() {
+  }
+
+  public String getCourseId() {
+    return courseId;
+  }
+
+  public void setCourseId(String courseId) {
+    this.courseId = courseId;
   }
 
   public String getName() {
@@ -34,27 +44,27 @@ public class Course {
     this.description = description;
   }
 
-  public List<User> getSubscribedUsers() {
+  public HashMap<String, User> getSubscribedUsers() {
     return subscribedUsers;
   }
 
-  public void setSubscribedUsers(List<User> subscribedUsers) {
+  public void setSubscribedUsers(HashMap<String, User> subscribedUsers) {
     this.subscribedUsers = subscribedUsers;
   }
 
-  public List<Problem> getSolvedProblems() {
+  public HashMap<String, Problem> getSolvedProblems() {
     return solvedProblems;
   }
 
-  public void setSolvedProblems(List<Problem> solvedProblems) {
+  public void setSolvedProblems(HashMap<String, Problem> solvedProblems) {
     this.solvedProblems = solvedProblems;
   }
 
-  public List<Problem> getUnsolvedProblems() {
+  public HashMap<String, Problem> getUnsolvedProblems() {
     return unsolvedProblems;
   }
 
-  public void setUnsolvedProblems(List<Problem> unsolvedProblems) {
+  public void setUnsolvedProblems(HashMap<String, Problem> unsolvedProblems) {
     this.unsolvedProblems = unsolvedProblems;
   }
 }

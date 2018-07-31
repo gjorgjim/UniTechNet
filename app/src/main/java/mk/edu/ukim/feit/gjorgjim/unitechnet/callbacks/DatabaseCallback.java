@@ -7,6 +7,6 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
  */
 
 public interface DatabaseCallback<T> {
-  void onSuccess( T t);
+  void onSuccess(T t);
   void onFailure(String message);
 }
