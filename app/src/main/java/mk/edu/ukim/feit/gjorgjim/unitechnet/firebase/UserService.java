@@ -147,9 +147,7 @@ public class UserService {
           currentUser.setCourses(new HashMap<>());
         }
         if(!currentUser.getCourses().containsKey(dataSnapshot.getKey())) {
-          HashMap<String, Course> hashMap = currentUser.getCourses();
-          hashMap.put(dataSnapshot.getKey(), course);
-          currentUser.setCourses(hashMap);
+          currentUser.getCourses().put(dataSnapshot.getKey(), course);
           profileChangeCallback.onCourseAdded(dataSnapshot.getKey(), course);
         }
       }
@@ -242,6 +240,20 @@ public class UserService {
       .getUid())
       .child("educations")
       .addChildEventListener(educationsEventListener);
+  }
+
+  public void addCourseToCurrentUser(Course course) {
+    if(currentUser.getCourses() == null) {
+      currentUser.setCourses(new HashMap<>());
+    }
+
+    currentUser.getCourses().put(course.getCourseId(), course);
+  }
+
+  public void removeCourseFromCurrentUser(String courseId) {
+    if(currentUser.getCourses() != null) {
+      currentUser.getCourses().remove(courseId);
+    }
   }
 
   public void setUserCallback(DatabaseCallback<User> userCallback){

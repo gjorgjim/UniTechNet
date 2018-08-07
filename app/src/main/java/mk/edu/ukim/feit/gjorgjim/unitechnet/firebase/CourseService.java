@@ -12,7 +12,6 @@ import java.util.List;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ListDatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 
 /**
  * Created by gjmarkov on 31.7.2018.
@@ -28,11 +27,13 @@ public class CourseService {
   private CourseService() {
     allCourses = null;
     databaseService = DatabaseService.getInstance();
+    userService = UserService.getInstance();
   }
 
   private List<Course> allCourses;
 
   private DatabaseService databaseService;
+  private UserService userService;
 
   private ListDatabaseCallback<Course> callback;
 
@@ -70,31 +71,78 @@ public class CourseService {
     }
   }
 
-  public void subscribeUserToCourse(String courseId, User user, String UID) {
+  public void subscribeUserToCourse(String courseId, String UID) {
+    addCourseToUser(courseId, UID);
+    addUserToCourse(courseId, UID);
+
+    callback.onSuccess(allCourses);
+  }
+
+  private void addUserToCourse(String courseId, String UID) {
     for(Course course : allCourses) {
       if(course.getCourseId().equals(courseId)) {
         if(course.getSubscribedUsers() == null) {
           course.setSubscribedUsers(new HashMap<>());
         }
-        course.getSubscribedUsers().put(UID, user);
+        course.getSubscribedUsers().put(UID, true);
         break;
       }
     }
-    callback.onSuccess(allCourses);
+
+    databaseService.courseReference(courseId)
+      .child("subscribedUsers")
+      .child(UID)
+      .setValue(true);
+  }
+
+  private void addCourseToUser(String courseId,String UID) {
+    Course currentCourse = null;
+    for(Course course : allCourses) {
+      if(course.getCourseId().equals(courseId)) {
+        currentCourse = course;
+        break;
+      }
+    }
+
+    userService.addCourseToCurrentUser(currentCourse);
+
+    databaseService.userReference(UID)
+      .child("courses")
+      .child(courseId)
+      .setValue(currentCourse);
   }
 
   public void unsubscribeUserFromCourse(String courseId, String UID) {
+
+    removeCourseFromUser(courseId, UID);
+    removeUserFromCourse(courseId, UID);
+
+    callback.onSuccess(allCourses);
+  }
+
+  private void removeCourseFromUser(String courseId, String UID) {
+    userService.removeCourseFromCurrentUser(courseId);
+
+    databaseService.userReference(UID)
+      .child("courses")
+      .child(courseId)
+      .removeValue();
+  }
+
+  private void removeUserFromCourse(String courseId, String UID) {
     for(Course course : allCourses) {
       if(course.getCourseId().equals(courseId)) {
         course.getSubscribedUsers().remove(UID);
         break;
       }
     }
-    callback.onSuccess(allCourses);
+    databaseService.courseReference(courseId)
+      .child("subscribedUsers")
+      .child(UID)
+      .removeValue();
   }
 
   public boolean isUserSubscribed(Course course, String UID) {
     return course.getSubscribedUsers() != null && course.getSubscribedUsers().containsKey(UID);
-
   }
 }

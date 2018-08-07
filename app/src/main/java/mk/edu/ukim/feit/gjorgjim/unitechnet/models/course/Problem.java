@@ -1,7 +1,7 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.models.course;
 
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 
@@ -13,7 +13,7 @@ public class Problem {
   private String name;
   private String description;
   private User author;
-  private List<Answer> answers;
+  private HashMap<String, Answer> answers;
   private Date date;
   private boolean solved;
 
@@ -44,11 +44,11 @@ public class Problem {
     this.author = author;
   }
 
-  public List<Answer> getAnswers() {
+  public HashMap<String, Answer> getAnswers() {
     return answers;
   }
 
-  public void setAnswers(List<Answer> answers) {
+  public void setAnswers(HashMap<String, Answer> answers) {
     this.answers = answers;
   }
 

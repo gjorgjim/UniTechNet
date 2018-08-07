@@ -103,28 +103,20 @@ public class CourseDialog extends Dialog {
 
     subscribeBtn.setOnClickListener(v -> {
       if(subscribeBtn.getText().equals(context.getString(R.string.subscribe_button))) {
-        databaseService.courseReference(currentCourse.getCourseId())
-          .child("subscribedUsers")
-          .child(authenticationService.getCurrentUser().getUid())
-          .setValue(userService.getCurrentUser());
 
         courseService.subscribeUserToCourse(
           currentCourse.getCourseId(),
-          userService.getCurrentUser(),
           authenticationService.getCurrentUser().getUid()
         );
+
       } else {
-        databaseService.courseReference(currentCourse.getCourseId())
-          .child("subscribedUsers")
-          .child(authenticationService.getCurrentUser().getUid())
-          .removeValue();
 
         courseService.unsubscribeUserFromCourse(
           currentCourse.getCourseId(),
           authenticationService.getCurrentUser().getUid()
         );
-      }
 
+      }
       dismiss();
     });
   }

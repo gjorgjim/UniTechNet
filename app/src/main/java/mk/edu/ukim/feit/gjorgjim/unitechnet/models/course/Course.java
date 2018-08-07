@@ -13,7 +13,7 @@ public class Course {
   private String courseId;
   private String name;
   private String description;
-  private HashMap<String, User> subscribedUsers;
+  private HashMap<String, Boolean> subscribedUsers;
   private HashMap<String, Problem> solvedProblems;
   private HashMap<String, Problem> unsolvedProblems;
 
@@ -44,11 +44,11 @@ public class Course {
     this.description = description;
   }
 
-  public HashMap<String, User> getSubscribedUsers() {
+  public HashMap<String, Boolean> getSubscribedUsers() {
     return subscribedUsers;
   }
 
-  public void setSubscribedUsers(HashMap<String, User> subscribedUsers) {
+  public void setSubscribedUsers(HashMap<String, Boolean> subscribedUsers) {
     this.subscribedUsers = subscribedUsers;
   }
 
