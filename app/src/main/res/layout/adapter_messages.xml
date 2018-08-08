@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp">
+
+  <de.hdodenhof.circleimageview.CircleImageView
+    android:id="@+id/profilePictureIv"
+    android:layout_width="64dp"
+    android:layout_height="64dp"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentTop="true"
+    android:src="@drawable/profile"/>
+
+  <android.support.v7.widget.AppCompatTextView
+    android:id="@+id/userNameMsgTv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_marginTop="16dp"
+    android:layout_toEndOf="@id/profilePictureIv"
+    android:layout_marginStart="16dp"
+    style="@style/PrimaryTextStyle"
+    android:text="@string/username_msg_placeholder"/>
+
+  <android.support.v7.widget.AppCompatTextView
+    android:id="@+id/lastMessageTv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/userNameMsgTv"
+    android:layout_toEndOf="@id/profilePictureIv"
+    android:layout_marginStart="16dp"
+    style="@style/SecondaryTextStyle"
+    android:text="@string/last_message_placeholder"/>
+
+  <android.support.v7.widget.AppCompatTextView
+    android:id="@+id/lastMessageTimeTv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_marginTop="24dp"
+    android:layout_alignParentEnd="true"
+    android:layout_marginEnd="8dp"
+    style="@style/SecondaryTextStyle"
+    android:text="@string/last_message_time_placeholder"/>
+
+</RelativeLayout>

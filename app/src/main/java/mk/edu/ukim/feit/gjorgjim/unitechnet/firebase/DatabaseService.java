@@ -36,4 +36,8 @@ public class DatabaseService {
   public DatabaseReference courseReference(String courseId) {
     return reference.child("courses").child(courseId);
   }
+
+  public DatabaseReference chatReference(String UID) {
+    return reference.child("users").child(UID).child("chat");
+  }
 }

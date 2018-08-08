@@ -70,7 +70,7 @@ public class ProfileItemView<T> extends RelativeLayout {
     if(item instanceof Course) {
       Course course = (Course) item;
       titleTv.setText(course.getName());
-      descriptionTv.setText(course.getDescription().substring(0, 100));
+      descriptionTv.setText(String.format("%s...", course.getDescription().substring(0, 100)));
       dateTv.setVisibility(GONE);
     } else if(item instanceof Experience) {
       Experience current = (Experience) item;

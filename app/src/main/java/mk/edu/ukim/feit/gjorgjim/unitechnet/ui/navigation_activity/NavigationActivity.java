@@ -210,7 +210,7 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
       coursesFragment = new CoursesFragment();
       feedFragment = FeedFragment.getInstance();
       notificationsFragment = NotificationsFragment.getInstance();
-      messagesFragment = MessagesFragment.getInstance();
+      messagesFragment = new MessagesFragment();
       profileFragment = new ProfileFragment();
 
       navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
