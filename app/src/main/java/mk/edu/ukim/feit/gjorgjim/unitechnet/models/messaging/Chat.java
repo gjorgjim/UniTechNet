@@ -1,11 +1,15 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging;
 
+import java.io.Serializable;
 import java.util.HashMap;
 /**
  * Created by gjmarkov on 08.8.2018.
  */
 
-public class Chat {
+public class Chat implements Serializable{
+
+  public static String TAG = "CHAT";
+
   private String firstName;
   private String lastName;
   private HashMap<String, Message> messages;

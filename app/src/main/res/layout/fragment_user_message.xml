@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+  <RelativeLayout
+    android:id="@+id/toolbarRl"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:layout_alignParentTop="true"
+    android:layout_centerHorizontal="true"
+    android:background="@color/colorPrimary"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    android:elevation="@dimen/ef_toolbar_elevation">
+
+    <android.support.v7.widget.AppCompatImageView
+      android:id="@+id/backArrowIv"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentStart="true"
+      android:layout_centerVertical="true"
+      android:src="@drawable/ef_ic_arrow_back"/>
+
+    <android.support.v7.widget.AppCompatTextView
+      android:id="@+id/userNameTv"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_marginStart="16dp"
+      android:layout_centerVertical="true"
+      style="@style/PrimaryTextStyle"
+      android:textColor="@color/ef_white"
+      android:text="@string/user_name_placeholder"/>
+
+  </RelativeLayout>
+
+  <ProgressBar
+    android:id="@+id/progressBar"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:layout_below="@id/toolbarRl"
+    android:layout_marginTop="32dp"/>
+
+  <ScrollView
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_below="@id/toolbarRl"
+    android:layout_above="@+id/bottomRl"
+    android:visibility="visible">
+
+    <LinearLayout
+      android:id="@+id/messagesViewLl"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:paddingStart="16dp"
+      android:paddingEnd="16dp">
+
+    </LinearLayout>
+
+  </ScrollView>
+
+  <RelativeLayout
+    android:id="@+id/bottomRl"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:background="@drawable/bubble_send_message">
+
+    <android.support.v7.widget.AppCompatEditText
+      android:id="@+id/messageEt"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="32dp"
+      android:hint="Send message.."
+      style="@style/PrimaryTextStyle"
+      android:textColor="@color/ef_white"
+      android:textColorHint="@color/ef_white"
+      android:textColorHighlight="@color/colorPrimary"
+      android:backgroundTint="@color/ef_white"/>
+
+    <android.support.v7.widget.AppCompatImageView
+      android:id="@+id/sendIv"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentEnd="true"
+      android:src="@drawable/ic_send_white_24dp"
+      android:layout_centerVertical="true"/>
+
+  </RelativeLayout>
+
+</RelativeLayout>

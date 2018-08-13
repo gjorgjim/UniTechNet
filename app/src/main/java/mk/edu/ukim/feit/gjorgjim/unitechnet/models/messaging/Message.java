@@ -1,6 +1,6 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging;
 
-import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by gjmarkov on 08.8.2018.
@@ -36,5 +36,16 @@ public class Message {
 
   public void setSentDate(String sentDate) {
     this.sentDate = sentDate;
+  }
+
+  @Override
+  public String toString() {
+    return String.format(
+      new Locale("en"),
+      "%s %s %s",
+      senderId,
+      value,
+      sentDate
+    );
   }
 }

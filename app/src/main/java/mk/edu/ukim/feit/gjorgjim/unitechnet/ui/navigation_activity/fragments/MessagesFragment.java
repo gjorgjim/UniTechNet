@@ -1,13 +1,14 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -27,6 +28,8 @@ public class MessagesFragment extends Fragment implements ChatCallback {
 
   private MessagingService messagingService;
 
+  private FragmentChangingListener fragmentChangingListener;
+
   public MessagesFragment() {
     messagingService = MessagingService.getInstance();
     messagingService.setChatCallback(this);
@@ -34,6 +37,14 @@ public class MessagesFragment extends Fragment implements ChatCallback {
 
   private ListView messagesLv;
   private ProgressBar progressBar;
+
+  private MessagesAdapter adapter;
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    fragmentChangingListener = (FragmentChangingListener) context;
+  }
 
   @Nullable
   @Override
@@ -46,13 +57,23 @@ public class MessagesFragment extends Fragment implements ChatCallback {
 
     messagingService.getChat();
 
+    messagesLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        fragmentChangingListener.changeToUserMessagingFragment(
+          (Chat) adapter.getItem(position),
+          adapter.getKey(position)
+        );
+      }
+    });
+
     return view;
   }
 
   @Override
   public void onSuccess(HashMap<String, Chat> chatHashMap) {
     progressBar.setVisibility(View.GONE);
-    MessagesAdapter adapter = new MessagesAdapter(getContext(), R.layout.adapter_messages, chatHashMap);
+    adapter = new MessagesAdapter(getContext(), R.layout.adapter_messages, chatHashMap);
     messagesLv.setAdapter(adapter);
     messagesLv.setVisibility(View.VISIBLE);
   }

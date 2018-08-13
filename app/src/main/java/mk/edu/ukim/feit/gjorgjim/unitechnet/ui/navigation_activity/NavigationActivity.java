@@ -14,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.model.Image;
@@ -32,6 +34,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DatePickerDialogIdentifier;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Chat;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Education;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
@@ -43,6 +46,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.Fra
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.MessagesFragment;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.NotificationsFragment;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.ProfileFragment;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.UserMessagingFragment;
 
 public class NavigationActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,
   FragmentChangingListener, DatabaseCallback<User>, ProfileChangeCallback {
@@ -59,6 +63,7 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
   private MessagesFragment messagesFragment;
   private ProfileFragment profileFragment = null;
   private EditProfileFragment editProfileFragment;
+  private UserMessagingFragment userMessagingFragment;
 
   private WaitingDialog waitingDialog;
 
@@ -66,6 +71,7 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
   private Toolbar toolbar;
   private MaterialSearchView searchView;
   private FloatingActionButton fab;
+  private LinearLayout container;
 
   private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -123,6 +129,7 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
     navigation = findViewById(R.id.navigation);
     toolbar = findViewById(R.id.toolbar);
     searchView = findViewById(R.id.searchview);
+    container = findViewById(R.id.container);
     fab = findViewById(R.id.fab);
 
     setSupportActionBar(toolbar);
@@ -180,6 +187,33 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
   @Override
   public void changeToCoursesFragment() {
     navigation.setSelectedItemId(R.id.navigation_courses);
+  }
+
+  @Override
+  public void changeToUserMessagingFragment(Chat chat, String key) {
+    getSupportActionBar().hide();
+    navigation.setVisibility(View.GONE);
+
+    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    userMessagingFragment = new UserMessagingFragment();
+
+    Bundle bundle = new Bundle();
+    bundle.putSerializable(Chat.TAG, chat);
+    bundle.putString("KEY", key);
+
+    userMessagingFragment.setArguments(bundle);
+
+    transaction.replace(R.id.container, userMessagingFragment).commit();
+  }
+
+  @Override
+  public void changeToMessagesFragment() {
+    getSupportActionBar().show();
+    navigation.setVisibility(View.VISIBLE);
+
+    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    messagesFragment = new MessagesFragment();
+    transaction.replace(R.id.container, messagesFragment).commit();
   }
 
   @Override
@@ -275,5 +309,14 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
 
   private void hideWaitingDialog(){
     waitingDialog.hideDialog();
+  }
+
+  @Override
+  public void onBackPressed() {
+    if(userMessagingFragment != null && userMessagingFragment.isVisible()) {
+      changeToMessagesFragment();
+    } else {
+      super.onBackPressed();
+    }
   }
 }

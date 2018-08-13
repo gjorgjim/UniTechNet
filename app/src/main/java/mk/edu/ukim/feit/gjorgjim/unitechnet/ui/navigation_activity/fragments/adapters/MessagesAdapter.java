@@ -88,6 +88,10 @@ public class MessagesAdapter extends ArrayAdapter {
     return chatList.get(position);
   }
 
+  public String getKey(int position) {
+    return chatKeys.get(position);
+  }
+
   private Message getLastMessage(Chat chat) {
     List<Message> messages = new ArrayList<>(chat.getMessages().values());
     return messages.get(messages.size() - 1);
