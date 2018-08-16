@@ -115,7 +115,7 @@ public class UserMessagingFragment extends Fragment {
         }
         lastMessageDate = messages.get(0).getSentDate();
         messagingService.removeListenerFromLastMessages(numberOfMessages, key);
-        scrollView.fullScroll(View.FOCUS_DOWN);
+        scrollDown();
         progressBar.setVisibility(View.GONE);
         scrollView.setVisibility(View.VISIBLE);
       }
@@ -149,7 +149,27 @@ public class UserMessagingFragment extends Fragment {
         if(!sendMessageEt.getText().toString().isEmpty()) {
           sendMessage(sendMessageEt.getText().toString());
           sendMessageEt.setText("");
+          scrollDown();
         }
+      }
+    });
+
+    sendMessageEt.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        scrollDown();
+      }
+    });
+
+    sendMessageEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+      @Override
+      public void onFocusChange(View v, boolean hasFocus) {
+        scrollView.post(new Runnable() {
+          @Override
+          public void run() {
+            scrollView.fullScroll(View.FOCUS_DOWN);
+          }
+        });
       }
     });
 
@@ -206,6 +226,15 @@ public class UserMessagingFragment extends Fragment {
       calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND));
 
     return date;
+  }
+
+  private void scrollDown() {
+    scrollView.post(new Runnable() {
+      @Override
+      public void run() {
+        scrollView.fullScroll(View.FOCUS_DOWN);
+      }
+    });
   }
 
   @Override

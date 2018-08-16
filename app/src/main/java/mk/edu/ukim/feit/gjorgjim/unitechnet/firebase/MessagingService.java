@@ -146,10 +146,26 @@ public class MessagingService {
     String messageKey = ref.push().getKey();
     ref.child(messageKey).setValue(message);
 
+    DatabaseReference lastMsgRef = databaseService.chatReference(
+      authenticationService.getCurrentUser().getUid()
+    ).child(chatKey).child("lastMessage");
+
+    lastMsgRef.removeValue();
+    lastMsgRef.setValue(message);
+
     databaseService.chatReference(
       chatKey
     ).child(
       authenticationService.getCurrentUser().getUid()
     ).child("messages").child(messageKey).setValue(message);
+
+    lastMsgRef = databaseService.chatReference(
+      chatKey
+    ).child(
+      authenticationService.getCurrentUser().getUid()
+    ).child("lastMessage");
+
+    lastMsgRef.removeValue();
+    lastMsgRef.setValue(message);
   }
 }

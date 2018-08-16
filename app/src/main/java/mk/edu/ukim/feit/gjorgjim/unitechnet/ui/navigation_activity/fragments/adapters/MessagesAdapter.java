@@ -19,6 +19,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Chat;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Message;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 
 /**
  * Created by gjmarkov on 08.8.2018.
@@ -69,9 +70,17 @@ public class MessagesAdapter extends ArrayAdapter {
 
     Message lastMessage = currentChat.getLastMessage();
 
-    lastMsgTv.setText(String.format("%s..", lastMessage.getValue()));
-    lastMsgTimeTv.setText(lastMessage.getSentDate().toString());
-
+    if(lastMessage.getSenderId().equals(currentKey)) {
+      lastMsgTv.setText(currentChat.getFirstName());
+    } else {
+      lastMsgTv.setText(getContext().getString(R.string.you_last_message));
+    }
+    if(lastMessage.getValue().length() > 20) {
+      lastMsgTv.setText(String.format("%s: %s..", lastMsgTv.getText(), lastMessage.getValue().substring(0, 19)));
+    } else {
+      lastMsgTv.setText(String.format("%s: %s", lastMsgTv.getText(),lastMessage.getValue()));
+    }
+    lastMsgTimeTv.setText(formatDate(lastMessage.getSentDate()));
     //TODO: Get profile picture from Firebase storage using currentKey
 
     return view;
@@ -90,5 +99,24 @@ public class MessagesAdapter extends ArrayAdapter {
 
   public String getKey(int position) {
     return chatKeys.get(position);
+  }
+
+  private String formatDate(Date date) {
+    return String.format(
+      new Locale("en"),
+      "%s.%s\n%s:%s",
+      formatNumber(date.getDay()),
+      formatNumber(date.getMonth()),
+      formatNumber(date.getHour()),
+      formatNumber(date.getMinute())
+    );
+  }
+
+  private String formatNumber(int n) {
+    if(n < 10) {
+      return String.format(new Locale("en"),"0%d", n);
+    } else {
+      return String.format(new Locale("en"),"%d", n);
+    }
   }
 }
