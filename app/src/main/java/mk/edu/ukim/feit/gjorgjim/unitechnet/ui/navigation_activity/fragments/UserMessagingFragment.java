@@ -31,7 +31,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Message;
  * Created by gjmarkov on 13.8.2018.
  */
 
-public class UserMessagingFragment extends Fragment implements MessageCallback {
+public class UserMessagingFragment extends Fragment {
 
   public static final String LOG_TAG = UserMessagingFragment.class.getSimpleName();
 
@@ -85,8 +85,15 @@ public class UserMessagingFragment extends Fragment implements MessageCallback {
     progressBar = view.findViewById(R.id.progressBar);
     scrollView = view.findViewById(R.id.scrollView);
 
-    messagingService.setMessageCallback(this);
-    messagingService.listenForNewMessages(key);
+    messagingService.listenForNewMessages(key, new MessageCallback() {
+      @Override
+      public void onMessageReceived(String messageKey, Message message) {
+        if(!chat.getMessages().containsKey(messageKey)) {
+          setMessage(message);
+          chat.getMessages().put(messageKey, message);
+        }
+      }
+    });
 
     userNameTv.setText(
       String.format("%s %s",
@@ -161,15 +168,6 @@ public class UserMessagingFragment extends Fragment implements MessageCallback {
     message.setValue(value);
 
     messagingService.sendMessage(message, key);
-  }
-
-  @Override
-  public void onMessageReceived(String messageKey, Message message) {
-    Log.d(LOG_TAG, "onMessageReceiver:" + message.toString());
-    if(!chat.getMessages().containsKey(messageKey)) {
-      setMessage(message);
-      chat.getMessages().put(messageKey, message);
-    }
   }
 
   @Override

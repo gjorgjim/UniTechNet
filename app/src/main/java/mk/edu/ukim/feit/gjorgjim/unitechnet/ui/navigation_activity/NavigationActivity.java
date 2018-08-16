@@ -49,7 +49,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.Pro
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.UserMessagingFragment;
 
 public class NavigationActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,
-  FragmentChangingListener, DatabaseCallback<User>, ProfileChangeCallback {
+  FragmentChangingListener {
 
   private static final String LOG_TAG = "NavigationActivity";
 
@@ -136,10 +136,84 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
 
     showWaitingDialog("Fetching your data...");
 
-    userService.setUserCallback(this);
-    userService.isFirstSignIn();
+    userService.isFirstSignIn(new DatabaseCallback<User>() {
+      @Override
+      public void onSuccess(User user) {
+        hideWaitingDialog();
+        if(user == null){
+          Log.d(LOG_TAG, "User is null");
+          editProfileFragment = new EditProfileFragment();
+          navigation.setSelectedItemId(R.id.navigation_profile);
+          FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+          transaction.replace(R.id.container, editProfileFragment).commit();
+          fab.hide();
+        } else {
+          coursesFragment = new CoursesFragment();
+          feedFragment = FeedFragment.getInstance();
+          notificationsFragment = NotificationsFragment.getInstance();
+          messagesFragment = new MessagesFragment();
+          profileFragment = new ProfileFragment();
 
-    userService.setProfileChangeCallback(this);
+          navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+          navigation.setSelectedItemId(R.id.navigation_feed);
+
+          listenForUserDetailsChanged();
+        }
+      }
+
+      @Override
+      public void onFailure(String message) {
+        hideWaitingDialog();
+      }
+    });
+  }
+
+  private void listenForUserDetailsChanged() {
+    userService.listenForUserDetailsChanges(new ProfileChangeCallback() {
+      @Override
+      public void onCourseAdded(String key, Course course) {
+        if(profileFragment != null) {
+          profileFragment.addCourse(key, course);
+        }
+      }
+
+      @Override
+      public void onCourseRemoved(String key) {
+        if(profileFragment != null) {
+          profileFragment.removeCourse(key);
+        }
+      }
+
+      @Override
+      public void onExperienceAdded(String key, Experience experience) {
+        if(profileFragment != null) {
+          profileFragment.addExperience(key, experience);
+        }
+      }
+
+      @Override
+      public void onExperienceRemoved(String key) {
+        if(profileFragment != null) {
+          profileFragment.removeExperience(key);
+        }
+      }
+
+      @Override
+      public void onEducationAdded(String key, Education education) {
+        if(profileFragment != null) {
+          profileFragment.addEducation(key, education);
+        }
+      }
+
+      @Override
+      public void onEducationRemoved(String key) {
+        Log.d("NavigationActivity", "Education removed");
+        if(profileFragment != null) {
+          profileFragment.removeEducation(key);
+        }
+      }
+    });
   }
 
   @Override
@@ -181,7 +255,7 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
     profileFragment = new ProfileFragment();
     transaction.replace(R.id.container, profileFragment).commit();
 
-    userService.listenForUserDetailsChanges();
+    listenForUserDetailsChanged();
   }
 
   @Override
@@ -228,79 +302,6 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
       }
     }
     super.onActivityResult(requestCode, resultCode, data);
-  }
-
-  @Override
-  public void onSuccess(User user) {
-    hideWaitingDialog();
-    if(user == null){
-      Log.d(LOG_TAG, "User is null");
-      editProfileFragment = new EditProfileFragment();
-      navigation.setSelectedItemId(R.id.navigation_profile);
-      FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-      transaction.replace(R.id.container, editProfileFragment).commit();
-      fab.hide();
-    } else {
-      coursesFragment = new CoursesFragment();
-      feedFragment = FeedFragment.getInstance();
-      notificationsFragment = NotificationsFragment.getInstance();
-      messagesFragment = new MessagesFragment();
-      profileFragment = new ProfileFragment();
-
-      navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-      navigation.setSelectedItemId(R.id.navigation_feed);
-
-      userService.listenForUserDetailsChanges();
-    }
-  }
-
-  @Override
-  public void onFailure(String message) {
-    hideWaitingDialog();
-  }
-
-  @Override
-  public void onCourseAdded(String key, Course course) {
-    if(profileFragment != null) {
-      profileFragment.addCourse(key, course);
-    }
-  }
-
-  @Override
-  public void onCourseRemoved(String key) {
-    if(profileFragment != null) {
-      profileFragment.removeCourse(key);
-    }
-  }
-
-  @Override
-  public void onExperienceAdded(String key, Experience experience) {
-    if(profileFragment != null) {
-      profileFragment.addExperience(key, experience);
-    }
-  }
-
-  @Override
-  public void onExperienceRemoved(String key) {
-    if(profileFragment != null) {
-      profileFragment.removeExperience(key);
-    }
-  }
-
-  @Override
-  public void onEducationAdded(String key, Education education) {
-    if(profileFragment != null) {
-      profileFragment.addEducation(key, education);
-    }
-  }
-
-  @Override
-  public void onEducationRemoved(String key) {
-    Log.d("NavigationActivity", "Education removed");
-    if(profileFragment != null) {
-      profileFragment.removeEducation(key);
-    }
   }
 
   private void showWaitingDialog(String message){

@@ -23,7 +23,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.WaitingDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.NavigationActivity;
 
-public class LoginActivity extends AppCompatActivity implements AuthenticationCallback {
+public class LoginActivity extends AppCompatActivity {
 
   private AppCompatImageView logoIv;
   private TextInputLayout emailIl;
@@ -70,12 +70,23 @@ public class LoginActivity extends AppCompatActivity implements AuthenticationCa
         incorrectInfoTv.setVisibility(View.INVISIBLE);
       }
       if(validateInput()) {
-        authenticationService.setCallback(this);
-        authenticationService.signIn(
-          emailEt.getText().toString().trim(),
-          passwordEt.getText().toString().trim(),
-          LoginActivity.this
-        );
+        authenticationService.signIn(emailEt.getText().toString().trim(), passwordEt.getText().toString().trim(),
+          LoginActivity.this, new AuthenticationCallback() {
+            @Override
+            public void onSuccess(FirebaseUser user) {
+              hideWaitingDialog();
+              startActivity(new Intent(LoginActivity.this, NavigationActivity.class));
+            }
+
+            @Override
+            public void onFailure(String message) {
+              incorrectInfoTv.setText(message);
+              incorrectInfoTv.setVisibility(View.VISIBLE);
+              emailEt.setText(getString(R.string.empty_string));
+              passwordEt.setText(getString(R.string.empty_string));
+              hideWaitingDialog();
+            }
+          });
       }
     });
   }
@@ -83,21 +94,6 @@ public class LoginActivity extends AppCompatActivity implements AuthenticationCa
   boolean validateInput() {
     return Validator.validateEmail(emailIl, emailEt, this)
       && Validator.validateInput(passwordIl, passwordEt, this);
-  }
-
-  @Override
-  public void onSuccess(FirebaseUser user) {
-    hideWaitingDialog();
-    startActivity(new Intent(LoginActivity.this, NavigationActivity.class));
-  }
-
-  @Override
-  public void onFailure(String message) {
-    incorrectInfoTv.setText(message);
-    incorrectInfoTv.setVisibility(View.VISIBLE);
-    emailEt.setText(getString(R.string.empty_string));
-    passwordEt.setText(getString(R.string.empty_string));
-    hideWaitingDialog();
   }
 
   private void showWaitingDialog(){

@@ -24,7 +24,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dia
  * Created by gjmarkov on 16.5.2018.
  */
 
-public class CoursesFragment extends Fragment implements ListDatabaseCallback<Course> {
+public class CoursesFragment extends Fragment {
 
   private GridView courseGridView;
   private ProgressBar progressBar;
@@ -47,33 +47,31 @@ public class CoursesFragment extends Fragment implements ListDatabaseCallback<Co
     courseGridView = view.findViewById(R.id.courseGv);
     progressBar = view.findViewById(R.id.coursePb);
 
-    courseService.setCourseCallback(this);
-    courseService.getAllCourses();
+    courseService.getAllCourses(new ListDatabaseCallback<Course>() {
+      @Override
+      public void onSuccess(List<Course> list) {
+        adapter = new CourseAdapter(getContext(), list);
+        courseGridView.setAdapter(adapter);
+
+        courseGridView.setOnItemClickListener((parent, view1, position, id) -> {
+          CourseDialog dialog = new CourseDialog(getContext(), list.get(position), CoursesFragment.this);
+          dialog.show();
+        });
+
+        progressBar.setVisibility(View.GONE);
+        courseGridView.setVisibility(View.VISIBLE);
+      }
+
+      @Override
+      public void onFailure(String message) {
+
+      }
+    });
 
     return view;
   }
 
-  @Override
-  public void onSuccess(List<Course> list) {
-    if(courseGridView.getAdapter() != null) {
-      adapter.notifyDataSetChanged();
-    } else {
-      adapter = new CourseAdapter(getContext(), list);
-      courseGridView.setAdapter(adapter);
-
-      courseGridView.setOnItemClickListener((parent, view1, position, id) -> {
-        CourseDialog dialog = new CourseDialog(getContext(), list.get(position));
-        dialog.show();
-      });
-
-      progressBar.setVisibility(View.GONE);
-      courseGridView.setVisibility(View.VISIBLE);
-    }
-
-  }
-
-  @Override
-  public void onFailure(String message) {
-
+  public void notifyDataSetChanged() {
+    adapter.notifyDataSetChanged();
   }
 }

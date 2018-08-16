@@ -8,9 +8,11 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.method.ScrollingMovementMethod;
 
+import java.util.List;
 import java.util.Locale;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ListDatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.CourseService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
@@ -26,6 +28,8 @@ public class CourseDialog extends Dialog {
 
   private Context context;
 
+  private CoursesFragment coursesFragment;
+
   private Course currentCourse;
 
   private AppCompatTextView courseName;
@@ -34,18 +38,15 @@ public class CourseDialog extends Dialog {
   private AppCompatTextView subscribedUsers;
   private AppCompatTextView solvedProblems;
 
-  private DatabaseService databaseService;
   private AuthenticationService authenticationService;
-  private UserService userService;
   private CourseService courseService;
 
-  public CourseDialog(@NonNull Context context, Course course) {
+  public CourseDialog(@NonNull Context context, Course course, CoursesFragment coursesFragment) {
     super(context);
     this.context = context;
+    this.coursesFragment = coursesFragment;
     this.currentCourse = course;
-    databaseService = DatabaseService.getInstance();
     authenticationService = AuthenticationService.getInstance();
-    userService = UserService.getInstance();
     courseService = CourseService.getInstance();
   }
 
@@ -104,17 +105,33 @@ public class CourseDialog extends Dialog {
     subscribeBtn.setOnClickListener(v -> {
       if(subscribeBtn.getText().equals(context.getString(R.string.subscribe_button))) {
 
-        courseService.subscribeUserToCourse(
-          currentCourse.getCourseId(),
-          authenticationService.getCurrentUser().getUid()
-        );
+        courseService.subscribeUserToCourse(currentCourse.getCourseId(),
+          authenticationService.getCurrentUser().getUid(), new ListDatabaseCallback<Course>() {
+            @Override
+            public void onSuccess(List<Course> list) {
+              coursesFragment.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(String message) {
+              coursesFragment.notifyDataSetChanged();
+            }
+          });
 
       } else {
 
-        courseService.unsubscribeUserFromCourse(
-          currentCourse.getCourseId(),
-          authenticationService.getCurrentUser().getUid()
-        );
+        courseService.unsubscribeUserFromCourse(currentCourse.getCourseId(),
+          authenticationService.getCurrentUser().getUid(), new ListDatabaseCallback<Course>() {
+            @Override
+            public void onSuccess(List<Course> list) {
+              coursesFragment.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(String message) {
+              coursesFragment.notifyDataSetChanged();
+            }
+          });
 
       }
       dismiss();

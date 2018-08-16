@@ -24,7 +24,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.ada
  * Created by gjmarkov on 16.5.2018.
  */
 
-public class MessagesFragment extends Fragment implements ChatCallback {
+public class MessagesFragment extends Fragment {
 
   private MessagingService messagingService;
 
@@ -32,7 +32,6 @@ public class MessagesFragment extends Fragment implements ChatCallback {
 
   public MessagesFragment() {
     messagingService = MessagingService.getInstance();
-    messagingService.setChatCallback(this);
   }
 
   private ListView messagesLv;
@@ -55,7 +54,20 @@ public class MessagesFragment extends Fragment implements ChatCallback {
     messagesLv = view.findViewById(R.id.messagesLv);
     progressBar = view.findViewById(R.id.progressBar);
 
-    messagingService.getChat();
+    messagingService.getChat(new ChatCallback() {
+      @Override
+      public void onSuccess(HashMap<String, Chat> chatHashMap) {
+        progressBar.setVisibility(View.GONE);
+        adapter = new MessagesAdapter(getContext(), R.layout.adapter_messages, chatHashMap);
+        messagesLv.setAdapter(adapter);
+        messagesLv.setVisibility(View.VISIBLE);
+      }
+
+      @Override
+      public void onFailure(String message) {
+
+      }
+    });
 
     messagesLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
@@ -68,18 +80,5 @@ public class MessagesFragment extends Fragment implements ChatCallback {
     });
 
     return view;
-  }
-
-  @Override
-  public void onSuccess(HashMap<String, Chat> chatHashMap) {
-    progressBar.setVisibility(View.GONE);
-    adapter = new MessagesAdapter(getContext(), R.layout.adapter_messages, chatHashMap);
-    messagesLv.setAdapter(adapter);
-    messagesLv.setVisibility(View.VISIBLE);
-  }
-
-  @Override
-  public void onFailure(String message) {
-
   }
 }

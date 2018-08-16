@@ -35,15 +35,9 @@ public class CourseService {
   private DatabaseService databaseService;
   private UserService userService;
 
-  private ListDatabaseCallback<Course> callback;
-
   private ValueEventListener courseListener;
 
-  public void setCourseCallback(ListDatabaseCallback<Course> callback) {
-    this.callback = callback;
-  }
-
-  public void getAllCourses() {
+  public void getAllCourses(ListDatabaseCallback<Course> callback) {
     courseListener = new ValueEventListener() {
       @Override
       public void onDataChange(DataSnapshot dataSnapshot) {
@@ -71,7 +65,7 @@ public class CourseService {
     }
   }
 
-  public void subscribeUserToCourse(String courseId, String UID) {
+  public void subscribeUserToCourse(String courseId, String UID, ListDatabaseCallback<Course> callback) {
     addCourseToUser(courseId, UID);
     addUserToCourse(courseId, UID);
 
@@ -112,7 +106,7 @@ public class CourseService {
       .setValue(currentCourse);
   }
 
-  public void unsubscribeUserFromCourse(String courseId, String UID) {
+  public void unsubscribeUserFromCourse(String courseId, String UID, ListDatabaseCallback<Course> callback) {
 
     removeCourseFromUser(courseId, UID);
     removeUserFromCourse(courseId, UID);

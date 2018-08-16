@@ -38,10 +38,6 @@ public class UserService {
 
   private User currentUser;
 
-  private DatabaseCallback<User> userCallback;
-
-  private ProfileChangeCallback profileChangeCallback;
-
   private LruCache mMemoryCache;
 
   private static final UserService ourInstance = new UserService();
@@ -63,7 +59,7 @@ public class UserService {
     currentUser = user;
   }
 
-  public void isFirstSignIn() {
+  public void isFirstSignIn(DatabaseCallback<User> userCallback) {
     ValueEventListener valueEventListener = new ValueEventListener() {
       @Override
       public void onDataChange(DataSnapshot dataSnapshot) {
@@ -73,7 +69,7 @@ public class UserService {
         } else {
           currentUser = dataSnapshot.getValue(User.class);
 
-          cacheProfilePicture();
+          cacheProfilePicture(userCallback);
         }
       }
 
@@ -88,7 +84,7 @@ public class UserService {
       .addListenerForSingleValueEvent(valueEventListener);
   }
 
-  private void cacheProfilePicture() {
+  private void cacheProfilePicture(DatabaseCallback<User> userCallback) {
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference imageReference = storage
       .getReference()
@@ -130,15 +126,15 @@ public class UserService {
     return (Bitmap) mMemoryCache.get(key);
   }
 
-  public void listenForUserDetailsChanges() {
-    setCoursesListener();
+  public void listenForUserDetailsChanges(ProfileChangeCallback callback) {
+    setCoursesListener(callback);
 
-    setExperiencesListener();
+    setExperiencesListener(callback);
 
-    setEducationListener();
+    setEducationListener(callback);
   }
 
-  private void setCoursesListener() {
+  private void setCoursesListener(ProfileChangeCallback profileChangeCallback) {
     ChildEventListener coursesEventListener = new ChildEventListener() {
       @Override
       public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -171,7 +167,7 @@ public class UserService {
       .addChildEventListener(coursesEventListener);
   }
 
-  private void setExperiencesListener() {
+  private void setExperiencesListener(ProfileChangeCallback profileChangeCallback) {
     ChildEventListener experiencesEventListener = new ChildEventListener() {
       @Override
       public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -206,7 +202,7 @@ public class UserService {
       .addChildEventListener(experiencesEventListener);
   }
 
-  private void setEducationListener() {
+  private void setEducationListener(ProfileChangeCallback profileChangeCallback) {
     ChildEventListener educationsEventListener = new ChildEventListener() {
       @Override
       public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -254,14 +250,6 @@ public class UserService {
     if(currentUser.getCourses() != null) {
       currentUser.getCourses().remove(courseId);
     }
-  }
-
-  public void setUserCallback(DatabaseCallback<User> userCallback){
-    this.userCallback = userCallback;
-  }
-
-  public void setProfileChangeCallback(ProfileChangeCallback profileChangeCallback) {
-    this.profileChangeCallback = profileChangeCallback;
   }
 
   public User getCurrentUser(){

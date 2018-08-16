@@ -30,7 +30,6 @@ public class MessagingService {
   private DatabaseService databaseService;
   private AuthenticationService authenticationService;
 
-  private ChatCallback callback;
   private MessageCallback messageCallback;
 
   private MessagingService() {
@@ -67,7 +66,7 @@ public class MessagingService {
     }
   };
 
-  public void getChat() {
+  public void getChat(ChatCallback callback) {
     HashMap<String, Chat> chatHashMap = new HashMap<>();
 
     ValueEventListener valueEventListener = new ValueEventListener() {
@@ -93,11 +92,8 @@ public class MessagingService {
 
   }
 
-  public void setChatCallback(ChatCallback callback) {
-    this.callback = callback;
-  }
-
-  public void listenForNewMessages(String chatKey) {
+  public void listenForNewMessages(String chatKey, MessageCallback messageCallback) {
+    this.messageCallback = messageCallback;
     databaseService.chatReference(
       authenticationService.getCurrentUser().getUid()
     ).child(chatKey).child("messages").addChildEventListener(messagesChildEventListener);
@@ -107,10 +103,6 @@ public class MessagingService {
     databaseService.chatReference(
       authenticationService.getCurrentUser().getUid()
     ).child(chatKey).child("messages").removeEventListener(messagesChildEventListener);
-  }
-
-  public void setMessageCallback(MessageCallback messageCallback) {
-    this.messageCallback = messageCallback;
   }
 
   public void sendMessage(Message message, String chatKey) {

@@ -22,10 +22,6 @@ public class AuthenticationService {
 
   private FirebaseAuth mAuth;
 
-  private FirebaseUser user;
-
-  private AuthenticationCallback callback;
-
   private static final AuthenticationService ourInstance = new AuthenticationService();
 
   public static AuthenticationService getInstance() {
@@ -34,14 +30,13 @@ public class AuthenticationService {
 
   private AuthenticationService() {
     mAuth = FirebaseAuth.getInstance();
-    user = null;
   }
 
   public FirebaseUser getCurrentUser() {
     return mAuth.getCurrentUser();
   }
 
-  public void signIn(String email, String password, Activity activity) {
+  public void signIn(String email, String password, Activity activity, AuthenticationCallback callback) {
     mAuth.signInWithEmailAndPassword(email, password)
       .addOnCompleteListener(activity, (@NonNull Task<AuthResult> task) -> {
         if(task.isSuccessful()){
@@ -55,9 +50,5 @@ public class AuthenticationService {
   public void signOut(Activity activity) {
     mAuth.signOut();
     activity.startActivity(new Intent(activity, LoginActivity.class));
-  }
-
-  public void setCallback(AuthenticationCallback callback) {
-    this.callback = callback;
   }
 }
