@@ -67,10 +67,10 @@ public class MessagesAdapter extends ArrayAdapter {
       currentChat.getLastName())
     );
 
-    Message lastMessage = getLastMessage(currentChat);
+    Message lastMessage = currentChat.getLastMessage();
 
     lastMsgTv.setText(String.format("%s..", lastMessage.getValue()));
-    lastMsgTimeTv.setText(lastMessage.getSentDate());
+    lastMsgTimeTv.setText(lastMessage.getSentDate().toString());
 
     //TODO: Get profile picture from Firebase storage using currentKey
 
@@ -90,10 +90,5 @@ public class MessagesAdapter extends ArrayAdapter {
 
   public String getKey(int position) {
     return chatKeys.get(position);
-  }
-
-  private Message getLastMessage(Chat chat) {
-    List<Message> messages = new ArrayList<>(chat.getMessages().values());
-    return messages.get(messages.size() - 1);
   }
 }

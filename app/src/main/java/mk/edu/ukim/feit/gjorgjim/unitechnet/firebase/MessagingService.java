@@ -8,7 +8,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ChatCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.MessageCallback;
@@ -30,12 +32,31 @@ public class MessagingService {
   private DatabaseService databaseService;
   private AuthenticationService authenticationService;
 
-  private MessageCallback messageCallback;
+  private MessageCallback<String, Message> messageCallback;
+  private MessageCallback<List<String>, List<Message>> lastMessagesCallback;
 
   private MessagingService() {
     databaseService = DatabaseService.getInstance();
     authenticationService = AuthenticationService.getInstance();
   }
+
+  private ValueEventListener lastMessagesValueEventListener = new ValueEventListener() {
+    @Override
+    public void onDataChange(DataSnapshot dataSnapshot) {
+      List<Message> messages = new ArrayList<>();
+      List<String> keys = new ArrayList<>();
+      for(DataSnapshot data : dataSnapshot.getChildren()) {
+        keys.add(data.getKey());
+        messages.add(data.getValue(Message.class));
+      }
+      lastMessagesCallback.onMessageReceived(keys, messages);
+    }
+
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
+
+    }
+  };
 
   private ChildEventListener messagesChildEventListener =  new ChildEventListener() {
     @Override
@@ -90,6 +111,19 @@ public class MessagingService {
         .getUid()
     ).addListenerForSingleValueEvent(valueEventListener);
 
+  }
+
+  public void getLastMessages(int n, String key, MessageCallback callback) {
+    lastMessagesCallback = callback;
+    databaseService.chatReference(
+      authenticationService.getCurrentUser().getUid()
+    ).child(key).child("messages").limitToLast(n).addListenerForSingleValueEvent(lastMessagesValueEventListener);
+  }
+
+  public void removeListenerFromLastMessages(int n, String key) {
+    databaseService.chatReference(
+      authenticationService.getCurrentUser().getUid()
+    ).child(key).child("messages").limitToLast(n).removeEventListener(lastMessagesValueEventListener);
   }
 
   public void listenForNewMessages(String chatKey, MessageCallback messageCallback) {

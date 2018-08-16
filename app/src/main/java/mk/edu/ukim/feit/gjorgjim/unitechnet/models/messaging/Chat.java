@@ -12,17 +12,9 @@ public class Chat implements Serializable{
 
   private String firstName;
   private String lastName;
-  private HashMap<String, Message> messages;
+  private Message lastMessage;
 
   public Chat() {
-  }
-
-  public HashMap<String, Message> getMessages() {
-    return messages;
-  }
-
-  public void setMessages(HashMap<String, Message> messages) {
-    this.messages = messages;
   }
 
   public String getFirstName() {
@@ -39,5 +31,13 @@ public class Chat implements Serializable{
 
   public void setLastName(String lastName) {
     this.lastName = lastName;
+  }
+
+  public Message getLastMessage() {
+    return lastMessage;
+  }
+
+  public void setLastMessage(Message lastMessage) {
+    this.lastMessage = lastMessage;
   }
 }

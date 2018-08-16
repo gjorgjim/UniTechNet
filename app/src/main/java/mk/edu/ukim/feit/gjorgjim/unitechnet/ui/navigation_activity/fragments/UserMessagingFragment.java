@@ -5,7 +5,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatImageView;
@@ -19,6 +18,13 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.MessageCallback;
@@ -43,6 +49,10 @@ public class UserMessagingFragment extends Fragment {
   private String UID;
   private String key;
 
+  private mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date lastMessageDate;
+
+  private int numberOfMessages;
+
   private Chat chat;
 
   private ScrollView scrollView;
@@ -57,6 +67,7 @@ public class UserMessagingFragment extends Fragment {
     messagingService = MessagingService.getInstance();
     authenticationService = AuthenticationService.getInstance();
     UID = authenticationService.getCurrentUser().getUid();
+    numberOfMessages = 20;
   }
 
   @Override
@@ -85,12 +96,36 @@ public class UserMessagingFragment extends Fragment {
     progressBar = view.findViewById(R.id.progressBar);
     scrollView = view.findViewById(R.id.scrollView);
 
-    messagingService.listenForNewMessages(key, new MessageCallback() {
+    messagingService.getLastMessages(numberOfMessages, key, new MessageCallback<List<String>, List<Message>>() {
       @Override
-      public void onMessageReceived(String messageKey, Message message) {
-        if(!chat.getMessages().containsKey(messageKey)) {
+      public void onMessageReceived(List<String> keys, List<Message> messages) {
+        Collections.sort(messages, new Comparator<Message>() {
+          @Override
+          public int compare(Message m1, Message m2) {
+            if(m1.getSentDate().isAfter(m2.getSentDate())) {
+              return -1;
+            } else {
+              return 1;
+            }
+          }
+        });
+
+        for(int i = messages.size() - 1; i >= 0; i--) {
+          setMessage(messages.get(i));
+        }
+        lastMessageDate = messages.get(0).getSentDate();
+        messagingService.removeListenerFromLastMessages(numberOfMessages, key);
+        scrollView.fullScroll(View.FOCUS_DOWN);
+        progressBar.setVisibility(View.GONE);
+        scrollView.setVisibility(View.VISIBLE);
+      }
+    });
+
+    messagingService.listenForNewMessages(key, new MessageCallback<String, Message>() {
+      @Override
+      public void onMessageReceived(String key, Message message) {
+        if(message.getSentDate().isAfter(lastMessageDate)) {
           setMessage(message);
-          chat.getMessages().put(messageKey, message);
         }
       }
     });
@@ -100,14 +135,6 @@ public class UserMessagingFragment extends Fragment {
         chat.getFirstName(),
         chat.getLastName())
     );
-
-    for(Message message : chat.getMessages().values()) {
-      setMessage(message);
-    }
-
-    scrollView.fullScroll(View.FOCUS_DOWN);
-    progressBar.setVisibility(View.GONE);
-    scrollView.setVisibility(View.VISIBLE);
 
     arrowBackIv.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -164,10 +191,21 @@ public class UserMessagingFragment extends Fragment {
   private void sendMessage(String value) {
     Message message = new Message();
     message.setSenderId(UID);
-    message.setSentDate("ad2123d");
+    message.setSentDate(getDate());
     message.setValue(value);
 
     messagingService.sendMessage(message, key);
+  }
+
+  private mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date getDate() {
+    Calendar calendar = GregorianCalendar.getInstance();
+    calendar.setTime(new Date());
+    mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date date
+      = new mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date(calendar.get(Calendar.YEAR),
+      calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY),
+      calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND));
+
+    return date;
   }
 
   @Override

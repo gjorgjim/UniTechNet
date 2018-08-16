@@ -2,6 +2,8 @@ package mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging;
 
 import java.util.Locale;
 
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
+
 /**
  * Created by gjmarkov on 08.8.2018.
  */
@@ -9,7 +11,7 @@ import java.util.Locale;
 public class Message {
   private String senderId;
   private String value;
-  private String sentDate;
+  private Date sentDate;
 
   public Message() {
   }
@@ -30,11 +32,11 @@ public class Message {
     this.value = value;
   }
 
-  public String getSentDate() {
+  public Date getSentDate() {
     return sentDate;
   }
 
-  public void setSentDate(String sentDate) {
+  public void setSentDate(Date sentDate) {
     this.sentDate = sentDate;
   }
 
