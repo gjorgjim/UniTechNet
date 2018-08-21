@@ -211,6 +211,64 @@ public class UserMessagingFragment extends Fragment {
   }
 
   private void addDateView(mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date date, boolean isToday) {
+    TextView dateTv = createDateTv(date, isToday);
+
+    messagesView.addView(dateTv);
+  }
+
+  private void addMessageView(Message message) {
+    TextView messageTv = createMessageTv(message);
+
+    TextView messageDateTv = createMessageDateTv(message);
+    messageDateTv.setVisibility(View.GONE);
+
+    messageTv.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        if(messageDateTv.getVisibility() == View.GONE) {
+          messageDateTv.setVisibility(View.VISIBLE);
+        } else {
+          messageDateTv.setVisibility(View.GONE);
+        }
+      }
+    });
+
+    messagesView.addView(messageTv);
+    messagesView.addView(messageDateTv);
+  }
+
+  private TextView createMessageTv(Message message) {
+    TextView messageTv = new TextView(getContext());
+
+    messageTv.setText(message.getValue());
+
+    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+      LinearLayout.LayoutParams.WRAP_CONTENT,
+      LinearLayout.LayoutParams.WRAP_CONTENT
+    );
+
+    lp.setMargins(0, 4, 0, 4);
+
+    if(message.getSenderId().equals(UID)) {
+      messageTv.setBackground(getResources().getDrawable(R.drawable.bubble_background_receiver));
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        messageTv.setTextAppearance(R.style.MessageTextStyleReceiver);
+      }
+      lp.gravity = Gravity.END;
+    } else {
+      messageTv.setBackground(getResources().getDrawable(R.drawable.bubble_background_sender));
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        messageTv.setTextAppearance(R.style.MessageTextStyleReceiver);
+      }
+      lp.gravity = Gravity.START;
+    }
+
+    messageTv.setLayoutParams(lp);
+
+    return messageTv;
+  }
+
+  private TextView createDateTv(mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date date, boolean isToday) {
     TextView dateTv = new TextView(getContext());
 
     if(isToday) {
@@ -242,38 +300,42 @@ public class UserMessagingFragment extends Fragment {
 
     dateTv.setLayoutParams(lp);
 
-    messagesView.addView(dateTv);
+    return dateTv;
   }
 
-  private void addMessageView(Message message) {
-    TextView messageTv = new TextView(getContext());
+  private TextView createMessageDateTv(Message message) {
+    TextView messageDateTv = new TextView(getContext());
 
-    messageTv.setText(message.getValue());
+    messageDateTv.setText(
+      String.format(
+        new Locale("en"),
+        "%s: %d:%d",
+        "Sent",
+        message.getSentDate().getHour(),
+        message.getSentDate().getMinute()
+      )
+    );
 
     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
       LinearLayout.LayoutParams.WRAP_CONTENT,
       LinearLayout.LayoutParams.WRAP_CONTENT
     );
 
-    lp.setMargins(0, 4, 0, 4);
+    lp.setMargins(0, 2, 8, 2);
 
     if(message.getSenderId().equals(UID)) {
-      messageTv.setBackground(getResources().getDrawable(R.drawable.bubble_background_receiver));
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        messageTv.setTextAppearance(R.style.MessageTextStyleReceiver);
-      }
       lp.gravity = Gravity.END;
     } else {
-      messageTv.setBackground(getResources().getDrawable(R.drawable.bubble_background_sender));
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        messageTv.setTextAppearance(R.style.MessageTextStyleReceiver);
-      }
       lp.gravity = Gravity.START;
     }
 
-    messageTv.setLayoutParams(lp);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      messageDateTv.setTextAppearance(R.style.DateTextStyle);
+    }
 
-    messagesView.addView(messageTv);
+    messageDateTv.setLayoutParams(lp);
+
+    return messageDateTv;
   }
 
   private void sendMessage(String value) {
@@ -300,7 +362,7 @@ public class UserMessagingFragment extends Fragment {
     scrollView.post(new Runnable() {
       @Override
       public void run() {
-        scrollView.fullScroll(View.FOCUS_DOWN);
+        scrollView.smoothScrollTo(0, messagesView.getBottom());
       }
     });
   }
