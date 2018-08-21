@@ -22,6 +22,7 @@ import java.util.Locale;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DatePickerDialogIdentifier;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
@@ -49,8 +50,7 @@ public class EditExperienceDialog extends Dialog {
 
   private DatePickerDialog.OnDateSetListener listener;
 
-  private DatabaseService databaseService;
-  private AuthenticationService authenticationService;
+  private UserService userService;
 
   private String key;
   private Experience currentExperience;
@@ -67,9 +67,6 @@ public class EditExperienceDialog extends Dialog {
     setContentView(R.layout.dialog_edit_experience);
 
     setTitle("Add Experience");
-
-    databaseService = DatabaseService.getInstance();
-    authenticationService = AuthenticationService.getInstance();
 
     titleIl = findViewById(R.id.titleIl);
     titleEt = findViewById(R.id.titleEt);
@@ -159,25 +156,16 @@ public class EditExperienceDialog extends Dialog {
             Integer.parseInt(endDate[0])
           ));
         }
-        DatabaseReference experienceRef = databaseService.userReference(
-          authenticationService
-            .getCurrentUser()
-            .getUid()
-        ).child("experiences");
-        experienceRef.child(key).removeValue();
-        experienceRef.child(key).setValue(experience);
+
+        userService.saveExperience(key, experience);
+
         dismiss();
       }
     });
 
     deleteExperienceBtn.setOnClickListener(v -> {
-      databaseService.userReference(
-        authenticationService
-          .getCurrentUser()
-          .getUid()
-      ).child("experiences")
-        .child(key)
-        .removeValue();
+      userService.deleteExperience(key);
+
       dismiss();
     });
 
