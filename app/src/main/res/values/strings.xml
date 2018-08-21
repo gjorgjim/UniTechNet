@@ -58,6 +58,7 @@
   <string name="last_message_time_placeholder">08.08 12:17</string>
   <string name="user_name_placeholder">Kristina Aleksieska</string>
   <string name="you_last_message">You</string>
+  <string name="today_text_view">Today</string>
 
   <string-array name="gender_array">
     <item>Not Specified</item>

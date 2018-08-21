@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.MessageCallback;
@@ -50,6 +51,7 @@ public class UserMessagingFragment extends Fragment {
   private String key;
 
   private mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date lastMessageDate;
+  private Message lastMessage;
 
   private int numberOfMessages;
 
@@ -68,6 +70,7 @@ public class UserMessagingFragment extends Fragment {
     authenticationService = AuthenticationService.getInstance();
     UID = authenticationService.getCurrentUser().getUid();
     numberOfMessages = 20;
+    lastMessage = null;
   }
 
   @Override
@@ -126,6 +129,7 @@ public class UserMessagingFragment extends Fragment {
       public void onMessageReceived(String key, Message message) {
         if(message.getSentDate().isAfter(lastMessageDate)) {
           setMessage(message);
+          scrollDown();
         }
       }
     });
@@ -149,7 +153,6 @@ public class UserMessagingFragment extends Fragment {
         if(!sendMessageEt.getText().toString().isEmpty()) {
           sendMessage(sendMessageEt.getText().toString());
           sendMessageEt.setText("");
-          scrollDown();
         }
       }
     });
@@ -164,12 +167,7 @@ public class UserMessagingFragment extends Fragment {
     sendMessageEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
       @Override
       public void onFocusChange(View v, boolean hasFocus) {
-        scrollView.post(new Runnable() {
-          @Override
-          public void run() {
-            scrollView.fullScroll(View.FOCUS_DOWN);
-          }
-        });
+        scrollDown();
       }
     });
 
@@ -178,6 +176,76 @@ public class UserMessagingFragment extends Fragment {
 
 
   private void setMessage(Message message){
+    if(lastMessage == null) {
+      lastMessage = message;
+
+      addDateView(message.getSentDate(), isToday(message.getSentDate().getDay()));
+      addMessageView(message);
+    } else {
+      if(message.getSentDate().getYear() > lastMessage.getSentDate().getYear()) {
+        addDateView(message.getSentDate(), false);
+        addMessageView(message);
+      } else if(message.getSentDate().getMonth() > lastMessage.getSentDate().getMonth()) {
+        addDateView(message.getSentDate(), false);
+        addMessageView(message);
+      } else if(message.getSentDate().getDay() > lastMessage.getSentDate().getDay()) {
+        if(isToday(message.getSentDate().getDay())) {
+          addDateView(message.getSentDate(), true);
+        } else {
+          addDateView(message.getSentDate(), false);
+        }
+        addMessageView(message);
+      } else {
+        addMessageView(message);
+      }
+
+      lastMessage = message;
+    }
+  }
+
+  private boolean isToday(int day) {
+    Calendar calendar = GregorianCalendar.getInstance();
+    calendar.setTime(new Date());
+
+    return calendar.get(Calendar.DAY_OF_MONTH) == day;
+  }
+
+  private void addDateView(mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date date, boolean isToday) {
+    TextView dateTv = new TextView(getContext());
+
+    if(isToday) {
+      dateTv.setText(getString(R.string.today_text_view));
+    } else {
+      dateTv.setText(
+        String.format(
+          new Locale("en"),
+          "%d.%d.%d",
+          date.getDay(),
+          date.getMonth(),
+          date.getYear()
+        )
+      );
+    }
+
+    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+      LinearLayout.LayoutParams.WRAP_CONTENT,
+      LinearLayout.LayoutParams.WRAP_CONTENT
+    );
+
+    lp.setMargins(0, 4, 0, 4);
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      dateTv.setTextAppearance(R.style.DateTextStyle);
+    }
+
+    lp.gravity = Gravity.CENTER_HORIZONTAL;
+
+    dateTv.setLayoutParams(lp);
+
+    messagesView.addView(dateTv);
+  }
+
+  private void addMessageView(Message message) {
     TextView messageTv = new TextView(getContext());
 
     messageTv.setText(message.getValue());

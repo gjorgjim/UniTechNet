@@ -301,7 +301,7 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
   }
 
   private void showWaitingDialog(String message){
-    waitingDialog.showDialog("Fetching your data...");
+    waitingDialog.showDialog(message);
   }
 
   private void hideWaitingDialog(){
