@@ -55,7 +55,6 @@ public class EditUserDetailsDialog extends Dialog {
 
   private User currentUser;
 
-  private DatabaseService databaseService;
   private AuthenticationService authenticationService;
   private UserService userService;
 
@@ -70,7 +69,6 @@ public class EditUserDetailsDialog extends Dialog {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.dialog_edit_user_details);
 
-    databaseService = DatabaseService.getInstance();
     authenticationService = AuthenticationService.getInstance();
     userService = UserService.getInstance();
 
@@ -122,34 +120,25 @@ public class EditUserDetailsDialog extends Dialog {
     });
 
     saveDetailsBtn.setOnClickListener(v -> {
-      DatabaseReference userRef = databaseService.userReference(
-        authenticationService
-        .getCurrentUser()
-        .getUid()
-      );
 
       if(!currentUser.getFirstName().equals(firstNameEt.getText().toString())){
-        userRef.child("firstName").removeValue();
-        userRef.child("firstName").setValue(firstNameEt.getText().toString());
+        userService.saveUserDetails("firstName", firstNameEt.getText().toString());
         currentUser.setFirstName(firstNameEt.getText().toString());
       }
 
 
       if(!currentUser.getLastName().equals(lastNameEt.getText().toString())) {
-        userRef.child("lastName").removeValue();
-        userRef.child("lastName").setValue(lastNameEt.getText().toString());
+        userService.saveUserDetails("lastName", lastNameEt.getText().toString());
         currentUser.setLastName(lastNameEt.getText().toString());
       }
 
       if(!currentUser.getTitle().equals(titleEt.getText().toString())) {
-        userRef.child("title").removeValue();
-        userRef.child("title").setValue(titleEt.getText().toString());
+        userService.saveUserDetails("title", titleEt.getText().toString());
         currentUser.setTitle(titleEt.getText().toString());
       }
 
       if(!currentUser.getUsername().equals(usernameEt.getText().toString())) {
-        userRef.child("username").removeValue();
-        userRef.child("username").setValue(usernameEt.getText().toString());
+        userService.saveUserDetails("username", usernameEt.getText().toString());
         currentUser.setUsername(usernameEt.getText().toString());
       }
 
@@ -160,8 +149,7 @@ public class EditUserDetailsDialog extends Dialog {
         Integer.parseInt(birthday[0])
       );
       if(!birthDate.equals(currentUser.getBirthday())) {
-        userRef.child("birthday").removeValue();
-        userRef.child("birthday").setValue(birthDate);
+        userService.saveUserBirthday(birthDate);
         currentUser.setBirthday(birthDate);
       }
 
