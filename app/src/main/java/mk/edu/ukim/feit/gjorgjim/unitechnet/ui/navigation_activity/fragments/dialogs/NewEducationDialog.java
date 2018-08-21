@@ -24,6 +24,7 @@ import java.util.Locale;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DatePickerDialogIdentifier;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
@@ -51,10 +52,9 @@ public class NewEducationDialog extends Dialog {
   private AppCompatCheckBox presentCb;
   private AppCompatButton addEducationBtn;
 
-  private DatabaseService databaseService;
-  private AuthenticationService authenticationService;
-
   private DatePickerDialog.OnDateSetListener listener;
+
+  private UserService userService;
 
   public NewEducationDialog(@NonNull Context context) {
     super(context);
@@ -67,10 +67,9 @@ public class NewEducationDialog extends Dialog {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.dialog_new_education);
 
-    setTitle("Add Education");
+    userService = UserService.getInstance();
 
-    databaseService = DatabaseService.getInstance();
-    authenticationService = AuthenticationService.getInstance();
+    setTitle("Add Education");
 
     schoolIl = findViewById(R.id.schoolIl);
     schoolEt = findViewById(R.id.schoolEt);
@@ -154,13 +153,9 @@ public class NewEducationDialog extends Dialog {
             Integer.parseInt(endDate[0])
           ));
         }
-        DatabaseReference experienceRef = databaseService.userReference(
-          authenticationService
-            .getCurrentUser()
-            .getUid()
-        ).child("educations");
-        String key = experienceRef.push().getKey();
-        experienceRef.child(key).setValue(education);
+
+        userService.addEducation(education);
+
         dismiss();
       }
     });
