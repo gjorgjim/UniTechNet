@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ProfileChangeCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
@@ -76,6 +78,7 @@ public class ProfileFragment extends Fragment{
   public ProfileFragment() {
     userService = UserService.getInstance();
     authenticationService = AuthenticationService.getInstance();
+    listenForUserDetailsChanged();
   }
 
   @Override
@@ -190,6 +193,40 @@ public class ProfileFragment extends Fragment{
     );
   }
 
+  private void listenForUserDetailsChanged() {
+    userService.listenForUserDetailsChanges(new ProfileChangeCallback() {
+      @Override
+      public void onCourseAdded(String key, Course course) {
+        addCourse(key, course);
+      }
+
+      @Override
+      public void onCourseRemoved(String key) {
+        removeCourse(key);
+      }
+
+      @Override
+      public void onExperienceAdded(String key, Experience experience) {
+        addExperience(key, experience);
+      }
+
+      @Override
+      public void onExperienceRemoved(String key) {
+        removeExperience(key);
+      }
+
+      @Override
+      public void onEducationAdded(String key, Education education) {
+        addEducation(key, education);
+      }
+
+      @Override
+      public void onEducationRemoved(String key) {
+        removeEducation(key);
+      }
+    });
+  }
+
   public void setStartDateExperience(int year, int month, int day) {
     experienceDialog.setStartDate(year, month, day);
   }
@@ -283,5 +320,11 @@ public class ProfileFragment extends Fragment{
 
   public void setCurrentExperience(ProfileItemView<Experience> experience) {
     currentExperience = experience;
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    userService.removeListenersFromUserDetails();
   }
 }

@@ -60,11 +60,13 @@ public class CoursesFragment extends Fragment {
 
         progressBar.setVisibility(View.GONE);
         courseGridView.setVisibility(View.VISIBLE);
+
+        courseService.removeAllCoursesListener();
       }
 
       @Override
       public void onFailure(String message) {
-
+        courseService.removeAllCoursesListener();
       }
     });
 

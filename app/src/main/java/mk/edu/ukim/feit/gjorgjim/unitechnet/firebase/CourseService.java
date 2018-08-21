@@ -35,34 +35,38 @@ public class CourseService {
   private DatabaseService databaseService;
   private UserService userService;
 
-  private ValueEventListener courseListener;
+  ListDatabaseCallback<Course> allCoursesCallback;
+  private ValueEventListener courseListener = new ValueEventListener() {
+    @Override
+    public void onDataChange(DataSnapshot dataSnapshot) {
+      for(DataSnapshot data : dataSnapshot.getChildren()) {
+        Log.d("CourseService", data.getValue().toString());
+        Course course = data.getValue(Course.class);
+        course.setCourseId(data.getKey());
+        allCourses.add(course);
+      }
+      allCoursesCallback.onSuccess(allCourses);
+      databaseService.coursesReference().removeEventListener(courseListener);
+    }
+
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
+      allCoursesCallback.onFailure(databaseError.getMessage());
+    }
+  };
 
   public void getAllCourses(ListDatabaseCallback<Course> callback) {
-    courseListener = new ValueEventListener() {
-      @Override
-      public void onDataChange(DataSnapshot dataSnapshot) {
-        for(DataSnapshot data : dataSnapshot.getChildren()) {
-          Log.d("CourseService", data.getValue().toString());
-          Course course = data.getValue(Course.class);
-          course.setCourseId(data.getKey());
-          allCourses.add(course);
-        }
-        callback.onSuccess(allCourses);
-        databaseService.coursesReference().removeEventListener(courseListener);
-      }
-
-      @Override
-      public void onCancelled(DatabaseError databaseError) {
-        callback.onFailure(databaseError.getMessage());
-      }
-    };
-
+    allCoursesCallback = callback;
     if(allCourses == null) {
       allCourses = new ArrayList<>();
       databaseService.coursesReference().addListenerForSingleValueEvent(courseListener);
     } else {
-      callback.onSuccess(allCourses);
+      allCoursesCallback.onSuccess(allCourses);
     }
+  }
+
+  public void removeAllCoursesListener() {
+    databaseService.coursesReference().removeEventListener(courseListener);
   }
 
   public void subscribeUserToCourse(String courseId, String UID, ListDatabaseCallback<Course> callback) {

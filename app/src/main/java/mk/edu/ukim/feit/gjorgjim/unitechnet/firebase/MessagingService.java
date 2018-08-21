@@ -87,30 +87,40 @@ public class MessagingService {
     }
   };
 
+  private HashMap<String, Chat> chatHashMap;
+  private ChatCallback chatCallback;
+  private ValueEventListener chatValueEventListener = new ValueEventListener() {
+    @Override
+    public void onDataChange(DataSnapshot dataSnapshot) {
+      for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+        chatHashMap.put(snapshot.getKey(), snapshot.getValue(Chat.class));
+      }
+      chatCallback.onSuccess(chatHashMap);
+    }
+
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
+      chatCallback.onFailure(databaseError.getMessage());
+    }
+  };
+
   public void getChat(ChatCallback callback) {
-    HashMap<String, Chat> chatHashMap = new HashMap<>();
-
-    ValueEventListener valueEventListener = new ValueEventListener() {
-      @Override
-      public void onDataChange(DataSnapshot dataSnapshot) {
-        for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
-          chatHashMap.put(snapshot.getKey(), snapshot.getValue(Chat.class));
-        }
-        callback.onSuccess(chatHashMap);
-      }
-
-      @Override
-      public void onCancelled(DatabaseError databaseError) {
-
-      }
-    };
+    chatHashMap = new HashMap<>();
+    chatCallback = callback;
 
     databaseService.chatReference(
       authenticationService
         .getCurrentUser()
         .getUid()
-    ).addListenerForSingleValueEvent(valueEventListener);
+    ).addListenerForSingleValueEvent(chatValueEventListener);
+  }
 
+  public void removeChatListener() {
+    databaseService.chatReference(
+      authenticationService
+        .getCurrentUser()
+        .getUid()
+    ).removeEventListener(chatValueEventListener);
   }
 
   public void getLastMessages(int n, String key, MessageCallback callback) {

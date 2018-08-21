@@ -68,11 +68,12 @@ public class MessagesFragment extends Fragment {
         adapter = new MessagesAdapter(getContext(), R.layout.adapter_messages, chatHashMap);
         messagesLv.setAdapter(adapter);
         messagesLv.setVisibility(View.VISIBLE);
+        messagingService.removeChatListener();
       }
 
       @Override
       public void onFailure(String message) {
-
+        messagingService.removeChatListener();
       }
     });
 

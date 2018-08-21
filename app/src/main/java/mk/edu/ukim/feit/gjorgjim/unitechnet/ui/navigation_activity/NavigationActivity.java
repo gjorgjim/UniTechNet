@@ -153,61 +153,14 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
           navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
           navigation.setSelectedItemId(R.id.navigation_feed);
-
-          listenForUserDetailsChanged();
         }
+        userService.removeSignInListener();
       }
 
       @Override
       public void onFailure(String message) {
         hideWaitingDialog();
-      }
-    });
-  }
-
-  private void listenForUserDetailsChanged() {
-    userService.listenForUserDetailsChanges(new ProfileChangeCallback() {
-      @Override
-      public void onCourseAdded(String key, Course course) {
-        if(profileFragment != null) {
-          profileFragment.addCourse(key, course);
-        }
-      }
-
-      @Override
-      public void onCourseRemoved(String key) {
-        if(profileFragment != null) {
-          profileFragment.removeCourse(key);
-        }
-      }
-
-      @Override
-      public void onExperienceAdded(String key, Experience experience) {
-        if(profileFragment != null) {
-          profileFragment.addExperience(key, experience);
-        }
-      }
-
-      @Override
-      public void onExperienceRemoved(String key) {
-        if(profileFragment != null) {
-          profileFragment.removeExperience(key);
-        }
-      }
-
-      @Override
-      public void onEducationAdded(String key, Education education) {
-        if(profileFragment != null) {
-          profileFragment.addEducation(key, education);
-        }
-      }
-
-      @Override
-      public void onEducationRemoved(String key) {
-        Log.d("NavigationActivity", "Education removed");
-        if(profileFragment != null) {
-          profileFragment.removeEducation(key);
-        }
+        userService.removeSignInListener();
       }
     });
   }
@@ -250,8 +203,6 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
     profileFragment = new ProfileFragment();
     transaction.replace(R.id.container, profileFragment).commit();
-
-    listenForUserDetailsChanged();
   }
 
   @Override
