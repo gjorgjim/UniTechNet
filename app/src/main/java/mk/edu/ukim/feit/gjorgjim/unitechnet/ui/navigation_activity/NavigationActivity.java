@@ -53,8 +53,6 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
 
   private static final String LOG_TAG = "NavigationActivity";
 
-  private DatabaseService databaseService;
-  private AuthenticationService authenticationService;
   private UserService userService;
 
   private CoursesFragment coursesFragment;
@@ -120,8 +118,6 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_navigation);
 
-    databaseService = DatabaseService.getInstance();
-    authenticationService = AuthenticationService.getInstance();
     userService = UserService.getInstance();
 
     waitingDialog = new WaitingDialog(NavigationActivity.this);
