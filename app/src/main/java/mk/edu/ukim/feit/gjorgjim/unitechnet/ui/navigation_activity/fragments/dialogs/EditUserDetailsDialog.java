@@ -55,7 +55,6 @@ public class EditUserDetailsDialog extends Dialog {
 
   private User currentUser;
 
-  private AuthenticationService authenticationService;
   private UserService userService;
 
   public EditUserDetailsDialog(@NonNull Context context) {
@@ -69,7 +68,6 @@ public class EditUserDetailsDialog extends Dialog {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.dialog_edit_user_details);
 
-    authenticationService = AuthenticationService.getInstance();
     userService = UserService.getInstance();
 
     firstNameIl = findViewById(R.id.firstNameIl);

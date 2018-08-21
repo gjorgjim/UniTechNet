@@ -27,6 +27,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DatePickerDialogIdentifier;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 
 /**
  * Created by gjmarkov on 25.7.2018.
@@ -67,6 +68,8 @@ public class EditExperienceDialog extends Dialog {
     setContentView(R.layout.dialog_edit_experience);
 
     setTitle("Add Experience");
+
+    userService = UserService.getInstance();
 
     titleIl = findViewById(R.id.titleIl);
     titleEt = findViewById(R.id.titleEt);
