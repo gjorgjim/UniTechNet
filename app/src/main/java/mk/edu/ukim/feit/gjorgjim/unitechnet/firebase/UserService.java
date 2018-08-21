@@ -20,6 +20,7 @@ import java.util.HashMap;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ProfileChangeCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Education;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
@@ -250,6 +251,88 @@ public class UserService {
     if(currentUser.getCourses() != null) {
       currentUser.getCourses().remove(courseId);
     }
+  }
+
+  public void saveEducation(String key, Education education) {
+    DatabaseReference educationRef = databaseService.userReference(
+      authenticationService
+        .getCurrentUser()
+        .getUid()
+    ).child("educations");
+    educationRef.child(key).removeValue();
+    educationRef.child(key).setValue(education);
+  }
+
+  public void deleteEducation(String key) {
+    databaseService.userReference(
+      authenticationService
+        .getCurrentUser()
+        .getUid()
+    ).child("educations")
+      .child(key)
+      .removeValue();
+  }
+
+  public void saveExperience(String key, Experience experience) {
+    DatabaseReference experienceRef = databaseService.userReference(
+      authenticationService
+        .getCurrentUser()
+        .getUid()
+    ).child("experiences");
+    experienceRef.child(key).removeValue();
+    experienceRef.child(key).setValue(experience);
+  }
+
+  public void deleteExperience(String key) {
+    databaseService.userReference(
+      authenticationService
+        .getCurrentUser()
+        .getUid()
+    ).child("experiences")
+      .child(key)
+      .removeValue();
+  }
+
+  public void saveUserDetails(String child, String value) {
+    DatabaseReference userRef = databaseService.userReference(
+      authenticationService
+        .getCurrentUser()
+        .getUid()
+    );
+
+    userRef.child(child).removeValue();
+    userRef.child(child).setValue(value);
+  }
+
+  public void saveUserBirthday(Date value) {
+    DatabaseReference userRef = databaseService.userReference(
+      authenticationService
+        .getCurrentUser()
+        .getUid()
+    );
+
+    userRef.child("birthday").removeValue();
+    userRef.child("birthday").setValue(value);
+  }
+
+  public void addEducation(Education education) {
+    DatabaseReference experienceRef = databaseService.userReference(
+      authenticationService
+        .getCurrentUser()
+        .getUid()
+    ).child("educations");
+    String key = experienceRef.push().getKey();
+    experienceRef.child(key).setValue(education);
+  }
+
+  public void addExperience(Experience experience) {
+    DatabaseReference experienceRef = databaseService.userReference(
+      authenticationService
+        .getCurrentUser()
+        .getUid()
+    ).child("experiences");
+    String key = experienceRef.push().getKey();
+    experienceRef.child(key).setValue(experience);
   }
 
   public User getCurrentUser(){
