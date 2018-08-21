@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import java.util.Locale;
 
@@ -49,8 +50,7 @@ public class NewExperienceDialog extends Dialog {
 
   private DatePickerDialog.OnDateSetListener listener;
 
-  private DatabaseService databaseService;
-  private AuthenticationService authenticationService;
+  private UserService userService;
 
   public NewExperienceDialog(@NonNull Context context) {
     super(context);
@@ -65,8 +65,7 @@ public class NewExperienceDialog extends Dialog {
 
     setTitle("Add Experience");
 
-    databaseService = DatabaseService.getInstance();
-    authenticationService = AuthenticationService.getInstance();
+    userService = UserService.getInstance();
 
     titleIl = findViewById(R.id.titleIl);
     titleEt = findViewById(R.id.titleEt);
@@ -153,13 +152,9 @@ public class NewExperienceDialog extends Dialog {
             Integer.parseInt(endDate[0])
           ));
         }
-        DatabaseReference experienceRef = databaseService.userReference(
-          authenticationService
-            .getCurrentUser()
-            .getUid()
-        ).child("experiences");
-        String key = experienceRef.push().getKey();
-        experienceRef.child(key).setValue(experience);
+
+        userService.addExperience(experience);
+
         dismiss();
       }
     });
