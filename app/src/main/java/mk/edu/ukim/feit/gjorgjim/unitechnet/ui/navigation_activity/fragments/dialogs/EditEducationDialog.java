@@ -22,6 +22,7 @@ import java.util.Locale;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DatePickerDialogIdentifier;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
@@ -47,8 +48,7 @@ public class EditEducationDialog extends Dialog {
   private AppCompatButton saveEducationBtn;
   private AppCompatButton deleteEducationBtn;
 
-  private DatabaseService databaseService;
-  private AuthenticationService authenticationService;
+  private UserService userService;
 
   private String key;
   private Education currentEducation;
@@ -68,8 +68,7 @@ public class EditEducationDialog extends Dialog {
 
     setTitle("Edit Education");
 
-    databaseService = DatabaseService.getInstance();
-    authenticationService = AuthenticationService.getInstance();
+    userService = UserService.getInstance();
 
     schoolIl = findViewById(R.id.schoolIl);
     schoolEt = findViewById(R.id.schoolEt);
@@ -156,25 +155,16 @@ public class EditEducationDialog extends Dialog {
             Integer.parseInt(endDate[0])
           ));
         }
-        DatabaseReference educationRef = databaseService.userReference(
-          authenticationService
-            .getCurrentUser()
-            .getUid()
-        ).child("educations");
-        educationRef.child(key).removeValue();
-        educationRef.child(key).setValue(education);
+
+        userService.saveEducation(key, education);
+
         dismiss();
       }
     });
 
     deleteEducationBtn.setOnClickListener(v -> {
-      databaseService.userReference(
-        authenticationService
-          .getCurrentUser()
-          .getUid()
-      ).child("educations")
-        .child(key)
-        .removeValue();
+      userService.deleteEducation(key);
+
       dismiss();
     });
 
