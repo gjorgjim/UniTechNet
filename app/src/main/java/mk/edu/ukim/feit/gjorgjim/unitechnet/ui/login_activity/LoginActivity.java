@@ -1,7 +1,6 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.login_activity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,8 +10,6 @@ import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
 
-import com.bluehomestudio.progresswindow.ProgressWindow;
-import com.bluehomestudio.progresswindow.ProgressWindowConfiguration;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -59,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
     incorrectInfoTv = findViewById(R.id.incorrectInfoTv);
 
     Glide.with(this)
-      .load(R.drawable.utn_logo)
+      .load(R.drawable.logo_android_v2)
       .into(logoIv);
 
     logoIv.setAdjustViewBounds(true);

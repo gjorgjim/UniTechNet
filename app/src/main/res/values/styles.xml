@@ -27,6 +27,13 @@
     <item name="android:textStyle">bold</item>
   </style>
 
+  <style name="ButtonPrimaryTextStyleWhite">
+    <item name="android:textColor">@color/colorPrimary</item>
+    <item name="android:textSize">16sp</item>
+    <item name="android:fontFamily">sans-serif-smallcaps</item>
+    <item name="android:textStyle">bold</item>
+  </style>
+
   <style name="ButtonSecondaryTextStyle">
     <item name="android:textColor">@android:color/white</item>
     <item name="android:textSize">12sp</item>
@@ -36,6 +43,12 @@
 
   <style name="EditTextPrimaryStyle">
     <item name="android:textColor">@color/colorTextPrimary</item>
+    <item name="android:textSize">16sp</item>
+    <item name="android:fontFamily">sans-serif-condensed</item>
+  </style>
+
+  <style name="EditTextPrimaryStyleWhite">
+    <item name="android:textColor">@color/ef_white</item>
     <item name="android:textSize">16sp</item>
     <item name="android:fontFamily">sans-serif-condensed</item>
   </style>
