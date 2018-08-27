@@ -26,6 +26,7 @@ import com.esafirm.imagepicker.features.ImagePicker;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
@@ -162,19 +163,18 @@ public class EditProfileFragment extends Fragment {
 
     DatePickerDialog datePicker = new SpinnerDatePickerDialogBuilder()
       .context(getActivity())
-      .callback(listener)
+      .callback(new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+          setDateTextView(year, monthOfYear, dayOfMonth);
+        }
+      })
       .spinnerTheme(R.style.NumberPickerStyle)
       .showTitle(true)
       .maxDate(2005, 11, 31)
       .minDate(1980, 0, 1)
       .defaultDate(2017, 0, 1)
       .build();
-    datePicker.setOnShowListener(new DialogInterface.OnShowListener() {
-      @Override
-      public void onShow(DialogInterface dialog) {
-        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.BIRTHDAY_EDIT_PROFILE);
-      }
-    });
 
     birthdayEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
       birthdayEt.setOnClickListener(v1 -> {
