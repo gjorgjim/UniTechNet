@@ -11,6 +11,7 @@ import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
 
 import com.google.firebase.database.DatabaseReference;
+import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
@@ -89,9 +90,8 @@ public class EditUserDetailsDialog extends Dialog {
     java.util.Date date = new java.util.Date();
     String[] today = dateFormat.format(date).split("/");
 
-    DatePickerDialog datePicker = new SpinnerDatePickerDialogBuilder()
+    SpinnerDatePickerDialogBuilder datePickerBuilder = new SpinnerDatePickerDialogBuilder()
       .context(activity)
-      .callback(listener)
       .spinnerTheme(R.style.NumberPickerStyle)
       .showTitle(true)
       .defaultDate(2017, 0, 1)
@@ -100,21 +100,30 @@ public class EditUserDetailsDialog extends Dialog {
         Integer.parseInt(today[1]) - 1,
         Integer.parseInt(today[2])
       )
-      .minDate(1980, 0, 1)
-      .build();
+      .minDate(1980, 0, 1);
 
     birthdayEt.setOnClickListener(v -> {
-      datePicker.setOnShowListener(dialog -> {
-        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.BIRTHDAY_CHANGE_DETAILS);
-      });
-      datePicker.show();
+      datePickerBuilder
+        .callback(new DatePickerDialog.OnDateSetListener() {
+          @Override
+          public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            setBirthday(year, monthOfYear, dayOfMonth);
+          }
+        })
+        .build()
+        .show();
     });
 
     birthdayEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
-      datePicker.setOnShowListener(dialog -> {
-        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.BIRTHDAY_CHANGE_DETAILS);
-      });
-      datePicker.show();
+      datePickerBuilder
+        .callback(new DatePickerDialog.OnDateSetListener() {
+          @Override
+          public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            setBirthday(year, monthOfYear, dayOfMonth);
+          }
+        })
+        .build()
+        .show();
     });
 
     saveDetailsBtn.setOnClickListener(v -> {
