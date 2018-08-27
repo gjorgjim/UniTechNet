@@ -9,6 +9,7 @@ import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,7 +29,6 @@ public class LoginActivity extends AppCompatActivity {
   private TextInputLayout passwordIl;
   private AppCompatEditText passwordEt;
   private AppCompatButton signInBtn;
-  private AppCompatTextView incorrectInfoTv;
 
   private WaitingDialog waitingDialog;
 
@@ -53,7 +53,6 @@ public class LoginActivity extends AppCompatActivity {
     passwordIl = findViewById(R.id.passwordIl);
     passwordEt = findViewById(R.id.passwordEt);
     signInBtn = findViewById(R.id.signInBtn);
-    incorrectInfoTv = findViewById(R.id.incorrectInfoTv);
 
     Glide.with(this)
       .load(R.drawable.logo_android_v2)
@@ -63,9 +62,6 @@ public class LoginActivity extends AppCompatActivity {
 
     signInBtn.setOnClickListener(v -> {
       showWaitingDialog();
-      if(incorrectInfoTv.getVisibility() == View.VISIBLE) {
-        incorrectInfoTv.setVisibility(View.INVISIBLE);
-      }
       if(validateInput()) {
         authenticationService.signIn(emailEt.getText().toString().trim(), passwordEt.getText().toString().trim(),
           LoginActivity.this, new AuthenticationCallback() {
@@ -77,11 +73,11 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(String message) {
-              incorrectInfoTv.setText(message);
-              incorrectInfoTv.setVisibility(View.VISIBLE);
               emailEt.setText(getString(R.string.empty_string));
               passwordEt.setText(getString(R.string.empty_string));
               hideWaitingDialog();
+              emailEt.requestFocus();
+              Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
             }
           });
       }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,7 +43,12 @@ public class AuthenticationService {
         if(task.isSuccessful()){
           callback.onSuccess(task.getResult().getUser());
         } else {
-          callback.onFailure("Username or password incorrect");
+          task.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+             callback.onFailure(e.getMessage());
+            }
+          });
         }
       });
   }
