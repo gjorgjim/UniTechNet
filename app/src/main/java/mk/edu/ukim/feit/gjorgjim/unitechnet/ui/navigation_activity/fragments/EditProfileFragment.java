@@ -1,7 +1,6 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,7 +36,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DatePickerDialogIdentifier;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;

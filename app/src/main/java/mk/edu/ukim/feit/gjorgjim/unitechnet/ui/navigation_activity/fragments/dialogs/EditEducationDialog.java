@@ -11,7 +11,6 @@ import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
 
-import com.google.firebase.database.DatabaseReference;
 import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
@@ -21,10 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DatePickerDialogIdentifier;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Education;
@@ -54,12 +50,9 @@ public class EditEducationDialog extends Dialog {
   private String key;
   private Education currentEducation;
 
-  private DatePickerDialog.OnDateSetListener listener;
-
   public EditEducationDialog(@NonNull Context context) {
     super(context);
     activity = (Activity) context;
-    listener = (DatePickerDialog.OnDateSetListener) context;
   }
 
   @Override
@@ -95,7 +88,6 @@ public class EditEducationDialog extends Dialog {
       .context(activity)
       .spinnerTheme(R.style.NumberPickerStyle)
       .showTitle(true)
-      .defaultDate(2017, 0, 1)
       .maxDate(
         Integer.parseInt(today[0]),
         Integer.parseInt(today[1]) - 1,
@@ -105,6 +97,11 @@ public class EditEducationDialog extends Dialog {
 
     startDateEt.setOnClickListener(v -> {
       datePickerBuilder
+        .defaultDate(
+          currentEducation.getStartDate().getYear(),
+          currentEducation.getStartDate().getMonth() - 1,
+          currentEducation.getStartDate().getDay()
+        )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override
           public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -117,6 +114,11 @@ public class EditEducationDialog extends Dialog {
 
     startDateEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
       datePickerBuilder
+        .defaultDate(
+          currentEducation.getStartDate().getYear(),
+          currentEducation.getStartDate().getMonth() - 1,
+          currentEducation.getStartDate().getDay()
+        )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override
           public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -129,6 +131,11 @@ public class EditEducationDialog extends Dialog {
 
     endDateEt.setOnClickListener(v -> {
       datePickerBuilder
+        .defaultDate(
+          currentEducation.getEndDate().getYear(),
+          currentEducation.getEndDate().getMonth() - 1,
+          currentEducation.getEndDate().getDay()
+        )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override
           public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -141,6 +148,11 @@ public class EditEducationDialog extends Dialog {
 
     endDateEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
       datePickerBuilder
+        .defaultDate(
+          currentEducation.getEndDate().getYear(),
+          currentEducation.getEndDate().getMonth() - 1,
+          currentEducation.getEndDate().getDay()
+        )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override
           public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {

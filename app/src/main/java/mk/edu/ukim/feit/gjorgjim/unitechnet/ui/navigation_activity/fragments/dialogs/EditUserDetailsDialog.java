@@ -10,7 +10,6 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
 
-import com.google.firebase.database.DatabaseReference;
 import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
@@ -22,10 +21,7 @@ import java.util.List;
 import java.util.Locale;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DatePickerDialogIdentifier;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.ProfileFragment;
@@ -52,8 +48,6 @@ public class EditUserDetailsDialog extends Dialog {
   private AppCompatEditText birthdayEt;
   private AppCompatButton saveDetailsBtn;
 
-  private DatePickerDialog.OnDateSetListener listener;
-
   private User currentUser;
 
   private UserService userService;
@@ -61,7 +55,6 @@ public class EditUserDetailsDialog extends Dialog {
   public EditUserDetailsDialog(@NonNull Context context) {
     super(context);
     activity = (Activity) context;
-    listener = (DatePickerDialog.OnDateSetListener) context;
   }
 
   @Override
@@ -94,7 +87,11 @@ public class EditUserDetailsDialog extends Dialog {
       .context(activity)
       .spinnerTheme(R.style.NumberPickerStyle)
       .showTitle(true)
-      .defaultDate(2017, 0, 1)
+      .defaultDate(
+        currentUser.getBirthday().getYear(),
+        currentUser.getBirthday().getMonth() - 1,
+        currentUser.getBirthday().getDay()
+      )
       .maxDate(
         Integer.parseInt(today[0]),
         Integer.parseInt(today[1]) - 1,

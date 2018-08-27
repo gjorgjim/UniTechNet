@@ -15,28 +15,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.model.Image;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-import com.tsongkha.spinnerdatepicker.DatePicker;
-import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 
 import java.io.File;
 import java.io.IOException;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ProfileChangeCallback;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DatePickerDialogIdentifier;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Chat;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Education;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.WaitingDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.CoursesFragment;
@@ -48,8 +38,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.Not
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.ProfileFragment;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.UserMessagingFragment;
 
-public class NavigationActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,
-  FragmentChangingListener {
+public class NavigationActivity extends AppCompatActivity implements FragmentChangingListener {
 
   private static final String LOG_TAG = "NavigationActivity";
 
@@ -69,7 +58,6 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
   private Toolbar toolbar;
   private MaterialSearchView searchView;
   private FloatingActionButton fab;
-  private LinearLayout container;
 
   private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -125,7 +113,6 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
     navigation = findViewById(R.id.navigation);
     toolbar = findViewById(R.id.toolbar);
     searchView = findViewById(R.id.searchview);
-    container = findViewById(R.id.container);
     fab = findViewById(R.id.fab);
 
     setSupportActionBar(toolbar);
@@ -171,31 +158,6 @@ public class NavigationActivity extends AppCompatActivity implements DatePickerD
     MenuItem item = menu.findItem(R.id.action_search);
     searchView.setMenuItem(item);
     return true;
-  }
-
-  @Override
-  public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-    if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.BIRTHDAY_EDIT_PROFILE)) {
-      editProfileFragment.setDateTextView(year, monthOfYear, dayOfMonth);
-    } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.STARTDATE_EXPERIENCE)) {
-      profileFragment.setStartDateExperience(year, monthOfYear, dayOfMonth);
-    } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.ENDDATE_EXPERIENCE)) {
-      profileFragment.setEndDateExperience(year, monthOfYear, dayOfMonth);
-    } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.STARTDATE_EDUCATION)) {
-      profileFragment.setStartDateEducation(year, monthOfYear, dayOfMonth);
-    } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.ENDDATE_EDUCATION)) {
-      profileFragment.setEndDateEducation(year, monthOfYear, dayOfMonth);
-    } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.STARTDATE_EDIT_EDUCATION)) {
-      profileFragment.setStartDateEditEducation(year, monthOfYear, dayOfMonth);
-    } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.ENDDATE_EDIT_EDUCATION)) {
-      profileFragment.setEndDateEditEducation(year, monthOfYear, dayOfMonth);
-    } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.STARTDATE_EDIT_EXPERIENCE)) {
-      profileFragment.setStartDateEditExperience(year, monthOfYear, dayOfMonth);
-    } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.ENDDATE_EDIT_EXPERIENCE)) {
-      profileFragment.setEndDateEditExperience(year, monthOfYear, dayOfMonth);
-    } else if(DatePickerDialogIdentifier.getCurrentDatePicker().equals(DatePickerDialogIdentifier.BIRTHDAY_CHANGE_DETAILS)) {
-      profileFragment.setBirthDayDetails(year, monthOfYear, dayOfMonth);
-    }
   }
 
   @Override

@@ -11,7 +11,6 @@ import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
 
-import com.google.firebase.database.DatabaseReference;
 import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
@@ -21,14 +20,10 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DatePickerDialogIdentifier;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 
 /**
  * Created by gjmarkov on 25.7.2018.
@@ -50,8 +45,6 @@ public class EditExperienceDialog extends Dialog {
   private AppCompatButton saveExperienceBtn;
   private AppCompatButton deleteExperienceBtn;
 
-  private DatePickerDialog.OnDateSetListener listener;
-
   private UserService userService;
 
   private String key;
@@ -60,7 +53,6 @@ public class EditExperienceDialog extends Dialog {
   public EditExperienceDialog(@NonNull Context context) {
     super(context);
     activity = (Activity) context;
-    listener = (DatePickerDialog.OnDateSetListener) context;
   }
 
   @Override
@@ -94,7 +86,6 @@ public class EditExperienceDialog extends Dialog {
       .context(activity)
       .spinnerTheme(R.style.NumberPickerStyle)
       .showTitle(true)
-      .defaultDate(2017, 0, 1)
       .maxDate(
         Integer.parseInt(today[0]),
         Integer.parseInt(today[1]) - 1,
@@ -104,6 +95,11 @@ public class EditExperienceDialog extends Dialog {
 
     startDateEt.setOnClickListener(v -> {
       datePickerBuilder
+        .defaultDate(
+          currentExperience.getStartDate().getYear(),
+          currentExperience.getStartDate().getMonth() - 1,
+          currentExperience.getStartDate().getDay()
+        )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override
           public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -116,6 +112,11 @@ public class EditExperienceDialog extends Dialog {
 
     startDateEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
       datePickerBuilder
+        .defaultDate(
+          currentExperience.getStartDate().getYear(),
+          currentExperience.getStartDate().getMonth() - 1,
+          currentExperience.getStartDate().getDay()
+        )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override
           public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -128,6 +129,11 @@ public class EditExperienceDialog extends Dialog {
 
     endDateEt.setOnClickListener(v -> {
       datePickerBuilder
+        .defaultDate(
+          currentExperience.getEndDate().getYear(),
+          currentExperience.getEndDate().getMonth() - 1,
+          currentExperience.getEndDate().getDay()
+        )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override
           public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -140,6 +146,11 @@ public class EditExperienceDialog extends Dialog {
 
     endDateEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
       datePickerBuilder
+        .defaultDate(
+          currentExperience.getEndDate().getYear(),
+          currentExperience.getEndDate().getMonth() - 1,
+          currentExperience.getEndDate().getDay()
+        )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override
           public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {

@@ -11,7 +11,6 @@ import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
 
-import com.google.firebase.database.DatabaseReference;
 import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
@@ -19,14 +18,11 @@ import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import java.util.Locale;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DatePickerDialogIdentifier;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
 
@@ -49,14 +45,11 @@ public class NewExperienceDialog extends Dialog {
   private AppCompatCheckBox presentCb;
   private AppCompatButton addExperienceBtn;
 
-  private DatePickerDialog.OnDateSetListener listener;
-
   private UserService userService;
 
   public NewExperienceDialog(@NonNull Context context) {
     super(context);
     activity = (Activity) context;
-    listener = (DatePickerDialog.OnDateSetListener) context;
   }
 
   @Override

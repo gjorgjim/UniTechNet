@@ -10,10 +10,7 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
-import android.view.Window;
-import android.widget.CompoundButton;
 
-import com.google.firebase.database.DatabaseReference;
 import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
@@ -23,14 +20,10 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DatePickerDialogIdentifier;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Education;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
 
 /**
  * Created by gjmarkov on 24.7.2018.
@@ -53,14 +46,11 @@ public class NewEducationDialog extends Dialog {
   private AppCompatCheckBox presentCb;
   private AppCompatButton addEducationBtn;
 
-  private DatePickerDialog.OnDateSetListener listener;
-
   private UserService userService;
 
   public NewEducationDialog(@NonNull Context context) {
     super(context);
     activity = (Activity) context;
-    listener = (DatePickerDialog.OnDateSetListener) context;
   }
 
   @Override
