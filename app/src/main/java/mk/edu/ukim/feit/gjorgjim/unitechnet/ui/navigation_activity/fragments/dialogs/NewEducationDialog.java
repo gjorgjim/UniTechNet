@@ -14,6 +14,7 @@ import android.view.Window;
 import android.widget.CompoundButton;
 
 import com.google.firebase.database.DatabaseReference;
+import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
@@ -88,9 +89,8 @@ public class NewEducationDialog extends Dialog {
     java.util.Date date = new java.util.Date();
     String[] today = dateFormat.format(date).split("/");
 
-    DatePickerDialog datePicker = new SpinnerDatePickerDialogBuilder()
+    SpinnerDatePickerDialogBuilder datePickerBuilder = new SpinnerDatePickerDialogBuilder()
       .context(activity)
-      .callback(listener)
       .spinnerTheme(R.style.NumberPickerStyle)
       .showTitle(true)
       .defaultDate(2017, 0, 1)
@@ -99,35 +99,54 @@ public class NewEducationDialog extends Dialog {
         Integer.parseInt(today[1]) - 1,
         Integer.parseInt(today[2])
       )
-      .minDate(2000, 0, 1)
-      .build();
+      .minDate(2000, 0, 1);
 
     startDateEt.setOnClickListener(v -> {
-      datePicker.setOnShowListener(dialog -> {
-        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.STARTDATE_EDUCATION);
-      });
-      datePicker.show();
+      datePickerBuilder
+        .callback(new DatePickerDialog.OnDateSetListener() {
+          @Override
+          public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            setStartDate(year, monthOfYear, dayOfMonth);
+          }
+        })
+        .build()
+        .show();
     });
 
     startDateEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
-      datePicker.setOnShowListener(dialog -> {
-        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.STARTDATE_EDUCATION);
-      });
-      datePicker.show();
+      datePickerBuilder
+        .callback(new DatePickerDialog.OnDateSetListener() {
+          @Override
+          public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            setStartDate(year, monthOfYear, dayOfMonth);
+          }
+        })
+        .build()
+        .show();
     });
 
     endDateEt.setOnClickListener(v -> {
-      datePicker.setOnShowListener(dialog -> {
-        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.ENDDATE_EDUCATION);
-      });
-      datePicker.show();
+      datePickerBuilder
+        .callback(new DatePickerDialog.OnDateSetListener() {
+          @Override
+          public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            setEndDate(year, monthOfYear, dayOfMonth);
+          }
+        })
+        .build()
+        .show();
     });
 
     endDateEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
-      datePicker.setOnShowListener(dialog -> {
-        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.ENDDATE_EDUCATION);
-      });
-      datePicker.show();
+      datePickerBuilder
+        .callback(new DatePickerDialog.OnDateSetListener() {
+          @Override
+          public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            setEndDate(year, monthOfYear, dayOfMonth);
+          }
+        })
+        .build()
+        .show();
     });
 
     addEducationBtn.setOnClickListener(v -> {
