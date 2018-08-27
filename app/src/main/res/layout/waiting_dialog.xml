@@ -11,9 +11,10 @@
     android:id="@+id/waitingDialogPb"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    style="?android:attr/progressBarStyleInverse"
+    style="?android:attr/progressBarStyle"
     android:layout_centerHorizontal="true"
-    android:indeterminate="true"/>
+    android:indeterminate="true"
+    android:indeterminateDrawable="@drawable/progress"/>
 
   <android.support.v7.widget.AppCompatTextView
     android:id="@+id/waitingDialogTv"
