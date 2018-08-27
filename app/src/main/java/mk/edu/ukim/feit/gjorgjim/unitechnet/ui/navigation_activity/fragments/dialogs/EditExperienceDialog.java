@@ -12,6 +12,7 @@ import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
 
 import com.google.firebase.database.DatabaseReference;
+import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
@@ -89,9 +90,8 @@ public class EditExperienceDialog extends Dialog {
     java.util.Date date = new java.util.Date();
     String[] today = dateFormat.format(date).split("/");
 
-    DatePickerDialog datePicker = new SpinnerDatePickerDialogBuilder()
+    SpinnerDatePickerDialogBuilder datePickerBuilder = new SpinnerDatePickerDialogBuilder()
       .context(activity)
-      .callback(listener)
       .spinnerTheme(R.style.NumberPickerStyle)
       .showTitle(true)
       .defaultDate(2017, 0, 1)
@@ -100,35 +100,54 @@ public class EditExperienceDialog extends Dialog {
         Integer.parseInt(today[1]) - 1,
         Integer.parseInt(today[2])
       )
-      .minDate(2000, 0, 1)
-      .build();
+      .minDate(2000, 0, 1);
 
     startDateEt.setOnClickListener(v -> {
-      datePicker.setOnShowListener(dialog -> {
-        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.STARTDATE_EDIT_EXPERIENCE);
-      });
-      datePicker.show();
+      datePickerBuilder
+        .callback(new DatePickerDialog.OnDateSetListener() {
+          @Override
+          public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            setStartDate(year, monthOfYear, dayOfMonth);
+          }
+        })
+        .build()
+        .show();
     });
 
     startDateEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
-      datePicker.setOnShowListener(dialog -> {
-        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.STARTDATE_EDIT_EXPERIENCE);
-      });
-      datePicker.show();
+      datePickerBuilder
+        .callback(new DatePickerDialog.OnDateSetListener() {
+          @Override
+          public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            setStartDate(year, monthOfYear, dayOfMonth);
+          }
+        })
+        .build()
+        .show();
     });
 
     endDateEt.setOnClickListener(v -> {
-      datePicker.setOnShowListener(dialog -> {
-        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.ENDDATE_EDIT_EXPERIENCE);
-      });
-      datePicker.show();
+      datePickerBuilder
+        .callback(new DatePickerDialog.OnDateSetListener() {
+          @Override
+          public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            setEndDate(year, monthOfYear, dayOfMonth);
+          }
+        })
+        .build()
+        .show();
     });
 
     endDateEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
-      datePicker.setOnShowListener(dialog -> {
-        DatePickerDialogIdentifier.setCurrentDatePicker(DatePickerDialogIdentifier.ENDDATE_EDIT_EXPERIENCE);
-      });
-      datePicker.show();
+      datePickerBuilder
+        .callback(new DatePickerDialog.OnDateSetListener() {
+          @Override
+          public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            setEndDate(year, monthOfYear, dayOfMonth);
+          }
+        })
+        .build()
+        .show();
     });
 
     presentCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
