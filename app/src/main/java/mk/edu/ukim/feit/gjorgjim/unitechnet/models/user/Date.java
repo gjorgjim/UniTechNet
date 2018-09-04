@@ -1,5 +1,10 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.models.user;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+
 /**
  * Created by gjmarkov on 08.7.2018.
  */
@@ -118,6 +123,22 @@ public class Date {
       }
     }
     return false;
+  }
+
+  public static Date getDate() {
+    Date date = new Date();
+
+    Calendar calendar = Calendar.getInstance();
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm/dd/yyyy/hh/mm/ss", new Locale("en"));
+    String[] stringDate = simpleDateFormat.format(calendar.getTime()).split("/");
+    date.setMonth(Integer.parseInt(stringDate[0]));
+    date.setDay(Integer.parseInt(stringDate[1]));
+    date.setYear(Integer.parseInt(stringDate[2]));
+    date.setHour(Integer.parseInt(stringDate[3]));
+    date.setMinute(Integer.parseInt(stringDate[4]));
+    date.setSecond(Integer.parseInt(stringDate[5]));
+
+    return date;
   }
 
   @Override
