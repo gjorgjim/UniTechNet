@@ -109,4 +109,9 @@ public class MessagesFragment extends Fragment {
 
     return date;
   }
+
+  public void updateLastMessage(String key, Message lastMessage) {
+    adapter.updateLastMessage(key, lastMessage);
+    adapter.notifyDataSetChanged();
+  }
 }

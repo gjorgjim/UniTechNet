@@ -34,6 +34,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.MessagingService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Chat;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Message;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.services.MessagingIntentService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.WaitingDialog;
@@ -253,7 +254,16 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
   private BroadcastReceiver messagesReceiver = new BroadcastReceiver() {
     @Override
     public void onReceive(Context context, Intent intent) {
-      //TODO: Handle new message when app is running
+      if(messagesFragment != null && messagesFragment.isVisible()) {
+        Bundle bundle = intent.getBundleExtra("info");
+
+        String key = bundle.getString("key");
+        Message lastMessage = (Message) bundle.getSerializable("lastMessage");
+
+        messagesFragment.updateLastMessage(key, lastMessage);
+      } else {
+        //TODO: Change messages icon with new one
+      }
     }
   };
 

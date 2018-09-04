@@ -77,6 +77,7 @@ public class UserMessagingFragment extends Fragment {
   public void onAttach(Context context) {
     super.onAttach(context);
     fragmentChangingListener = (FragmentChangingListener) context;
+    messagingService.stopBackgroundServiceForMessages(getActivity());
   }
 
   @Nullable
@@ -370,6 +371,7 @@ public class UserMessagingFragment extends Fragment {
   @Override
   public void onDestroy() {
     messagingService.stopListeningForNewMessages(key);
+    messagingService.startBackgroundServiceForMessages(getActivity());
     super.onDestroy();
   }
 }
