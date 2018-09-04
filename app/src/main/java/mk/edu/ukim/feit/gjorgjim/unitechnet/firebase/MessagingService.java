@@ -2,8 +2,7 @@ package mk.edu.ukim.feit.gjorgjim.unitechnet.firebase;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.util.Log;
-
+import android.os.Bundle;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -18,6 +17,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ChatCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.MessageCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Chat;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Message;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.services.MessagingIntentService;
 
 /**
@@ -186,6 +186,12 @@ public class MessagingService {
 
   public void startBackgroundServiceForMessages(Activity activity) {
     messagingIntent = new Intent(activity, MessagingIntentService.class);
+
+    Bundle bundle = new Bundle();
+    bundle.putSerializable("date", Date.getDate());
+
+    messagingIntent.putExtra("info", bundle);
+
     activity.startService(messagingIntent);
   }
 

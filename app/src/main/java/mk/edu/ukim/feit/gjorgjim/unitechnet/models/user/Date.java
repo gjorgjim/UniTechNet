@@ -1,15 +1,15 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.models.user;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 
 /**
  * Created by gjmarkov on 08.7.2018.
  */
 
-public class Date {
+public class Date implements Serializable{
   private int year;
   private int month;
   private int day;

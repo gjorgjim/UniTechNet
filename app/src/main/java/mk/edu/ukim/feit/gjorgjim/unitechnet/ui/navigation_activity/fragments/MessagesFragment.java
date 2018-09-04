@@ -13,10 +13,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ChatCallback;
@@ -49,6 +51,9 @@ public class MessagesFragment extends Fragment {
 
   private String key = null;
 
+  private List<String> chatKeys;
+  private List<Chat> chatList;
+
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
@@ -72,9 +77,11 @@ public class MessagesFragment extends Fragment {
     messagingService.getChat(new ChatCallback() {
       @Override
       public void onSuccess(HashMap<String, Chat> chatHashMap) {
+        MessagesFragment.this.chatKeys = new ArrayList<>(chatHashMap.keySet());
+        MessagesFragment.this.chatList = new ArrayList<>(chatHashMap.values());
         if(TextUtils.isEmpty(key)) {
           progressBar.setVisibility(View.GONE);
-          adapter = new MessagesAdapter(getContext(), R.layout.adapter_messages, chatHashMap);
+          adapter = new MessagesAdapter(getContext(), R.layout.adapter_messages, MessagesFragment.this.chatKeys, MessagesFragment.this.chatList);
           messagesLv.setAdapter(adapter);
           messagesLv.setVisibility(View.VISIBLE);
           messagingService.removeChatListener();
@@ -126,7 +133,7 @@ public class MessagesFragment extends Fragment {
   }
 
   public void updateLastMessage(String key, Message lastMessage) {
-    adapter.updateLastMessage(key, lastMessage);
+    chatList.get(chatKeys.indexOf(key)).setLastMessage(lastMessage);
     adapter.notifyDataSetChanged();
   }
 }

@@ -35,10 +35,10 @@ public class MessagesAdapter extends ArrayAdapter {
   private AppCompatTextView lastMsgTv;
   private AppCompatTextView lastMsgTimeTv;
 
-  public MessagesAdapter(@NonNull Context context, int resource, HashMap<String, Chat> chat) {
+  public MessagesAdapter(@NonNull Context context, int resource, List<String> chatKeys, List<Chat> chatList) {
     super(context, resource);
-    chatList = new ArrayList<>(chat.values());
-    chatKeys = new ArrayList<>(chat.keySet());
+    this.chatList = chatList ;
+    this.chatKeys = chatKeys;
     Log.d("MessagesAdapter", chatList.size() + "");
   }
 

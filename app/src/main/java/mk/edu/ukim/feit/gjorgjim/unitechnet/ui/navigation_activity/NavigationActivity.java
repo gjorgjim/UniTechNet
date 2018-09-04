@@ -124,8 +124,6 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     userService = UserService.getInstance();
     messagingService = MessagingService.getInstance();
 
-    messagingService.startBackgroundServiceForMessages(this);
-
     waitingDialog = new WaitingDialog(NavigationActivity.this);
 
     navigation = findViewById(R.id.navigation);
@@ -162,6 +160,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
           navigation.setSelectedItemId(R.id.navigation_feed);
         }
         userService.removeSignInListener();
+        messagingService.startBackgroundServiceForMessages(NavigationActivity.this);
       }
 
       @Override
@@ -279,8 +278,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
               messagesFragment.setArguments(bundle);
 
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.container, messagesFragment).commit();
+            navigation.setSelectedItemId(R.id.navigation_messages);
           }).show();
           messagesSnackbarShownList.add(key);
         }

@@ -40,6 +40,8 @@ public class MessagingIntentService extends IntentService {
   private AuthenticationService authenticationService;
   private NotificationCenter notificationCenter;
 
+  private Date now;
+
   public MessagingIntentService() {
     super("MessagingIntentService");
   }
@@ -56,7 +58,14 @@ public class MessagingIntentService extends IntentService {
     notificationCenter = NotificationCenter.getInstance();
     notificationCenter.setContext(this);
 
-    Date now = Date.getDate();
+    now =  new Date();
+
+    if(intent != null) {
+      Bundle bundle = intent.getExtras();
+      if(bundle != null && bundle.getSerializable("date") != null) {
+        now = (Date) bundle.getSerializable("date");
+      }
+    }
 
     databaseService.chatReference(
       authenticationService.getCurrentUser().getUid()
@@ -65,7 +74,7 @@ public class MessagingIntentService extends IntentService {
       public void onDataChange(DataSnapshot dataSnapshot) {
         for(DataSnapshot data : dataSnapshot.getChildren()) {
           Chat currentChat = data.getValue(Chat.class);
-          if(currentChat.getLastMessage().getSentDate().isAfter(now)) {
+          if(currentChat.getLastMessage().getSentDate().isAfter(MessagingIntentService.this.now)) {
             if(isForeground()) {
               Bundle bundle = new Bundle();
               bundle.putString("key", data.getKey());
