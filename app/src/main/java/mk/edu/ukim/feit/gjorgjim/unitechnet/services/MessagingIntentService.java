@@ -70,6 +70,7 @@ public class MessagingIntentService extends IntentService {
               Bundle bundle = new Bundle();
               bundle.putString("key", data.getKey());
               bundle.putSerializable("lastMessage", currentChat.getLastMessage());
+              bundle.putString("firstName", currentChat.getFirstName());
 
               Intent broadcastIntent = new Intent(ACTION);
               broadcastIntent.putExtra("info", bundle);

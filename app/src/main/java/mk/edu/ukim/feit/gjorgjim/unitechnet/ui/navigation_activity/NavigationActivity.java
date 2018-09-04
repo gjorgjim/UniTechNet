@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,8 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
@@ -52,6 +55,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
   private static final String LOG_TAG = "NavigationActivity";
 
   private UserService userService;
+  private MessagingService messagingService;
 
   private CoursesFragment coursesFragment;
   private FeedFragment feedFragment;
@@ -68,7 +72,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
   private MaterialSearchView searchView;
   private FloatingActionButton fab;
 
-  private MessagingService messagingService;
+  private List<String> messagesSnackbarShownList;
 
   private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -128,6 +132,8 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     toolbar = findViewById(R.id.toolbar);
     searchView = findViewById(R.id.searchview);
     fab = findViewById(R.id.fab);
+
+    messagesSnackbarShownList = new ArrayList<>();
 
     setSupportActionBar(toolbar);
 
@@ -254,15 +260,30 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
   private BroadcastReceiver messagesReceiver = new BroadcastReceiver() {
     @Override
     public void onReceive(Context context, Intent intent) {
+      Bundle bundle = intent.getBundleExtra("info");
+
+      String key = bundle.getString("key");
+      String firstName = bundle.getString("firstName");
+      Message lastMessage = (Message) bundle.getSerializable("lastMessage");
+
       if(messagesFragment != null && messagesFragment.isVisible()) {
-        Bundle bundle = intent.getBundleExtra("info");
-
-        String key = bundle.getString("key");
-        Message lastMessage = (Message) bundle.getSerializable("lastMessage");
-
         messagesFragment.updateLastMessage(key, lastMessage);
       } else {
-        //TODO: Change messages icon with new one
+        if(!messagesSnackbarShownList.contains(key)) {
+          Snackbar.make(findViewById(android.R.id.content), String.format("You have a new message from %s", firstName),
+            Snackbar.LENGTH_SHORT).setAction("VIEW", v -> {
+              messagesFragment = new MessagesFragment();
+
+              Bundle fragmentBundle = new Bundle();
+              fragmentBundle.putString("key", key);
+
+              messagesFragment.setArguments(bundle);
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.container, messagesFragment).commit();
+          }).show();
+          messagesSnackbarShownList.add(key);
+        }
       }
     }
   };
@@ -287,5 +308,9 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     } else {
       super.onBackPressed();
     }
+  }
+
+  public void clearSnackbarShownList(String key) {
+    messagesSnackbarShownList.remove(key);
   }
 }

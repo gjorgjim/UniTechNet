@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,8 @@ public class MessagesFragment extends Fragment {
 
   private MessagesAdapter adapter;
 
+  private String key = null;
+
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
@@ -61,14 +64,26 @@ public class MessagesFragment extends Fragment {
     messagesLv = view.findViewById(R.id.messagesLv);
     progressBar = view.findViewById(R.id.progressBar);
 
+    Bundle args = getArguments();
+    if (args != null) {
+      key = args.getString("key");
+    }
+
     messagingService.getChat(new ChatCallback() {
       @Override
       public void onSuccess(HashMap<String, Chat> chatHashMap) {
-        progressBar.setVisibility(View.GONE);
-        adapter = new MessagesAdapter(getContext(), R.layout.adapter_messages, chatHashMap);
-        messagesLv.setAdapter(adapter);
-        messagesLv.setVisibility(View.VISIBLE);
-        messagingService.removeChatListener();
+        if(TextUtils.isEmpty(key)) {
+          progressBar.setVisibility(View.GONE);
+          adapter = new MessagesAdapter(getContext(), R.layout.adapter_messages, chatHashMap);
+          messagesLv.setAdapter(adapter);
+          messagesLv.setVisibility(View.VISIBLE);
+          messagingService.removeChatListener();
+        } else {
+          fragmentChangingListener.changeToUserMessagingFragment(
+            chatHashMap.get(key),
+            key
+          );
+        }
       }
 
       @Override

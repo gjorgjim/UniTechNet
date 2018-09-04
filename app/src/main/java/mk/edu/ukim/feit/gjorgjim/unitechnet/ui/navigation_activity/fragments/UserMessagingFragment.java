@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +32,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.MessagingService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Chat;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Message;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.NavigationActivity;
 
 /**
  * Created by gjmarkov on 13.8.2018.
@@ -118,8 +118,12 @@ public class UserMessagingFragment extends Fragment {
           setMessage(messages.get(i));
         }
         lastMessageDate = messages.get(0).getSentDate();
+
         messagingService.removeListenerFromLastMessages(numberOfMessages, key);
+        ((NavigationActivity) getActivity()).clearSnackbarShownList(key);
+
         scrollDown();
+
         progressBar.setVisibility(View.GONE);
         scrollView.setVisibility(View.VISIBLE);
       }
