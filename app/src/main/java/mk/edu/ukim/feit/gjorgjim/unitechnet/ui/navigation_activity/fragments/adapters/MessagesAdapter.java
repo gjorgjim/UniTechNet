@@ -119,4 +119,9 @@ public class MessagesAdapter extends ArrayAdapter {
       return String.format(new Locale("en"),"%d", n);
     }
   }
+
+  public void updateLastMessage(String key, Message lastMessage) {
+    int position = chatKeys.indexOf(key);
+    chatList.get(position).setLastMessage(lastMessage);
+  }
 }

@@ -1,5 +1,7 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.firebase;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 
 import com.google.firebase.database.ChildEventListener;
@@ -16,6 +18,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ChatCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.MessageCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Chat;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Message;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.services.MessagingIntentService;
 
 /**
  * Created by gjmarkov on 08.8.2018.
@@ -177,5 +180,16 @@ public class MessagingService {
 
     lastMsgRef.removeValue();
     lastMsgRef.setValue(message);
+  }
+
+  private Intent messagingIntent;
+
+  public void startBackgroundServiceForMessages(Activity activity) {
+    messagingIntent = new Intent(activity, MessagingIntentService.class);
+    activity.startService(messagingIntent);
+  }
+
+  public void stopBackgroundServiceForMessages(Activity activity) {
+    activity.stopService(messagingIntent);
   }
 }

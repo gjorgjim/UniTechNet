@@ -14,10 +14,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.esafirm.imagepicker.features.ImagePicker;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,14 +35,18 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ProfileChangeCallback;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ProfilePictureCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.MessagingService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Education;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.WaitingDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dialogs.EditUserDetailsDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dialogs.NewEducationDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dialogs.NewExperienceDialog;
@@ -46,8 +58,11 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.vie
 
 public class ProfileFragment extends Fragment{
 
+  public static final int ImagePickerRequestCode = 0x000123;
+
   private UserService userService;
   private AuthenticationService authenticationService;
+  private MessagingService messagingService;
 
   private AppCompatTextView nameTv;
   private AppCompatTextView titleTv;
@@ -61,6 +76,7 @@ public class ProfileFragment extends Fragment{
   private LinearLayout experiencesLl;
   private LinearLayout educationsLl;
   private AppCompatImageView editDetailsIv;
+  private AppCompatTextView changeProfilePictureTv;
 
   private HashMap<String, ProfileItemView<Course>> courseViews;
   private HashMap<String, ProfileItemView<Experience>> experienceViews;
@@ -78,6 +94,7 @@ public class ProfileFragment extends Fragment{
   public ProfileFragment() {
     userService = UserService.getInstance();
     authenticationService = AuthenticationService.getInstance();
+    messagingService = MessagingService.getInstance();
     listenForUserDetailsChanged();
   }
 
@@ -105,12 +122,14 @@ public class ProfileFragment extends Fragment{
     experiencesLl = view.findViewById(R.id.experiencesLl);
     educationsLl = view.findViewById(R.id.educationsLl);
     editDetailsIv = view.findViewById(R.id.editIv);
+    changeProfilePictureTv = view.findViewById(R.id.changeProfilePictureTv);
 
     courseViews = new HashMap<>();
     experienceViews = new HashMap<>();
     educationViews = new HashMap<>();
 
     profilePictureIv.setOnClickListener(v -> {
+      messagingService.stopBackgroundServiceForMessages(getActivity());
       authenticationService.signOut(getActivity());
     });
 
@@ -135,6 +154,13 @@ public class ProfileFragment extends Fragment{
       userDetailsDialog.show();
     });
 
+    changeProfilePictureTv.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        chooseImage();
+      }
+    });
+
     setUserUI(userService.getCurrentUser());
 
     return view;
@@ -150,7 +176,7 @@ public class ProfileFragment extends Fragment{
       "%d/%d/%d", birthday.getDay(), birthday.getMonth(), birthday.getYear())
     );
 
-    profilePictureIv.setImageBitmap(userService.getBitmapFromMemCache("profilePicture"));
+    profilePictureIv.setImageBitmap(userService.getBitmapFromMemCache());
 
     if(user.getCourses() != null) {
       for(Map.Entry<String, Course> current : user.getCourses().entrySet()) {
@@ -227,40 +253,33 @@ public class ProfileFragment extends Fragment{
     });
   }
 
-  public void setStartDateExperience(int year, int month, int day) {
-    experienceDialog.setStartDate(year, month, day);
+  private void chooseImage() {
+    ImagePicker.create(getActivity())
+      .folderMode(true)
+      .limit(1)
+      .theme(R.style.AppTheme)
+      .start(ImagePickerRequestCode);
   }
 
-  public void setEndDateExperience(int year, int month, int day) {
-    experienceDialog.setEndDate(year, month, day);
-  }
+  public void changeProfilePicture(Bitmap bitmap){
+    WaitingDialog waitingDialog = new WaitingDialog(getActivity());
+    waitingDialog.showDialog("Changing profile picture");
 
-  public void setStartDateEducation(int year, int month, int day) {
-    educationDialog.setStartDate(year, month, day);
-  }
+    userService.saveProfilePicture(bitmap, new ProfilePictureCallback() {
+      @Override
+      public void onSuccess() {
+        Glide.with(getActivity())
+          .load(bitmap)
+          .into(profilePictureIv);
+        waitingDialog.hideDialog();
+      }
 
-  public void setEndDateEducation(int year, int month, int day) {
-    educationDialog.setEndDate(year, month, day);
-  }
-
-  public void setBirthDayDetails(int year, int month, int day) {
-    userDetailsDialog.setBirthday(year, month, day);
-  }
-
-  public void setStartDateEditEducation(int year, int month, int day) {
-    currentEducation.setStartDateEducation(year, month, day);
-  }
-
-  public void setEndDateEditEducation(int year, int month, int day) {
-    currentEducation.setEndDateEducation(year, month, day);
-  }
-
-  public void setStartDateEditExperience(int year, int month, int day) {
-    currentExperience.setStartDateExperience(year, month, day);
-  }
-
-  public void setEndDateEditExperience(int year, int month, int day) {
-    currentExperience.setEndDateExperience(year, month, day);
+      @Override
+      public void onFailure(String message) {
+        waitingDialog.hideDialog();
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+      }
+    });
   }
 
   public void addCourse(String key, Course course) {

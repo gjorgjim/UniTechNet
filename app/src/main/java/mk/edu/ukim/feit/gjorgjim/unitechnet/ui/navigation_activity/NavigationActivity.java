@@ -1,6 +1,10 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,12 +13,14 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.model.Image;
@@ -25,9 +31,11 @@ import java.io.IOException;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.MessagingService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Chat;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.services.MessagingIntentService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.WaitingDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.CoursesFragment;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.EditProfileFragment;
@@ -58,6 +66,8 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
   private Toolbar toolbar;
   private MaterialSearchView searchView;
   private FloatingActionButton fab;
+
+  private MessagingService messagingService;
 
   private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -107,6 +117,9 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     setContentView(R.layout.activity_navigation);
 
     userService = UserService.getInstance();
+    messagingService = MessagingService.getInstance();
+
+    messagingService.startBackgroundServiceForMessages(this);
 
     waitingDialog = new WaitingDialog(NavigationActivity.this);
 
@@ -146,8 +159,18 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
       @Override
       public void onFailure(String message) {
+        coursesFragment = new CoursesFragment();
+        feedFragment = FeedFragment.getInstance();
+        notificationsFragment = NotificationsFragment.getInstance();
+        messagesFragment = new MessagesFragment();
+        profileFragment = new ProfileFragment();
+
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        navigation.setSelectedItemId(R.id.navigation_feed);
         hideWaitingDialog();
         userService.removeSignInListener();
+        Toast.makeText(NavigationActivity.this, message, Toast.LENGTH_SHORT).show();
       }
     });
   }
@@ -201,11 +224,17 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
+    Log.d(LOG_TAG, "requestCode: " + requestCode);
+    if(resultCode == Activity.RESULT_OK && (requestCode == ProfileFragment.ImagePickerRequestCode || requestCode == EditProfileFragment.ImagePickerRequestCode)) {
       Image image = ImagePicker.getFirstImageOrNull(data);
+      Log.d(LOG_TAG, "requestCode: " + requestCode);
       try {
         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.fromFile(new File(image.getPath())));
-        editProfileFragment.setNewProfilePicture(bitmap);
+        if(requestCode == EditProfileFragment.ImagePickerRequestCode) {
+          editProfileFragment.setNewProfilePicture(bitmap);
+        } else if(requestCode == ProfileFragment.ImagePickerRequestCode) {
+          profileFragment.changeProfilePicture(bitmap);
+        }
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -219,6 +248,26 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
   private void hideWaitingDialog(){
     waitingDialog.hideDialog();
+  }
+
+  private BroadcastReceiver messagesReceiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      //TODO: Handle new message when app is running
+    }
+  };
+
+  @Override
+  protected void onResume() {
+    IntentFilter intentFilter = new IntentFilter(MessagingIntentService.ACTION);
+    LocalBroadcastManager.getInstance(this).registerReceiver(messagesReceiver, intentFilter);
+    super.onResume();
+  }
+
+  @Override
+  protected void onDestroy() {
+    LocalBroadcastManager.getInstance(this).unregisterReceiver(messagesReceiver);
+    super.onDestroy();
   }
 
   @Override

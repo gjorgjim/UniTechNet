@@ -1,5 +1,6 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging;
 
+import java.io.Serializable;
 import java.util.Locale;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
@@ -8,7 +9,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
  * Created by gjmarkov on 08.8.2018.
  */
 
-public class Message {
+public class Message implements Serializable{
   private String senderId;
   private String value;
   private Date sentDate;
