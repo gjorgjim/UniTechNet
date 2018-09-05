@@ -41,6 +41,18 @@
             android:src="@drawable/profile"/>
 
           <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/changeProfilePictureTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            card_view:layout_constraintTop_toBottomOf="@id/profilePictureIv"
+            card_view:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="48dp"
+            style="@style/SecondaryTextStyle"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/change_profile_picture"/>
+
+          <android.support.v7.widget.AppCompatTextView
             android:id="@+id/nameTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

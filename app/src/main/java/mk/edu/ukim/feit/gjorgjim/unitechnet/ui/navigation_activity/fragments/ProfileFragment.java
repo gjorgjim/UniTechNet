@@ -176,7 +176,11 @@ public class ProfileFragment extends Fragment{
       "%d/%d/%d", birthday.getDay(), birthday.getMonth(), birthday.getYear())
     );
 
-    profilePictureIv.setImageBitmap(userService.getBitmapFromMemCache());
+    Bitmap profilePicture = userService.getProfilePicture();
+
+    Glide.with(getActivity())
+      .load(profilePicture)
+      .into(profilePictureIv);
 
     if(user.getCourses() != null) {
       for(Map.Entry<String, Course> current : user.getCourses().entrySet()) {
@@ -262,6 +266,7 @@ public class ProfileFragment extends Fragment{
   }
 
   public void changeProfilePicture(Bitmap bitmap){
+    Log.d(ProfileFragment.class.getSimpleName(), "changeProfilePicture");
     WaitingDialog waitingDialog = new WaitingDialog(getActivity());
     waitingDialog.showDialog("Changing profile picture");
 

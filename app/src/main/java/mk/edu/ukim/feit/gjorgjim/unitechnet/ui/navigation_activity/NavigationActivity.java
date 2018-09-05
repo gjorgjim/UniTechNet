@@ -72,41 +72,50 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
   private MaterialSearchView searchView;
   private FloatingActionButton fab;
 
+  private boolean isFirstLogin = false;
+  
+  private android.support.v4.app.FragmentManager fragmentManager;
+
   private List<String> messagesSnackbarShownList;
 
   private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-      FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+      FragmentTransaction transaction = fragmentManager.beginTransaction();
       transaction.setCustomAnimations(R.animator.enter, R.animator.exit);
       switch (item.getItemId()) {
         case R.id.navigation_courses:
-          transaction.replace(R.id.container, coursesFragment).commitAllowingStateLoss();
+          transaction.replace(R.id.container, coursesFragment).commit();
           if(fab.isShown()) {
             fab.hide();
           }
           return true;
         case R.id.navigation_messages:
-          transaction.replace(R.id.container, messagesFragment).commitAllowingStateLoss();
+          transaction.replace(R.id.container, messagesFragment).commit();
           if(fab.isShown()) {
             fab.hide();
           }
           return true;
         case R.id.navigation_feed:
-          transaction.replace(R.id.container, feedFragment).commitAllowingStateLoss();
+          transaction.replace(R.id.container, feedFragment).commit();
           if(!fab.isShown()) {
             fab.show();
           }
           return true;
         case R.id.navigation_notification:
-          transaction.replace(R.id.container, notificationsFragment).commitAllowingStateLoss();
+          transaction.replace(R.id.container, notificationsFragment).commit();
           if(fab.isShown()) {
             fab.hide();
           }
           return true;
         case R.id.navigation_profile:
-          transaction.replace(R.id.container, profileFragment).commitAllowingStateLoss();
+          if(isFirstLogin) {
+            transaction.replace(R.id.container, editProfileFragment).commit();
+            isFirstLogin = false;
+          } else {
+            transaction.replace(R.id.container, profileFragment).commit();
+          }
           if(fab.isShown()) {
             fab.hide();
           }
@@ -124,6 +133,8 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     userService = UserService.getInstance();
     messagingService = MessagingService.getInstance();
 
+    fragmentManager = getSupportFragmentManager();
+    
     waitingDialog = new WaitingDialog(NavigationActivity.this);
 
     navigation = findViewById(R.id.navigation);
@@ -141,22 +152,25 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
       @Override
       public void onSuccess(User user) {
         hideWaitingDialog();
+
+        coursesFragment = new CoursesFragment();
+        feedFragment = FeedFragment.getInstance();
+        notificationsFragment = NotificationsFragment.getInstance();
+        messagesFragment = new MessagesFragment();
+        profileFragment = new ProfileFragment();
+
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
         if(user == null){
           Log.d(LOG_TAG, "User is null");
           editProfileFragment = new EditProfileFragment();
+
+          isFirstLogin = true;
+
           navigation.setSelectedItemId(R.id.navigation_profile);
-          FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-          transaction.replace(R.id.container, editProfileFragment).commit();
+
           fab.hide();
         } else {
-          coursesFragment = new CoursesFragment();
-          feedFragment = FeedFragment.getInstance();
-          notificationsFragment = NotificationsFragment.getInstance();
-          messagesFragment = new MessagesFragment();
-          profileFragment = new ProfileFragment();
-
-          navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
           navigation.setSelectedItemId(R.id.navigation_feed);
         }
         userService.removeSignInListener();
@@ -191,9 +205,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
   @Override
   public void changeToUserFragment() {
-    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-    profileFragment = new ProfileFragment();
-    transaction.replace(R.id.container, profileFragment).commit();
+    navigation.setSelectedItemId(R.id.navigation_profile);
   }
 
   @Override
@@ -206,7 +218,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     getSupportActionBar().hide();
     navigation.setVisibility(View.GONE);
 
-    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    FragmentTransaction transaction = fragmentManager.beginTransaction();
     userMessagingFragment = new UserMessagingFragment();
 
     Bundle bundle = new Bundle();
@@ -223,7 +235,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     getSupportActionBar().show();
     navigation.setVisibility(View.VISIBLE);
 
-    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    FragmentTransaction transaction = fragmentManager.beginTransaction();
     messagesFragment = new MessagesFragment();
     transaction.replace(R.id.container, messagesFragment).commit();
   }

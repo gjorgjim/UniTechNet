@@ -59,6 +59,9 @@
   <string name="user_name_placeholder">Kristina Aleksieska</string>
   <string name="you_last_message">You</string>
   <string name="today_text_view">Today</string>
+  <string name="channel_name">Notification Channel</string>
+  <string name="channel_description">Channel for message notifications</string>
+  <string name="edit_profile_placeholder">Edit Profile</string>
 
   <string-array name="gender_array">
     <item>Not Specified</item>

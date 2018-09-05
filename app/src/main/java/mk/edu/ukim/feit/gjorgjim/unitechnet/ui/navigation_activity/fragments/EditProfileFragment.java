@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.esafirm.imagepicker.features.ImagePicker;
@@ -34,6 +35,7 @@ import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ProfilePictureCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
@@ -49,6 +51,8 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.WaitingDialog;
 public class EditProfileFragment extends Fragment {
 
   private static final String TAG = "EditProfileFragment";
+
+  public static final int ImagePickerRequestCode = 0x000234;
 
   public EditProfileFragment() {
     authenticationService = AuthenticationService.getInstance();
@@ -79,13 +83,11 @@ public class EditProfileFragment extends Fragment {
 
   private User user;
 
-  private DatePickerDialog.OnDateSetListener listener;
   private WaitingDialog waitingDialog;
 
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
-    listener = (DatePickerDialog.OnDateSetListener) context;
     fragmentChangingListener = (FragmentChangingListener) context;
   }
 
@@ -185,8 +187,8 @@ public class EditProfileFragment extends Fragment {
     });
 
     saveBtn.setOnClickListener(v -> {
-      waitingDialog.showDialog("Saving user details...");
       if(validateInput()) {
+        waitingDialog.showDialog("Saving user details...");
         user.setFirstName(firstNameEt.getText().toString().trim());
         user.setLastName(lastNameEt.getText().toString().trim());
         user.setUsername(usernameEt.getText().toString().trim());
@@ -198,24 +200,22 @@ public class EditProfileFragment extends Fragment {
 
         userService.saveUser(user);
 
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference imageReference = storage
-          .getReference()
-          .child("images")
-          .child(authenticationService.getCurrentUser().getUid())
-          .child("pp.jpg");
-
         profilePictureIv.setDrawingCacheEnabled(true);
         profilePictureIv.buildDrawingCache();
         Bitmap bitmap = profilePictureIv.getDrawingCache();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
 
-        UploadTask uploadTask = imageReference.putBytes(data);
-        uploadTask.addOnSuccessListener((UploadTask.TaskSnapshot taskSnapshot) -> {
-          waitingDialog.hideDialog();
-          fragmentChangingListener.changeToUserFragment();
+        userService.saveProfilePicture(bitmap, new ProfilePictureCallback() {
+          @Override
+          public void onSuccess() {
+            waitingDialog.hideDialog();
+            fragmentChangingListener.changeToUserFragment();
+          }
+
+          @Override
+          public void onFailure(String message) {
+            waitingDialog.hideDialog();
+            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+          }
         });
       }
     });
@@ -228,7 +228,6 @@ public class EditProfileFragment extends Fragment {
   }
 
   public void setNewProfilePicture(Bitmap image) {
-    Log.d(TAG, "setNewProfilePicture called");
     Glide
       .with(getActivity())
       .load(image)
@@ -248,7 +247,7 @@ public class EditProfileFragment extends Fragment {
     ImagePicker.create(getActivity())
       .folderMode(true)
       .limit(1)
-      .start();
+      .theme(R.style.AppTheme)
+      .start(ImagePickerRequestCode);
   }
-
 }

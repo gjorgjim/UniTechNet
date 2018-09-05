@@ -2,23 +2,33 @@ package mk.edu.ukim.feit.gjorgjim.unitechnet.firebase;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.LruCache;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ProfileChangeCallback;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ProfilePictureCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Education;
@@ -41,6 +51,8 @@ public class UserService {
 
   private LruCache mMemoryCache;
 
+  private Bitmap profilePicture;
+
   private static final UserService ourInstance = new UserService();
 
   public static UserService getInstance() {
@@ -51,6 +63,7 @@ public class UserService {
     databaseService = DatabaseService.getInstance();
     authenticationService = AuthenticationService.getInstance();
     currentUser = null;
+    profilePicture = null;
   }
 
   public void saveUser(User user) {
@@ -70,7 +83,17 @@ public class UserService {
       } else {
         currentUser = dataSnapshot.getValue(User.class);
 
-        cacheProfilePicture(userCallback);
+        getBitmapFromStorage(new DatabaseCallback<Bitmap>() {
+          @Override
+          public void onSuccess(Bitmap bitmap) {
+            cacheProfilePicture(bitmap, userCallback);
+          }
+
+          @Override
+          public void onFailure(String message) {
+            userCallback.onFailure(message);
+          }
+        });
       }
     }
 
@@ -95,7 +118,61 @@ public class UserService {
       .removeEventListener(signInValueEventListener);
   }
 
-  private void cacheProfilePicture(DatabaseCallback<User> userCallback) {
+  public void saveProfilePicture(Bitmap bitmap, ProfilePictureCallback profilePictureCallback) {
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference imageReference = storage
+      .getReference()
+      .child("images")
+      .child(authenticationService.getCurrentUser().getUid())
+      .child("pp.jpg");
+
+    imageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+      @Override
+      public void onSuccess(Void aVoid) {
+        saveBitmapInStorage(imageReference, bitmap, profilePictureCallback);
+      }
+    }).addOnFailureListener(new OnFailureListener() {
+      @Override
+      public void onFailure(@NonNull Exception e) {
+        if(((StorageException) e).getErrorCode() == StorageException.ERROR_OBJECT_NOT_FOUND) {
+          saveBitmapInStorage(imageReference, bitmap, profilePictureCallback);
+        } else {
+          profilePictureCallback.onFailure(e.getMessage());
+        }
+      }
+    });
+  }
+
+  private void saveBitmapInStorage(StorageReference imageReference, Bitmap bitmap, ProfilePictureCallback profilePictureCallback){
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+    byte[] data = baos.toByteArray();
+
+    UploadTask uploadTask = imageReference.putBytes(data);
+    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+      @Override
+      public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+        cacheProfilePicture(bitmap, new DatabaseCallback<User>() {
+          @Override
+          public void onSuccess(User user) {
+            profilePictureCallback.onSuccess();
+          }
+
+          @Override
+          public void onFailure(String message) {
+            profilePictureCallback.onFailure(message);
+          }
+        });
+      }
+    }).addOnFailureListener(new OnFailureListener() {
+      @Override
+      public void onFailure(@NonNull Exception e) {
+        profilePictureCallback.onFailure(e.getMessage());
+      }
+    });
+  }
+
+  private void getBitmapFromStorage(DatabaseCallback<Bitmap> bitmapDatabaseCallback) {
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference imageReference = storage
       .getReference()
@@ -105,36 +182,61 @@ public class UserService {
 
     try {
       final File localFile = File.createTempFile("images", "jpg");
-      imageReference.getFile(localFile).addOnSuccessListener(taskSnapshot -> {
-        Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-
-        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-        final int cacheSize = maxMemory / 8;
-
-        mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
-          @Override
-          protected int sizeOf(String key, Bitmap bitmap) {
-            return bitmap.getByteCount() / 1024;
-          }
-        };
-
-        addBitmapToMemoryCache("profilePicture", bitmap);
-
-        userCallback.onSuccess(currentUser);
-      }).addOnFailureListener(Throwable::printStackTrace);
-    } catch (IOException e ) {
-      e.printStackTrace();
+      imageReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+        @Override
+        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+          bitmapDatabaseCallback.onSuccess(BitmapFactory.decodeFile(localFile.getAbsolutePath()));
+        }
+      }).addOnFailureListener(new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception e) {
+          bitmapDatabaseCallback.onFailure(e.getMessage());
+        }
+      });
+    } catch (IOException e) {
+      bitmapDatabaseCallback.onFailure(e.getMessage());
     }
   }
 
-  public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
-    if (getBitmapFromMemCache(key) == null) {
+  private void cacheProfilePicture(Bitmap bitmap, DatabaseCallback<User> userCallback) {
+    initializeMemoryCache();
+
+    addBitmapToMemoryCache(String.format("%s_pp", authenticationService.getCurrentUser().getUid()), bitmap);
+    profilePicture = bitmap;
+
+    userCallback.onSuccess(currentUser);
+  }
+
+  private void initializeMemoryCache(){
+    final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+    final int cacheSize = maxMemory / 8;
+
+    mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
+      @Override
+      protected int sizeOf(String key, Bitmap bitmap) {
+        return bitmap.getByteCount() / 1024;
+      }
+    };
+  }
+
+  private void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+    if (getBitmapFromMemCache() == null) {
+      mMemoryCache.put(key, bitmap);
+    } else {
+      mMemoryCache.remove(key);
       mMemoryCache.put(key, bitmap);
     }
   }
 
-  public Bitmap getBitmapFromMemCache(String key) {
-    return (Bitmap) mMemoryCache.get(key);
+  public Bitmap getProfilePicture() {
+    if(profilePicture == null) {
+      profilePicture = getBitmapFromMemCache();
+    }
+    return profilePicture;
+  }
+
+  public Bitmap getBitmapFromMemCache() {
+      return (Bitmap) mMemoryCache.get(String.format("%s_pp", authenticationService.getCurrentUser().getUid()));
   }
 
   private ProfileChangeCallback profileChangeCallback;
