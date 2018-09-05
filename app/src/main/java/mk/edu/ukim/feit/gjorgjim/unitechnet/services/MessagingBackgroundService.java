@@ -59,7 +59,9 @@ public class MessagingBackgroundService extends Service {
             LocalBroadcastManager.getInstance(MessagingBackgroundService.this).sendBroadcast(broadcastIntent);
           } else {
             notificationCenter.sentMessageNotification(
-              String.format("%s %s has sent you a message", currentChat.getFirstName(), currentChat.getLastName()));
+              String.format("%s %s has sent you a message", currentChat.getFirstName(), currentChat.getLastName()),
+              data.getKey()
+            );
           }
           now = Date.getDate();
         }

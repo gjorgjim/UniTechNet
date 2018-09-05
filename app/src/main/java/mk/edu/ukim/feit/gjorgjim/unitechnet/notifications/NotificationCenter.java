@@ -2,13 +2,16 @@ package mk.edu.ukim.feit.gjorgjim.unitechnet.notifications;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.NavigationActivity;
 
 /**
  * Created by gjmarkov on 04.9.2018.
@@ -41,16 +44,27 @@ public class NotificationCenter {
     createNotificationChannel();
   }
 
-  public void sentMessageNotification(String message) {
+  public void sentMessageNotification(String message, String key) {
     if(isNotificationVisible()) {
       return;
     }
 
+    Intent intent = new Intent(context, NavigationActivity.class);
+    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+    Bundle bundle = new Bundle();
+    bundle.putString("key", key);
+
+    intent.putExtra("info", bundle);
+
+    PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
       .setSmallIcon(R.drawable.logo_android_v2)
-      .setContentTitle("New Message")
+      .setContentTitle("UniTechNet")
       .setContentText(message)
       .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+      .setContentIntent(pendingIntent)
       .setAutoCancel(true);
 
     notificationManager.notify(notificationId, builder.build());

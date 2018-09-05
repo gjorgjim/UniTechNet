@@ -373,9 +373,9 @@ public class UserMessagingFragment extends Fragment {
   }
 
   @Override
-  public void onDestroy() {
+  public void onStop() {
     messagingService.stopListeningForNewMessages(key);
     messagingService.startBackgroundServiceForMessages(getActivity());
-    super.onDestroy();
+    super.onStop();
   }
 }

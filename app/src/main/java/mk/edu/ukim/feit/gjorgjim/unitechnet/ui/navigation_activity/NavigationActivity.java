@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -73,6 +74,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
   private FloatingActionButton fab;
 
   private boolean isFirstLogin = false;
+  private String startedFromNotificationKey = null;
   
   private android.support.v4.app.FragmentManager fragmentManager;
 
@@ -146,6 +148,13 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
     setSupportActionBar(toolbar);
 
+    Bundle bundle = getIntent().getBundleExtra("info");
+    if(bundle != null) {
+      if(bundle.get("key") != null) {
+        startedFromNotificationKey = bundle.getString("key");
+      }
+    }
+
     showWaitingDialog("Fetching your data...");
 
     userService.isFirstSignIn(new DatabaseCallback<User>() {
@@ -171,6 +180,16 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
           fab.hide();
         } else {
+          if(!TextUtils.isEmpty(startedFromNotificationKey)) {
+            messagesFragment = new MessagesFragment();
+
+            Bundle fragmentBundle = new Bundle();
+            fragmentBundle.putString("key", startedFromNotificationKey);
+
+            messagesFragment.setArguments(bundle);
+
+            navigation.setSelectedItemId(R.id.navigation_messages);
+          }
           navigation.setSelectedItemId(R.id.navigation_feed);
         }
         userService.removeSignInListener();
@@ -235,9 +254,9 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     getSupportActionBar().show();
     navigation.setVisibility(View.VISIBLE);
 
-    FragmentTransaction transaction = fragmentManager.beginTransaction();
     messagesFragment = new MessagesFragment();
-    transaction.replace(R.id.container, messagesFragment).commit();
+
+    navigation.setSelectedItemId(R.id.navigation_messages);
   }
 
   @Override
