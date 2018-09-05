@@ -39,7 +39,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Chat;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Message;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.services.MessagingIntentService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.services.MessagingBackgroundService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.WaitingDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.CoursesFragment;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.EditProfileFragment;
@@ -300,7 +300,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
   @Override
   protected void onResume() {
-    IntentFilter intentFilter = new IntentFilter(MessagingIntentService.ACTION);
+    IntentFilter intentFilter = new IntentFilter(MessagingBackgroundService.ACTION);
     LocalBroadcastManager.getInstance(this).registerReceiver(messagesReceiver, intentFilter);
     super.onResume();
   }

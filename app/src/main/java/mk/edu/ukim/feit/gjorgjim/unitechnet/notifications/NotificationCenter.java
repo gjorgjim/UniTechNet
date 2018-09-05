@@ -2,22 +2,21 @@ package mk.edu.ukim.feit.gjorgjim.unitechnet.notifications;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.NavigationActivity;
 
 /**
  * Created by gjmarkov on 04.9.2018.
  */
 
 public class NotificationCenter {
+
+  public static final String LOG_TAG  = NotificationCenter.class.getSimpleName();
 
   private static final String CHANNEL_ID = "MessageNotification";
 
@@ -69,6 +68,8 @@ public class NotificationCenter {
       // or other notification behaviors after this
       notificationManager = context.getSystemService(NotificationManager.class);
       notificationManager.createNotificationChannel(channel);
+    } else {
+      notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
   }
 

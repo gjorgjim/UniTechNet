@@ -129,7 +129,7 @@ public class Date implements Serializable{
     Date date = new Date();
 
     Calendar calendar = Calendar.getInstance();
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm/dd/yyyy/hh/mm/ss", new Locale("en"));
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy/hh/mm/ss", new Locale("en"));
     String[] stringDate = simpleDateFormat.format(calendar.getTime()).split("/");
     date.setMonth(Integer.parseInt(stringDate[0]));
     date.setDay(Integer.parseInt(stringDate[1]));
@@ -143,6 +143,7 @@ public class Date implements Serializable{
 
   @Override
   public String toString() {
-    return "Date{" + "hour=" + hour + ", minute=" + minute + ", second=" + second + '}';
+    return "Date{" + "year=" + year + ", month=" + month + ", day=" + day + ", hour=" + hour + ", minute=" + minute
+      + ", second=" + second + '}';
   }
 }
