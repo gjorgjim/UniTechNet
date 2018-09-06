@@ -1,10 +1,10 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,8 +33,16 @@ public class CoursesFragment extends Fragment {
 
   private CourseService courseService;
 
+  private FragmentChangingListener fragmentChangingListener;
+
   public CoursesFragment() {
     courseService = CourseService.getInstance();
+  }
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    fragmentChangingListener = (FragmentChangingListener) context;
   }
 
   @Nullable
@@ -54,8 +62,7 @@ public class CoursesFragment extends Fragment {
         courseGridView.setAdapter(adapter);
 
         courseGridView.setOnItemClickListener((parent, view1, position, id) -> {
-          CourseDialog dialog = new CourseDialog(getContext(), list.get(position), CoursesFragment.this);
-          dialog.show();
+          fragmentChangingListener.changeToCourseViewFragment(list.get(position));
         });
 
         progressBar.setVisibility(View.GONE);

@@ -51,8 +51,8 @@
   <string name="subscribe_button">Subscribe</string>
   <string name="unsubscribe_button">Unsubscribe</string>
   <string name="subscribed_placeholder">subscribed</string>
-  <string name="subscribed_users_placeholder">Subscribed users</string>
-  <string name="solved_problems_placeholder">Solved problems</string>
+  <string name="subscribed_users_placeholder">Subscribed users:</string>
+  <string name="solved_problems_placeholder">Solved problems:</string>
   <string name="username_msg_placeholder">Kristina Aleksieska</string>
   <string name="last_message_placeholder">Koga ke diplomirame?</string>
   <string name="last_message_time_placeholder">08.08 12:17</string>
@@ -62,6 +62,14 @@
   <string name="channel_name">Notification Channel</string>
   <string name="channel_description">Channel for message notifications</string>
   <string name="edit_profile_placeholder">Edit Profile</string>
+  <string name="problem_name_placeholder">Omitting the second expression when using the if-else shorthand</string>
+  <string name="problem_description_placeholder">Can I write the \'if else\' shorthand without the else? var x=1; x==2 ? dosomething() : doNothingButContinueCode(); I\'ve noticed putting null for the else works (but I have no idea why or if that\'s a good idea).</string>
+  <string name="problem_author_placeholder">Posted by:</string>
+  <string name="problem_date_placeholder">06.08.2018</string>
+  <string name="solved_problems">Solved problems:</string>
+  <string name="unsolved_problems">Unsolved problems:</string>
+  <string name="empty_solved_problems">There are no solved problems.</string>
+  <string name="empty_unsolved_problems">There are no unsolved problems.</string>
 
   <string-array name="gender_array">
     <item>Not Specified</item>

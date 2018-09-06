@@ -1,8 +1,9 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.models.course;
 
-import java.util.Date;
+
 import java.util.HashMap;
 
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 
 /**

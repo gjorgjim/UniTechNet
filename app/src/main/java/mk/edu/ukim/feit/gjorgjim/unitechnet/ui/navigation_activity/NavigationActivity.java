@@ -37,11 +37,13 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.MessagingService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Chat;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Message;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.services.MessagingBackgroundService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.WaitingDialog;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.CourseViewFragment;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.CoursesFragment;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.EditProfileFragment;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.FeedFragment;
@@ -65,6 +67,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
   private ProfileFragment profileFragment = null;
   private EditProfileFragment editProfileFragment;
   private UserMessagingFragment userMessagingFragment;
+  private CourseViewFragment courseViewFragment;
 
   private WaitingDialog waitingDialog;
 
@@ -147,6 +150,20 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     messagesSnackbarShownList = new ArrayList<>();
 
     setSupportActionBar(toolbar);
+
+    toolbar.setLogo(R.drawable.logo_android_v2);
+
+    searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+      @Override
+      public void onSearchViewShown() {
+        toolbar.setLogo(null);
+      }
+
+      @Override
+      public void onSearchViewClosed() {
+        toolbar.setLogo(R.drawable.logo_android_v2);
+      }
+    });
 
     Bundle bundle = getIntent().getBundleExtra("info");
     if(bundle != null) {
@@ -260,6 +277,19 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
   }
 
   @Override
+  public void changeToCourseViewFragment(Course course) {
+    courseViewFragment = new CourseViewFragment();
+
+    Bundle bundle = new Bundle();
+    bundle.putSerializable("currentCourse", course);
+
+    courseViewFragment.setArguments(bundle);
+
+    FragmentTransaction transaction = fragmentManager.beginTransaction();
+    transaction.replace(R.id.container, courseViewFragment).commit();
+  }
+
+  @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     Log.d(LOG_TAG, "requestCode: " + requestCode);
     if(resultCode == Activity.RESULT_OK && (requestCode == ProfileFragment.ImagePickerRequestCode || requestCode == EditProfileFragment.ImagePickerRequestCode)) {
@@ -334,6 +364,8 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
   public void onBackPressed() {
     if(userMessagingFragment != null && userMessagingFragment.isVisible()) {
       changeToMessagesFragment();
+    } else if(courseViewFragment != null && courseViewFragment.isVisible()){
+      changeToCoursesFragment();
     } else {
       super.onBackPressed();
     }

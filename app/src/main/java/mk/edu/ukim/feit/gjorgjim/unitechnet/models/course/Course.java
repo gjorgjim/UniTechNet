@@ -1,5 +1,6 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.models.course;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
@@ -9,7 +10,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
  * Created by gjmarkov on 05.7.2018.
  */
 
-public class Course {
+public class Course implements Serializable {
   private String courseId;
   private String name;
   private String description;
