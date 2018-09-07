@@ -119,4 +119,15 @@
     android:background="@color/colorPrimary"
     style="@style/ButtonPrimaryTextStyle"/>
 
+  <android.support.v7.widget.AppCompatTextView
+    android:id="@+id/changePwTv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:layout_below="@id/saveChangesBtn"
+    android:layout_marginTop="16dp"
+    style="@style/SecondaryTextStyle"
+    android:textColor="@color/colorPrimary"
+    android:text="@string/change_password_underlined"/>
+
 </RelativeLayout>

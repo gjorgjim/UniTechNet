@@ -7,7 +7,9 @@ import android.support.annotation.NonNull;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -71,6 +73,36 @@ public class AuthenticationService {
         @Override
         public void onFailure(@NonNull Exception e) {
           callback.onFailure(e.getMessage());
+        }
+      });
+  }
+
+  public void changePassword(String oldPassword, String newPassword, AuthenticationCallback callback) {
+    AuthCredential credential = EmailAuthProvider.getCredential(getCurrentUser().getEmail(), oldPassword);
+
+    getCurrentUser().reauthenticate(credential)
+      .addOnSuccessListener(new OnSuccessListener<Void>() {
+        @Override
+        public void onSuccess(Void aVoid) {
+          getCurrentUser().updatePassword(newPassword)
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+              @Override
+              public void onSuccess(Void aVoid) {
+                callback.onSuccess(null);
+              }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+              @Override
+              public void onFailure(@NonNull Exception e) {
+               callback.onFailure(e.getMessage());
+              }
+            });
+        }
+      })
+      .addOnFailureListener(new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception e) {
+         callback.onFailure(e.getMessage());
         }
       });
   }

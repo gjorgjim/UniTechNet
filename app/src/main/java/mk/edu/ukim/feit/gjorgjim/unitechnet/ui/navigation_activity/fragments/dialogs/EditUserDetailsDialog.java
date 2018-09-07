@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
 
 import com.tsongkha.spinnerdatepicker.DatePicker;
@@ -47,6 +48,7 @@ public class EditUserDetailsDialog extends Dialog {
   private TextInputLayout birthdayIl;
   private AppCompatEditText birthdayEt;
   private AppCompatButton saveDetailsBtn;
+  private AppCompatTextView changePwTv;
 
   private User currentUser;
 
@@ -75,6 +77,7 @@ public class EditUserDetailsDialog extends Dialog {
     birthdayIl = findViewById(R.id.birthdayIl);
     birthdayEt = findViewById(R.id.birthdayEt);
     saveDetailsBtn = findViewById(R.id.saveChangesBtn);
+    changePwTv = findViewById(R.id.changePwTv);
 
     currentUser = userService.getCurrentUser();
     setupUi(currentUser);
@@ -167,6 +170,14 @@ public class EditUserDetailsDialog extends Dialog {
       userService.changeCurrentUserDetails(currentUser);
 
       dismiss();
+    });
+
+    changePwTv.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        ChangePasswordDialog dialog = new ChangePasswordDialog(activity);
+        dialog.show();
+      }
     });
   }
 

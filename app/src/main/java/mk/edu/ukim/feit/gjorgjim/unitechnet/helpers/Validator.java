@@ -77,6 +77,15 @@ public class Validator {
     return true;
   }
 
+  public static boolean validatePassword(AppCompatEditText pw1, AppCompatEditText pw2, TextInputLayout textInputLayout, Activity activity) {
+    if(!pw1.getText().toString().equals(pw2.getText().toString())) {
+      textInputLayout.setError(activity.getString(R.string.passwords_not_match));
+      requestFocus(pw2, activity);
+      return false;
+    }
+    return true;
+  }
+
   private static void requestFocus(View view, Activity activity) {
     if (view.requestFocus()) {
       activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);

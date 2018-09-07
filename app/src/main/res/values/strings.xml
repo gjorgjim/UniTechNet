@@ -8,6 +8,7 @@
   <string name="edit_text_empty_error">This field cannot be empty</string>
   <string name="invalid_email_error">The email address is not valid</string>
   <string name="incorrect_email_or_password">Incorrect email or password</string>
+  <string name="passwords_not_match">Passwords do not match</string>
   <string name="title_activity_navigation">NavigationActivity</string>
   <string name="title_courses">Courses</string>
   <string name="title_feed">Feed</string>
@@ -72,11 +73,18 @@
   <string name="hide_problems">Subscribe to course, to see and answer the problems.</string>
   <string name="forgot_password">Forgot password</string>
   <string name="forgot_password_underlined"><u>Forgot password</u></string>
+  <string name="change_password">Change password</string>
+  <string name="change_password_underlined"><u>Change password</u></string>
+  <string name="old_password_hint">Old password</string>
+  <string name="new_password_hint">New password</string>
+  <string name="repeat_password_hint">Repeat password</string>
   <string name="forgot_password_description">Please enter your email address, and we will sent a password reset email.</string>
   <string name="send_email">Send Email</string>
   <string name="sending_email">Sending email...</string>
+  <string name="changing_password">Changing password...</string>
   <string name="email_sent_success">Email with instructions to reset password has been sent to your email address.</string>
   <string name="try_again">Please try again.</string>
+  <string name="password_changed">Your password was successfully changed.</string>
 
   <string-array name="gender_array">
     <item>Not Specified</item>
