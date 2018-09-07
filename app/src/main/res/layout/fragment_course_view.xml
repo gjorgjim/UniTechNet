@@ -82,6 +82,17 @@
             android:background="@color/colorPrimary"
             android:text="@string/subscribe_button"/>
 
+          <android.support.v4.widget.ContentLoadingProgressBar
+            android:id="@+id/waitingPb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?android:attr/progressBarStyle"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/courseDescriptionTv"
+            android:layout_marginEnd="20dp"
+            android:indeterminate="true"
+            android:indeterminateDrawable="@drawable/progress"/>
+
         </RelativeLayout>
 
       </android.support.v7.widget.CardView>
@@ -100,7 +111,7 @@
       android:text="@string/solved_problems"/>
 
       <LinearLayout
-        android:id="@+id/solvedProblemsLl"
+        android:id="@+id/problemsLl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -108,25 +119,15 @@
       </LinearLayout>
 
       <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/unSolvedProblemsTextTv"
+        android:id="@+id/hideProblemsTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/solvedProblemsLl"
-        android:layout_alignParentStart="true"
-        style="@style/PrimaryTextStyle"
-        android:textStyle="italic"
-        android:textColor="@color/colorPrimary"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/unsolved_problems"/>
-
-      <LinearLayout
-        android:id="@+id/unsolvedProblemsLl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@+id/unSolvedProblemsTextTv">
-      </LinearLayout>
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/solvedProblemsTextTv"
+        style="@style/SecondaryTextStyle"
+        android:layout_marginTop="16dp"
+        android:text="@string/hide_problems"
+        android:textStyle="italic"/>
 
     </RelativeLayout>
 

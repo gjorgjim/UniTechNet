@@ -15,8 +15,7 @@ public class Course implements Serializable {
   private String name;
   private String description;
   private HashMap<String, Boolean> subscribedUsers;
-  private HashMap<String, Problem> solvedProblems;
-  private HashMap<String, Problem> unsolvedProblems;
+  private HashMap<String, Problem> problems;
 
   public Course() {
   }
@@ -53,19 +52,11 @@ public class Course implements Serializable {
     this.subscribedUsers = subscribedUsers;
   }
 
-  public HashMap<String, Problem> getSolvedProblems() {
-    return solvedProblems;
+  public HashMap<String, Problem> getProblems() {
+    return problems;
   }
 
-  public void setSolvedProblems(HashMap<String, Problem> solvedProblems) {
-    this.solvedProblems = solvedProblems;
-  }
-
-  public HashMap<String, Problem> getUnsolvedProblems() {
-    return unsolvedProblems;
-  }
-
-  public void setUnsolvedProblems(HashMap<String, Problem> unsolvedProblems) {
-    this.unsolvedProblems = unsolvedProblems;
+  public void setProblems(HashMap<String, Problem> problems) {
+    this.problems = problems;
   }
 }

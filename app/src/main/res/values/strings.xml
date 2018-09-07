@@ -66,10 +66,10 @@
   <string name="problem_description_placeholder">Can I write the \'if else\' shorthand without the else? var x=1; x==2 ? dosomething() : doNothingButContinueCode(); I\'ve noticed putting null for the else works (but I have no idea why or if that\'s a good idea).</string>
   <string name="problem_author_placeholder">Posted by:</string>
   <string name="problem_date_placeholder">06.08.2018</string>
-  <string name="solved_problems">Solved problems:</string>
-  <string name="unsolved_problems">Unsolved problems:</string>
+  <string name="solved_problems">Problems:</string>
   <string name="empty_solved_problems">There are no solved problems.</string>
   <string name="empty_unsolved_problems">There are no unsolved problems.</string>
+  <string name="hide_problems">Subscribe to course, to see and answer the problems.</string>
 
   <string-array name="gender_array">
     <item>Not Specified</item>

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.Gravity;
@@ -11,17 +12,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.List;
 import java.util.Locale;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ListDatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.CourseService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Problem;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.views.ProblemView;
+
+import static android.view.View.GONE;
 
 /**
  * Created by gjmarkov on 06.9.2018.
@@ -37,8 +42,9 @@ public class CourseViewFragment extends Fragment {
   private AppCompatTextView subscribedUsersTv;
   private AppCompatTextView solvedProblemsTv;
   private AppCompatButton subscribeButton;
-  private LinearLayout solvedProblemsLl;
-  private LinearLayout unsolvedProblemsLl;
+  private LinearLayout problemsLl;
+  private AppCompatTextView hideProblemsTv;
+  private ContentLoadingProgressBar progressBar;
 
   private Course currentCourse;
 
@@ -58,8 +64,9 @@ public class CourseViewFragment extends Fragment {
     subscribedUsersTv = view.findViewById(R.id.subscribedUsersTv);
     solvedProblemsTv = view.findViewById(R.id.solvedProblemsTv);
     subscribeButton = view.findViewById(R.id.subscribeBtn);
-    solvedProblemsLl = view.findViewById(R.id.solvedProblemsLl);
-    unsolvedProblemsLl = view.findViewById(R.id.unsolvedProblemsLl);
+    problemsLl = view.findViewById(R.id.problemsLl);
+    hideProblemsTv = view.findViewById(R.id.hideProblemsTv);
+    progressBar = view.findViewById(R.id.waitingPb);
 
     Bundle bundle = getArguments();
     if(bundle != null) {
@@ -80,55 +87,93 @@ public class CourseViewFragment extends Fragment {
       new Locale("en"),
       "%s %d",
       getString(R.string.solved_problems_placeholder),
-      currentCourse.getSolvedProblems() == null ? 0 : currentCourse.getSolvedProblems().size()
+      currentCourse.getProblems() == null ? 0 : currentCourse.getProblems().size()
     ));
 
     if(courseService.isUserSubscribed(currentCourse, authenticationService.getCurrentUser().getUid())) {
-      subscribeButton.setText(getString(R.string.unsubscribe_button));
-    }
-
-    if(currentCourse.getSolvedProblems() != null) {
-      for(Problem problem : currentCourse.getSolvedProblems().values()) {
-        ProblemView problemView = new ProblemView(getContext(), problem);
-
-        solvedProblemsLl.addView(problemView);
-      }
+      setupSubscribedUser();
     } else {
-      TextView emptySolvedProblems = new TextView(getContext());
-
-      LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-        LinearLayout.LayoutParams.WRAP_CONTENT,
-        LinearLayout.LayoutParams.WRAP_CONTENT
-      );
-
-      lp.gravity = Gravity.CENTER;
-
-      emptySolvedProblems.setText(getString(R.string.empty_solved_problems));
-
-      solvedProblemsLl.addView(emptySolvedProblems);
+      setupUnsubscribedUser();
     }
 
-    if(currentCourse.getUnsolvedProblems() != null) {
-      for(Problem problem : currentCourse.getUnsolvedProblems().values()) {
-        ProblemView problemView = new ProblemView(getContext(), problem);
+    subscribeButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        subscribeButton.setVisibility(View.GONE);
+        if(subscribeButton.getText().equals(getString(R.string.subscribe_button))) {
 
-        unsolvedProblemsLl.addView(problemView);
+          courseService.subscribeUserToCourse(currentCourse.getCourseId(),
+            authenticationService.getCurrentUser().getUid(), new ListDatabaseCallback<Course>() {
+              @Override
+              public void onSuccess(List<Course> list) {
+                setupSubscribedUser();
+                subscribeButton.setVisibility(View.VISIBLE);
+              }
+
+              @Override
+              public void onFailure(String message) {
+                Toast.makeText(getContext(), message , Toast.LENGTH_SHORT).show();
+                subscribeButton.setVisibility(View.VISIBLE);
+              }
+            });
+
+        } else {
+
+          courseService.unsubscribeUserFromCourse(currentCourse.getCourseId(),
+            authenticationService.getCurrentUser().getUid(), new ListDatabaseCallback<Course>() {
+              @Override
+              public void onSuccess(List<Course> list) {
+                setupUnsubscribedUser();
+                subscribeButton.setVisibility(View.VISIBLE);
+              }
+
+              @Override
+              public void onFailure(String message) {
+                Toast.makeText(getContext(), message , Toast.LENGTH_SHORT).show();
+                subscribeButton.setVisibility(View.VISIBLE);
+              }
+            });
+
+        }
       }
-    } else {
-      TextView emptyUnsolvedProblems = new TextView(getContext());
-
-      LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-        LinearLayout.LayoutParams.WRAP_CONTENT,
-        LinearLayout.LayoutParams.WRAP_CONTENT
-      );
-
-      lp.gravity = Gravity.CENTER;
-
-      emptyUnsolvedProblems.setText(getString(R.string.empty_unsolved_problems));
-
-      unsolvedProblemsLl.addView(emptyUnsolvedProblems);
-    }
+    });
 
     return view;
+  }
+
+  private void setupSubscribedUser() {
+    subscribeButton.setText(getString(R.string.unsubscribe_button));
+    hideProblemsTv.setVisibility(GONE);
+    problemsLl.setVisibility(View.VISIBLE);
+    showProblems();
+  }
+
+  private void setupUnsubscribedUser() {
+    subscribeButton.setText(getString(R.string.subscribe_button));
+    problemsLl.setVisibility(GONE);
+    hideProblemsTv.setVisibility(View.VISIBLE);
+  }
+
+  private void showProblems() {
+    if(currentCourse.getProblems() != null) {
+      for(Problem problem : currentCourse.getProblems().values()) {
+        ProblemView problemView = new ProblemView(getContext(), problem);
+
+        problemsLl.addView(problemView);
+      }
+    } else {
+      TextView emptyProblems = new TextView(getContext());
+
+      LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+        LinearLayout.LayoutParams.WRAP_CONTENT,
+        LinearLayout.LayoutParams.WRAP_CONTENT
+      );
+
+      lp.gravity = Gravity.CENTER;
+
+      emptyProblems.setText(getString(R.string.empty_solved_problems));
+
+      problemsLl.addView(emptyProblems);
+    }
   }
 }

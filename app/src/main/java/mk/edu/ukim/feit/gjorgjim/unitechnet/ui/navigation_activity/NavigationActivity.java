@@ -153,6 +153,10 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
     toolbar.setLogo(R.drawable.logo_android_v2);
 
+    navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+    feedFragment = new FeedFragment();
+    navigation.setSelectedItemId(R.id.navigation_feed);
+
     searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
       @Override
       public void onSearchViewShown() {
@@ -185,8 +189,6 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
         messagesFragment = new MessagesFragment();
         profileFragment = new ProfileFragment();
 
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
         if(user == null){
           Log.d(LOG_TAG, "User is null");
           editProfileFragment = new EditProfileFragment();
@@ -207,7 +209,6 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
             navigation.setSelectedItemId(R.id.navigation_messages);
           }
-          navigation.setSelectedItemId(R.id.navigation_feed);
         }
         userService.removeSignInListener();
         messagingService.startBackgroundServiceForMessages(NavigationActivity.this);

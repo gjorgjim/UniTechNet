@@ -82,21 +82,12 @@ public class CourseDialog extends Dialog {
       ));
     }
 
-    if(currentCourse.getSolvedProblems() != null) {
       solvedProblems.setText(String.format(
         new Locale("en"),
         "%s: %d",
         context.getString(R.string.solved_problems_placeholder),
-        currentCourse.getSolvedProblems().values().size()
+        currentCourse.getProblems() != null ? currentCourse.getProblems().size() : 0
       ));
-    } else {
-      solvedProblems.setText(String.format(
-        new Locale("en"),
-        "%s: %d",
-        context.getString(R.string.solved_problems_placeholder),
-        0
-      ));
-    }
 
     if(courseService.isUserSubscribed(currentCourse, authenticationService.getCurrentUser().getUid())) {
       subscribeBtn.setText(context.getString(R.string.unsubscribe_button));
