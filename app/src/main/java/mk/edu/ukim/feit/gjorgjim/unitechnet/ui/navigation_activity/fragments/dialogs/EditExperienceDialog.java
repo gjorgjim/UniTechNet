@@ -130,9 +130,9 @@ public class EditExperienceDialog extends Dialog {
     endDateEt.setOnClickListener(v -> {
       datePickerBuilder
         .defaultDate(
-          currentExperience.getEndDate().getYear(),
-          currentExperience.getEndDate().getMonth() - 1,
-          currentExperience.getEndDate().getDay()
+          currentExperience.getEndDate() != null ? currentExperience.getEndDate().getYear() : 2017,
+          currentExperience.getEndDate() != null ? currentExperience.getEndDate().getMonth() - 1 : 1,
+          currentExperience.getEndDate() != null ? currentExperience.getEndDate().getDay() : 1
         )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override
@@ -147,9 +147,9 @@ public class EditExperienceDialog extends Dialog {
     endDateEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
       datePickerBuilder
         .defaultDate(
-          currentExperience.getEndDate().getYear(),
-          currentExperience.getEndDate().getMonth() - 1,
-          currentExperience.getEndDate().getDay()
+          currentExperience.getEndDate() != null ? currentExperience.getEndDate().getYear() : 2017,
+          currentExperience.getEndDate() != null ? currentExperience.getEndDate().getMonth() - 1 : 1,
+          currentExperience.getEndDate() != null ? currentExperience.getEndDate().getDay() : 1
         )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override

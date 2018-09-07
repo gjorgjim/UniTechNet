@@ -132,9 +132,9 @@ public class EditEducationDialog extends Dialog {
     endDateEt.setOnClickListener(v -> {
       datePickerBuilder
         .defaultDate(
-          currentEducation.getEndDate().getYear(),
-          currentEducation.getEndDate().getMonth() - 1,
-          currentEducation.getEndDate().getDay()
+          currentEducation.getEndDate() != null ? currentEducation.getEndDate().getYear() : 2017,
+          currentEducation.getEndDate() != null ? currentEducation.getEndDate().getMonth() - 1 : 1,
+          currentEducation.getEndDate() != null ? currentEducation.getEndDate().getDay() : 1
         )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override
@@ -149,9 +149,9 @@ public class EditEducationDialog extends Dialog {
     endDateEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
       datePickerBuilder
         .defaultDate(
-          currentEducation.getEndDate().getYear(),
-          currentEducation.getEndDate().getMonth() - 1,
-          currentEducation.getEndDate().getDay()
+          currentEducation.getEndDate() != null ? currentEducation.getEndDate().getYear() : 2017,
+          currentEducation.getEndDate() != null ? currentEducation.getEndDate().getMonth() - 1 : 1,
+          currentEducation.getEndDate() != null ? currentEducation.getEndDate().getDay() : 1
         )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override
