@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -56,5 +57,21 @@ public class AuthenticationService {
   public void signOut(Activity activity) {
     mAuth.signOut();
     activity.startActivity(new Intent(activity, LoginActivity.class));
+  }
+
+  public void forgotPassword(String email, AuthenticationCallback callback) {
+    mAuth.sendPasswordResetEmail(email)
+      .addOnSuccessListener(new OnSuccessListener<Void>() {
+        @Override
+        public void onSuccess(Void aVoid) {
+          callback.onSuccess(null);
+        }
+      })
+      .addOnFailureListener(new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception e) {
+          callback.onFailure(e.getMessage());
+        }
+      });
   }
 }

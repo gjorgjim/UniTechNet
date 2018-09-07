@@ -8,7 +8,10 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -20,6 +23,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.WaitingDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.NavigationActivity;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dialogs.ForgotPasswordDialog;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -29,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
   private TextInputLayout passwordIl;
   private AppCompatEditText passwordEt;
   private AppCompatButton signInBtn;
+  private AppCompatTextView forgotPasswordTv;
 
   private WaitingDialog waitingDialog;
 
@@ -53,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
     passwordIl = findViewById(R.id.passwordIl);
     passwordEt = findViewById(R.id.passwordEt);
     signInBtn = findViewById(R.id.signInBtn);
+    forgotPasswordTv = findViewById(R.id.forgotPasswordTv);
 
     Glide.with(this)
       .load(R.drawable.logo_android_v2)
@@ -60,9 +66,19 @@ public class LoginActivity extends AppCompatActivity {
 
     logoIv.setAdjustViewBounds(true);
 
+    passwordEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+      @Override
+      public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if(actionId == EditorInfo.IME_ACTION_DONE) {
+          signInBtn.performClick();
+        }
+        return false;
+      }
+    });
+
     signInBtn.setOnClickListener(v -> {
-      showWaitingDialog();
       if(validateInput()) {
+        showWaitingDialog();
         authenticationService.signIn(emailEt.getText().toString().trim(), passwordEt.getText().toString().trim(),
           LoginActivity.this, new AuthenticationCallback() {
             @Override
@@ -82,6 +98,15 @@ public class LoginActivity extends AppCompatActivity {
           });
       }
     });
+
+    forgotPasswordTv.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        ForgotPasswordDialog dialog = new ForgotPasswordDialog(LoginActivity.this);
+        dialog.show();
+      }
+    });
+
   }
 
   boolean validateInput() {

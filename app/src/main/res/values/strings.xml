@@ -70,6 +70,13 @@
   <string name="empty_solved_problems">There are no solved problems.</string>
   <string name="empty_unsolved_problems">There are no unsolved problems.</string>
   <string name="hide_problems">Subscribe to course, to see and answer the problems.</string>
+  <string name="forgot_password">Forgot password</string>
+  <string name="forgot_password_underlined"><u>Forgot password</u></string>
+  <string name="forgot_password_description">Please enter your email address, and we will sent a password reset email.</string>
+  <string name="send_email">Send Email</string>
+  <string name="sending_email">Sending email...</string>
+  <string name="email_sent_success">Email with instructions to reset password has been sent to your email address.</string>
+  <string name="try_again">Please try again.</string>
 
   <string-array name="gender_array">
     <item>Not Specified</item>

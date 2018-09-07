@@ -128,9 +128,15 @@ public class ProfileFragment extends Fragment{
     experienceViews = new HashMap<>();
     educationViews = new HashMap<>();
 
+    nameTv.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        authenticationService.signOut(getActivity());
+      }
+    });
+
     profilePictureIv.setOnClickListener(v -> {
       messagingService.stopBackgroundServiceForMessages(getActivity());
-      authenticationService.signOut(getActivity());
     });
 
     plusExperienceIv.setOnClickListener(v -> {
