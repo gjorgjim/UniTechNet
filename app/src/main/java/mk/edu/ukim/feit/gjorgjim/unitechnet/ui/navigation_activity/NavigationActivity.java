@@ -72,6 +72,8 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
   private CourseViewFragment courseViewFragment;
   private ProblemViewFragment problemViewFragment;
 
+  private NavigationToolbarDelegate navigationToolbarDelegate;
+
   private WaitingDialog waitingDialog;
 
   private BottomNavigationView navigation;
@@ -92,6 +94,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
       FragmentTransaction transaction = fragmentManager.beginTransaction();
       transaction.setCustomAnimations(R.animator.enter, R.animator.exit);
+      navigationToolbarDelegate.setLogo(getDrawable(R.drawable.log_android_v2));
       switch (item.getItemId()) {
         case R.id.navigation_courses:
           transaction.replace(R.id.container, coursesFragment).commit();
@@ -141,6 +144,8 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     userService = UserService.getInstance();
     messagingService = MessagingService.getInstance();
 
+    navigationToolbarDelegate = NavigationToolbarDelegate.getInstance();
+
     fragmentManager = getSupportFragmentManager();
     
     waitingDialog = new WaitingDialog(NavigationActivity.this);
@@ -153,8 +158,9 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     messagesSnackbarShownList = new ArrayList<>();
 
     setSupportActionBar(toolbar);
+    navigationToolbarDelegate.setToolbar(toolbar, getResources().getColor(R.color.ef_white));
 
-    toolbar.setLogo(R.drawable.logo_android_v2);
+    navigationToolbarDelegate.setLogo(getDrawable(R.drawable.log_android_v2));
 
     navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     feedFragment = new FeedFragment();
@@ -291,6 +297,9 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
     FragmentTransaction transaction = fragmentManager.beginTransaction();
     transaction.replace(R.id.container, courseViewFragment).commit();
+
+    //TODO: Change drawable
+    navigationToolbarDelegate.setLogo(getDrawable(R.drawable.log_android_v2));
   }
 
   @Override
@@ -304,6 +313,9 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
     FragmentTransaction transaction = fragmentManager.beginTransaction();
     transaction.replace(R.id.container, problemViewFragment).commit();
+
+    //TODO: Change drawable
+    navigationToolbarDelegate.setLogo(getDrawable(R.drawable.log_android_v2));
   }
 
   @Override
