@@ -38,6 +38,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.MessagingService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Problem;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Chat;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Message;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
@@ -50,6 +51,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.Fee
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.FragmentChangingListener;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.MessagesFragment;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.NotificationsFragment;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.ProblemViewFragment;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.ProfileFragment;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.UserMessagingFragment;
 
@@ -68,6 +70,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
   private EditProfileFragment editProfileFragment;
   private UserMessagingFragment userMessagingFragment;
   private CourseViewFragment courseViewFragment;
+  private ProblemViewFragment problemViewFragment;
 
   private WaitingDialog waitingDialog;
 
@@ -291,6 +294,19 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
   }
 
   @Override
+  public void changeToProblemViewFragment(Problem problem) {
+    problemViewFragment = new ProblemViewFragment();
+
+    Bundle bundle = new Bundle();
+    bundle.putSerializable("currentProblem", problem);
+
+    problemViewFragment.setArguments(bundle);
+
+    FragmentTransaction transaction = fragmentManager.beginTransaction();
+    transaction.replace(R.id.container, problemViewFragment).commit();
+  }
+
+  @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     Log.d(LOG_TAG, "requestCode: " + requestCode);
     if(resultCode == Activity.RESULT_OK && (requestCode == ProfileFragment.ImagePickerRequestCode || requestCode == EditProfileFragment.ImagePickerRequestCode)) {
@@ -367,6 +383,8 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
       changeToMessagesFragment();
     } else if(courseViewFragment != null && courseViewFragment.isVisible()){
       changeToCoursesFragment();
+    } else if(problemViewFragment !=null && problemViewFragment.isAdded()) {
+      changeToCourseViewFragment(courseViewFragment.getCurrentCourse());
     } else {
       super.onBackPressed();
     }

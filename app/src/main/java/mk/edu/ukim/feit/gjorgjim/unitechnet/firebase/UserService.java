@@ -81,6 +81,7 @@ public class UserService {
       if(!dataSnapshot.exists()) {
         userCallback.onSuccess(null);
       } else {
+        Log.d(UserService.class.getSimpleName(), dataSnapshot.getValue().toString());
         currentUser = dataSnapshot.getValue(User.class);
 
         getBitmapFromStorage(new DatabaseCallback<Bitmap>() {

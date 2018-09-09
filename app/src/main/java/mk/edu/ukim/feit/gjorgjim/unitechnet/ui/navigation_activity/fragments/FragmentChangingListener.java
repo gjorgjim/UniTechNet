@@ -1,6 +1,7 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Problem;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Chat;
 
 /**
@@ -13,4 +14,5 @@ public interface FragmentChangingListener {
   void changeToUserMessagingFragment(Chat chat, String key);
   void changeToMessagesFragment();
   void changeToCourseViewFragment(Course course);
+  void changeToProblemViewFragment(Problem problem);
 }

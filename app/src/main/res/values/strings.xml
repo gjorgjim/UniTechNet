@@ -68,6 +68,9 @@
   <string name="problem_author_placeholder">Posted by:</string>
   <string name="problem_date_placeholder">06.08.2018</string>
   <string name="solved_problems">Problems:</string>
+  <string name="answers">Answers:</string>
+  <string name="no_answers">There are not answers yet.</string>
+  <string name="mark_as_read">Mark as read</string>
   <string name="empty_solved_problems">There are no solved problems.</string>
   <string name="empty_unsolved_problems">There are no unsolved problems.</string>
   <string name="hide_problems">Subscribe to course, to see and answer the problems.</string>
@@ -85,6 +88,8 @@
   <string name="email_sent_success">Email with instructions to reset password has been sent to your email address.</string>
   <string name="try_again">Please try again.</string>
   <string name="password_changed">Your password was successfully changed.</string>
+  <string name="not_answered">Not answered</string>
+  <string name="answered">Answered</string>
 
   <string-array name="gender_array">
     <item>Not Specified</item>

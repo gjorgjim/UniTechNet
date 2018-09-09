@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                xmlns:card_view="http://schemas.android.com/apk/res-auto">
+
+  <android.support.v4.widget.NestedScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp">
+
+    <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+      <android.support.v7.widget.CardView
+        android:id="@+id/problemCv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
+
+        <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:background="@android:color/white"
+          android:padding="4dp"
+          card_view:cardCornerRadius="2dp"
+          card_view:cardElevation="2dp">
+
+          <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/problemNameTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            style="@style/PrimaryTextStyle"
+            android:paddingTop="8dp"
+            android:text="@string/problem_name_placeholder"/>
+
+          <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/problemDescriptionTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/problemNameTv"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            style="@style/SecondaryTextStyle"
+            android:padding="4dp"
+            android:text="@string/problem_description_placeholder"/>
+
+          <android.support.v7.widget.AppCompatButton
+            android:id="@+id/markAsAnsweredBtn"
+            style="@style/ButtonPrimaryTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/problemDescriptionTv"
+            android:layout_marginTop="16dp"
+            android:background="@color/colorPrimary"
+            android:padding="4dp"
+            android:text="@string/mark_as_read"
+            android:visibility="gone"/>
+
+          <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/solvedTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/problemDescriptionTv"
+            android:layout_marginTop="16dp"
+            style="@style/SecondaryTextStyle"
+            android:textColor="@android:color/holo_green_dark"
+            android:text="@string/answered"/>
+
+        </RelativeLayout>
+
+      </android.support.v7.widget.CardView>
+
+      <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/answersTextTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/problemCv"
+        android:layout_alignParentStart="true"
+        style="@style/PrimaryTextStyle"
+        android:textStyle="italic"
+        android:textColor="@color/colorPrimary"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/answers"/>
+
+      <LinearLayout
+        android:id="@+id/answersLl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/answersTextTv"
+        android:orientation="vertical">
+      </LinearLayout>
+
+      <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/noAnswersTv"
+        style="@style/SecondaryTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/answersTextTv"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="@string/no_answers"
+        android:textStyle="italic"
+        android:visibility="gone"/>
+
+    </RelativeLayout>
+
+  </android.support.v4.widget.NestedScrollView>
+
+  <android.support.design.widget.FloatingActionButton
+    android:id="@+id/addAnswerBtn"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentEnd="true"
+    android:layout_alignParentBottom="true"
+    android:layout_marginBottom="16dp"
+    android:layout_marginEnd="16dp"
+    android:src="@drawable/ic_add_white_24dp"/>
+
+</RelativeLayout>

@@ -11,8 +11,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 
 public class Answer {
   private String description;
-  private User author;
-  private HashMap<String, Comment> comments;
+  private HashMap<String, User> author;
   private Date date;
 
   public Answer() {
@@ -26,20 +25,12 @@ public class Answer {
     this.description = description;
   }
 
-  public User getAuthor() {
+  public HashMap<String, User> getAuthor() {
     return author;
   }
 
-  public void setAuthor(User author) {
+  public void setAuthor(HashMap<String, User> author) {
     this.author = author;
-  }
-
-  public HashMap<String, Comment> getComments() {
-    return comments;
-  }
-
-  public void setComments(HashMap<String, Comment> comments) {
-    this.comments = comments;
   }
 
   public Date getDate() {

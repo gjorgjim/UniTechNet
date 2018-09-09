@@ -170,7 +170,7 @@ public class CourseViewFragment extends Fragment {
   private void showProblems() {
     if(currentCourse.getProblems() != null) {
       for(Problem problem : currentCourse.getProblems().values()) {
-        ProblemView problemView = new ProblemView(getContext(), problem);
+        ProblemView problemView = new ProblemView(getActivity(), problem);
 
         problemsLl.addView(problemView);
       }
@@ -188,5 +188,9 @@ public class CourseViewFragment extends Fragment {
 
       problemsLl.addView(emptyProblems);
     }
+  }
+
+  public Course getCurrentCourse() {
+    return currentCourse;
   }
 }
