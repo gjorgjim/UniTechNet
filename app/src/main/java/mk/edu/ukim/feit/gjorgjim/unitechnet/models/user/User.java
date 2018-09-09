@@ -18,6 +18,7 @@ public class User {
   private String email;
   private Date birthday;
   private UserGender gender;
+  private HashMap<String, Boolean> connections;
   private HashMap<String, Course> courses;
   private HashMap<String, Experience> experiences;
   private HashMap<String, Education> educations;
@@ -107,5 +108,13 @@ public class User {
 
   public void setTitle(String title) {
     this.title = title;
+  }
+
+  public HashMap<String, Boolean> getConnections() {
+    return connections;
+  }
+
+  public void setConnections(HashMap<String, Boolean> connections) {
+    this.connections = connections;
   }
 }

@@ -12,12 +12,15 @@ import java.util.List;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ListDatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 
 /**
  * Created by gjmarkov on 31.7.2018.
  */
 
 public class CourseService {
+  private static final String LOG_TAG = CourseService.class.getSimpleName();
+
   private static final CourseService ourInstance = new CourseService();
 
   public static CourseService getInstance() {
@@ -44,6 +47,7 @@ public class CourseService {
         Course course = data.getValue(Course.class);
         course.setCourseId(data.getKey());
         allCourses.add(course);
+        Log.d(LOG_TAG, "course: " + course.toString());
       }
       allCoursesCallback.onSuccess(allCourses);
       databaseService.coursesReference().removeEventListener(courseListener);
@@ -73,7 +77,32 @@ public class CourseService {
     addCourseToUser(courseId, UID);
     addUserToCourse(courseId, UID);
 
+    addConnectionsToUserFromCourse(courseId, UID);
+
     callback.onSuccess(allCourses);
+  }
+
+  private void addConnectionsToUserFromCourse(String courseId, String UID) {
+    User currentUser = userService.getCurrentUser();
+
+    for (Course course : allCourses) {
+      if (course.getCourseId().equals(courseId)) {
+        if (course.getSubscribedUsers() != null) {
+          for (String key : course.getSubscribedUsers().keySet()) {
+            if(!key.equals(UID)) {
+              if (currentUser.getConnections() == null) {
+                currentUser.setConnections(new HashMap<>());
+              }
+              if (!currentUser.getConnections().containsKey(key)) {
+                currentUser.getConnections().put(key, true);
+              }
+              databaseService.userReference(UID).child("connections").child(key).setValue(true);
+              databaseService.userReference(key).child("connections").child(UID).setValue(true);
+            }
+          }
+        }
+      }
+    }
   }
 
   private void addUserToCourse(String courseId, String UID) {

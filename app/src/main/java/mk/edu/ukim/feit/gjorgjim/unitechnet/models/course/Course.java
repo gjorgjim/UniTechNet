@@ -59,4 +59,10 @@ public class Course implements Serializable {
   public void setProblems(HashMap<String, Problem> problems) {
     this.problems = problems;
   }
+
+  @Override
+  public String toString() {
+    return "Course{" + "courseId='" + courseId + '\'' + ", name='" + name + '\'' + ", description='" + description
+      + '\'' + ", subscribedUsers=" + subscribedUsers + ", problems=" + problems + '}';
+  }
 }
