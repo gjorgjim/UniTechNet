@@ -143,6 +143,12 @@ public class CourseViewFragment extends Fragment {
 
   private void setupSubscribedUser() {
     subscribeButton.setText(getString(R.string.unsubscribe_button));
+    subscribedUsersTv.setText(String.format(
+      new Locale("en"),
+      "%s %d",
+      getString(R.string.subscribed_users_placeholder),
+      currentCourse.getSubscribedUsers() == null ? 0 : currentCourse.getSubscribedUsers().size()
+    ));
     hideProblemsTv.setVisibility(GONE);
     problemsLl.setVisibility(View.VISIBLE);
     showProblems();
@@ -150,6 +156,13 @@ public class CourseViewFragment extends Fragment {
 
   private void setupUnsubscribedUser() {
     subscribeButton.setText(getString(R.string.subscribe_button));
+    subscribedUsersTv.setText(String.format(
+      new Locale("en"),
+      "%s %d",
+      getString(R.string.subscribed_users_placeholder),
+      currentCourse.getSubscribedUsers() == null ? 0 : currentCourse.getSubscribedUsers().size()
+    ));
+    problemsLl.removeAllViews();
     problemsLl.setVisibility(GONE);
     hideProblemsTv.setVisibility(View.VISIBLE);
   }
