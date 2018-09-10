@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseUser;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.cache.ImagesCacher;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.AuthenticationCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
@@ -37,6 +38,8 @@ public class LoginActivity extends AppCompatActivity {
 
   private WaitingDialog waitingDialog;
 
+  private ImagesCacher imagesCacher;
+
   private AuthenticationService authenticationService;
 
   @Override
@@ -50,6 +53,9 @@ public class LoginActivity extends AppCompatActivity {
       startActivity(new Intent(LoginActivity.this, NavigationActivity.class));
     }
 
+    imagesCacher = ImagesCacher.getInstance();
+    imagesCacher.setResources(getResources());
+
     waitingDialog = new WaitingDialog(LoginActivity.this);
 
     logoIv = findViewById(R.id.logoIv);
@@ -61,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
     forgotPasswordTv = findViewById(R.id.forgotPasswordTv);
 
     Glide.with(this)
-      .load(R.drawable.logo_android_v2)
+      .load(imagesCacher.getLogo())
       .into(logoIv);
 
     logoIv.setAdjustViewBounds(true);

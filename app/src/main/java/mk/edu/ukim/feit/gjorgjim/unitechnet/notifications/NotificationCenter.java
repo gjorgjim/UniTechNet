@@ -5,12 +5,14 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.cache.ImagesCacher;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.NavigationActivity;
 
 /**
@@ -31,6 +33,8 @@ public class NotificationCenter {
 
   private Context context;
 
+  private ImagesCacher imagesCacher;
+
   private NotificationManager notificationManager;
 
   private int notificationId;
@@ -42,6 +46,8 @@ public class NotificationCenter {
   public void setContext(Context context) {
     this.context = context;
     createNotificationChannel();
+    imagesCacher = ImagesCacher.getInstance();
+    imagesCacher.setResources(context.getResources());
   }
 
   public void sentMessageNotification(String message, String key) {
@@ -60,7 +66,7 @@ public class NotificationCenter {
     PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-      .setSmallIcon(R.drawable.logo_android_v2)
+      .setLargeIcon(imagesCacher.getSmallLogo())
       .setContentTitle("UniTechNet")
       .setContentText(message)
       .setPriority(NotificationCompat.PRIORITY_DEFAULT)

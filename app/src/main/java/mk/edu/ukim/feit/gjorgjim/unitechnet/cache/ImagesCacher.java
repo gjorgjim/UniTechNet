@@ -25,6 +25,8 @@ public class ImagesCacher {
   private Drawable toolbarLogo;
   private Drawable toolbarLogoCourse;
   private Drawable toolbarLogoProblem;
+  private Drawable logo;
+  private Bitmap smallLogo;
 
   private Resources resources;
 
@@ -46,6 +48,22 @@ public class ImagesCacher {
         return bitmap.getByteCount() / 1024;
       }
     };
+  }
+
+  public Drawable getLogo() {
+    if(logo == null) {
+      logo = new BitmapDrawable(resources, getToolbarLogoFromCache("logo"));
+    }
+
+    return logo;
+  }
+
+  public Bitmap getSmallLogo() {
+    if(smallLogo == null) {
+      smallLogo = getToolbarLogoFromCache("small_logo");
+    }
+
+    return smallLogo;
   }
 
   public Drawable getToolbarLogo() {
@@ -77,6 +95,12 @@ public class ImagesCacher {
 
     Bitmap bitmap = null;
     switch (name) {
+      case "logo":
+        bitmap = BitmapFactory.decodeResource(resources, R.drawable.logo_android_v2);
+        break;
+      case "small_logo":
+        bitmap = BitmapFactory.decodeResource(resources, R.drawable.small_logo);
+        break;
       case "toolbar_logo":
         bitmap = BitmapFactory.decodeResource(resources, R.drawable.toolbar_logo);
         break;
