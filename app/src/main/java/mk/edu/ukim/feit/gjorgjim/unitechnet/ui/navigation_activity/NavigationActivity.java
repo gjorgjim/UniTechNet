@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.cache.ImagesCacher;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.MessagingService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
@@ -44,6 +45,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Message;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.services.MessagingBackgroundService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.WaitingDialog;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.delegates.NavigationToolbarDelegate;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.CourseViewFragment;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.CoursesFragment;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.EditProfileFragment;
@@ -94,7 +96,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
       FragmentTransaction transaction = fragmentManager.beginTransaction();
       transaction.setCustomAnimations(R.animator.enter, R.animator.exit);
-      navigationToolbarDelegate.setLogo(getDrawable(R.drawable.log_android_v2));
+      navigationToolbarDelegate.setLogo(NavigationToolbarDelegate.NavigationToolbarLogo.MAIN);
       switch (item.getItemId()) {
         case R.id.navigation_courses:
           transaction.replace(R.id.container, coursesFragment).commit();
@@ -158,9 +160,9 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     messagesSnackbarShownList = new ArrayList<>();
 
     setSupportActionBar(toolbar);
-    navigationToolbarDelegate.setToolbar(toolbar, getResources().getColor(R.color.ef_white));
+    navigationToolbarDelegate.setToolbar(toolbar, getResources());
 
-    navigationToolbarDelegate.setLogo(getDrawable(R.drawable.log_android_v2));
+    navigationToolbarDelegate.setLogo(NavigationToolbarDelegate.NavigationToolbarLogo.MAIN);
 
     navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     feedFragment = new FeedFragment();
@@ -174,7 +176,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
       @Override
       public void onSearchViewClosed() {
-        toolbar.setLogo(R.drawable.logo_android_v2);
+        toolbar.setLogo(R.drawable.toolbar_logo);
       }
     });
 
@@ -299,7 +301,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     transaction.replace(R.id.container, courseViewFragment).commit();
 
     //TODO: Change drawable
-    navigationToolbarDelegate.setLogo(getDrawable(R.drawable.log_android_v2));
+    navigationToolbarDelegate.setLogo(NavigationToolbarDelegate.NavigationToolbarLogo.COURSE);
   }
 
   @Override
@@ -315,7 +317,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     transaction.replace(R.id.container, problemViewFragment).commit();
 
     //TODO: Change drawable
-    navigationToolbarDelegate.setLogo(getDrawable(R.drawable.log_android_v2));
+    navigationToolbarDelegate.setLogo(NavigationToolbarDelegate.NavigationToolbarLogo.PROBLEM);
   }
 
   @Override
