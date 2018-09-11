@@ -199,4 +199,32 @@ public class CourseService {
       callback.onFailure();
     }
   }
+
+  public void editProblemsAnswerId(Answer answer, SuccessFailureCallback callback) {
+    try {
+      Course course = viewDelegate.getCurrentCourse();
+      String courseKey = course.getCourseId();
+      Problem problem = viewDelegate.getCurrentProblem();
+      String problemKey = dataManager.getProblemKey(course.getProblems(), problem);
+      String answerKey = dataManager.getAnswerKey(problem.getAnswers(), answer);
+
+      databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answers").child("answerId").setValue(answerKey);
+    } catch (NullPointerException e) {
+      callback.onFailure();
+    }
+  }
+
+  public void deleteAnswerFromProblem(Answer answer, SuccessFailureCallback callback) {
+    try {
+      Course course = viewDelegate.getCurrentCourse();
+      String courseKey = course.getCourseId();
+      Problem problem = viewDelegate.getCurrentProblem();
+      String problemKey = dataManager.getProblemKey(course.getProblems(), problem);
+      String answerKey = dataManager.getAnswerKey(problem.getAnswers(), answer);
+
+      databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answers").child(answerKey).removeValue();
+    } catch (NullPointerException e) {
+      callback.onFailure();
+    }
+  }
 }

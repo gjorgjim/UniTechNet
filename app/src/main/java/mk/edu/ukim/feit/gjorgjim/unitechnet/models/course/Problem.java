@@ -18,6 +18,7 @@ public class Problem implements Serializable{
   private HashMap<String, Answer> answers;
   private Date date;
   private boolean solved;
+  private String answerid;
 
   public Problem() {
   }
@@ -68,5 +69,13 @@ public class Problem implements Serializable{
 
   public void setSolved(boolean solved) {
     this.solved = solved;
+  }
+
+  public String getAnswerid() {
+    return answerid;
+  }
+
+  public void setAnswerid(String answerid) {
+    this.answerid = answerid;
   }
 }

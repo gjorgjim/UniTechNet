@@ -8,6 +8,7 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -22,6 +23,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.cache.ImagesCacher;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.AuthenticationCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.Validator;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.ViewDelegate;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.WaitingDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.NavigationActivity;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dialogs.ForgotPasswordDialog;
@@ -42,12 +44,18 @@ public class LoginActivity extends AppCompatActivity {
 
   private AuthenticationService authenticationService;
 
+  private ViewDelegate viewDelegate;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_login);
 
     authenticationService = AuthenticationService.getInstance();
+
+    viewDelegate = ViewDelegate.getInstance();
+
+    viewDelegate.setCurrentActivity(LoginActivity.this);
 
     if(authenticationService.getCurrentUser() != null){
       startActivity(new Intent(LoginActivity.this, NavigationActivity.class));

@@ -1,5 +1,7 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.helpers;
 
+import android.app.Activity;
+
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Problem;
 
@@ -16,6 +18,8 @@ public class ViewDelegate {
   private Course currentCourse = null;
   private Problem currentProblem = null;
 
+  private Activity currentActivity;
+
   private ViewDelegate() {
   }
 
@@ -26,6 +30,14 @@ public class ViewDelegate {
 
   public void viewCurrentProblem(Problem problem) {
     currentProblem = problem;
+  }
+
+  public Activity getCurrentActivity() {
+    return currentActivity;
+  }
+
+  public void setCurrentActivity(Activity currentActivity) {
+    this.currentActivity = currentActivity;
   }
 
   public Course getCurrentCourse() {

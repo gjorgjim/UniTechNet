@@ -12,8 +12,11 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import java.util.Map;
+
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DataManager;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Answer;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Problem;
@@ -27,6 +30,8 @@ public class ProblemViewFragment extends Fragment {
 
   private AuthenticationService authenticationService;
 
+  private DataManager dataManager;
+
   private AppCompatTextView problemNameTv;
   private AppCompatTextView problemDescription;
   private LinearLayout answersLl;
@@ -35,8 +40,11 @@ public class ProblemViewFragment extends Fragment {
 
   private Problem currentProblem;
 
+  private AnswerView currentAnswerView;
+
   public ProblemViewFragment() {
     authenticationService = AuthenticationService.getInstance();
+    dataManager = DataManager.getInstance();
   }
 
   @Nullable
@@ -81,15 +89,21 @@ public class ProblemViewFragment extends Fragment {
   }
 
   private void showAnswers() {
-    for(Answer answer : currentProblem.getAnswers().values()) {
-      AnswerView answerView = new AnswerView(
-        getContext(),
-        answer,
-        currentProblem.getAuthor()
-        );
+    for (Map.Entry<String, Answer> current : currentProblem.getAnswers().entrySet()) {
+      AnswerView answerView = null;
+      if (currentAnswerView == null && currentProblem.getAnswerid().equals(current.getKey())) {
+          answerView = new AnswerView(getContext(), this, current.getValue(), currentProblem.getAuthor(), true);
+          currentAnswerView = answerView;
+      } else {
+        answerView = new AnswerView(getContext(), this, current.getValue(), currentProblem.getAuthor(), false);
+      }
 
       answersLl.addView(answerView);
     }
+  }
+
+  public AnswerView getCurrentAnswerView() {
+    return currentAnswerView;
   }
 
 }

@@ -151,6 +151,8 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
     viewDelegate = ViewDelegate.getInstance();
 
+    viewDelegate.setCurrentActivity(NavigationActivity.this);
+
     navigationToolbarDelegate = NavigationToolbarDelegate.getInstance();
 
     fragmentManager = getSupportFragmentManager();
