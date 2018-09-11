@@ -1,6 +1,7 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.firebase;
 
 import android.util.Log;
+import android.view.View;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -11,7 +12,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ListDatabaseCallback;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.SuccessFailureCallback;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DataManager;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.ViewDelegate;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Answer;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Problem;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 
 /**
@@ -31,12 +37,17 @@ public class CourseService {
     allCourses = null;
     databaseService = DatabaseService.getInstance();
     userService = UserService.getInstance();
+    viewDelegate = ViewDelegate.getInstance();
+    dataManager = DataManager.getInstance();
   }
 
   private List<Course> allCourses;
 
   private DatabaseService databaseService;
   private UserService userService;
+
+  private ViewDelegate viewDelegate;
+  private DataManager dataManager;
 
   ListDatabaseCallback<Course> allCoursesCallback;
   private ValueEventListener courseListener = new ValueEventListener() {
@@ -171,5 +182,21 @@ public class CourseService {
 
   public boolean isUserSubscribed(Course course, String UID) {
     return course.getSubscribedUsers() != null && course.getSubscribedUsers().containsKey(UID);
+  }
+
+  public void editAnswerDescription(Answer answer, String newDescription, SuccessFailureCallback callback) {
+    try {
+      Course course = viewDelegate.getCurrentCourse();
+      String courseKey = course.getCourseId();
+      Problem problem = viewDelegate.getCurrentProblem();
+      String problemKey = dataManager.getProblemKey(course.getProblems(), problem);
+      String answerKey = dataManager.getAnswerKey(problem.getAnswers(), answer);
+
+      databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answers").child(answerKey).child("description").setValue(newDescription);
+
+      callback.onSuccess();
+    } catch (NullPointerException e) {
+      callback.onFailure();
+    }
   }
 }
