@@ -19,14 +19,12 @@ public class ViewDelegate {
   private ViewDelegate() {
   }
 
-  private void viewCurrentCourse(Course course) {
+  public void viewCurrentCourse(Course course) {
     currentProblem = null;
-    if(course != null) {
-      currentCourse = course;
-    }
+    currentCourse = course;
   }
 
-  private void viewCurrentProblem(Problem problem) {
+  public void viewCurrentProblem(Problem problem) {
     currentProblem = problem;
   }
 

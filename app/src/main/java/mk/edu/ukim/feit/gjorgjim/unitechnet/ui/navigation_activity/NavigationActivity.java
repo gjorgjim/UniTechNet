@@ -38,6 +38,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.cache.ImagesCacher;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.MessagingService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.ViewDelegate;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Problem;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Chat;
@@ -63,6 +64,8 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
   private UserService userService;
   private MessagingService messagingService;
+
+  private ViewDelegate viewDelegate;
 
   private CoursesFragment coursesFragment;
   private FeedFragment feedFragment;
@@ -145,6 +148,8 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
     userService = UserService.getInstance();
     messagingService = MessagingService.getInstance();
+
+    viewDelegate = ViewDelegate.getInstance();
 
     navigationToolbarDelegate = NavigationToolbarDelegate.getInstance();
 
@@ -300,6 +305,8 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     FragmentTransaction transaction = fragmentManager.beginTransaction();
     transaction.replace(R.id.container, courseViewFragment).commit();
 
+    viewDelegate.viewCurrentCourse(course);
+
     //TODO: Change drawable
     navigationToolbarDelegate.setLogo(NavigationToolbarDelegate.NavigationToolbarLogo.COURSE);
   }
@@ -315,6 +322,8 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
     FragmentTransaction transaction = fragmentManager.beginTransaction();
     transaction.replace(R.id.container, problemViewFragment).commit();
+
+    viewDelegate.viewCurrentProblem(problem);
 
     //TODO: Change drawable
     navigationToolbarDelegate.setLogo(NavigationToolbarDelegate.NavigationToolbarLogo.PROBLEM);
