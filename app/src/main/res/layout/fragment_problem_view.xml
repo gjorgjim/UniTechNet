@@ -49,19 +49,6 @@
             android:padding="4dp"
             android:text="@string/problem_description_placeholder"/>
 
-          <android.support.v7.widget.AppCompatButton
-            android:id="@+id/markAsAnsweredBtn"
-            style="@style/ButtonPrimaryTextStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@id/problemDescriptionTv"
-            android:layout_marginTop="16dp"
-            android:background="@color/colorPrimary"
-            android:padding="4dp"
-            android:text="@string/mark_as_read"
-            android:visibility="gone"/>
-
           <android.support.v7.widget.AppCompatTextView
             android:id="@+id/solvedTv"
             android:layout_width="wrap_content"
@@ -70,7 +57,7 @@
             android:layout_below="@id/problemDescriptionTv"
             android:layout_marginTop="16dp"
             style="@style/SecondaryTextStyle"
-            android:textColor="@android:color/holo_green_dark"
+            android:textColor="@color/answeredProblemColor"
             android:text="@string/answered"/>
 
         </RelativeLayout>

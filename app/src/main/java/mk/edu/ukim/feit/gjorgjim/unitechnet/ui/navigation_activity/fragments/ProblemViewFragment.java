@@ -29,7 +29,6 @@ public class ProblemViewFragment extends Fragment {
 
   private AppCompatTextView problemNameTv;
   private AppCompatTextView problemDescription;
-  private AppCompatButton markAsAnsweredBtn;
   private LinearLayout answersLl;
   private AppCompatTextView noAnswersTv;
   private AppCompatTextView solvedTv;
@@ -48,7 +47,6 @@ public class ProblemViewFragment extends Fragment {
 
     problemNameTv = view.findViewById(R.id.problemNameTv);
     problemDescription = view.findViewById(R.id.problemDescriptionTv);
-    markAsAnsweredBtn = view.findViewById(R.id.markAsAnsweredBtn);
     answersLl = view.findViewById(R.id.answersLl);
     noAnswersTv = view.findViewById(R.id.noAnswersTv);
     solvedTv = view.findViewById(R.id.solvedTv);
@@ -63,17 +61,12 @@ public class ProblemViewFragment extends Fragment {
     problemNameTv.setText(currentProblem.getName());
     problemDescription.setText(currentProblem.getDescription());
 
-    if(currentProblem.getAuthor().containsKey(authenticationService.getCurrentUser().getUid())) {
-      solvedTv.setVisibility(View.GONE);
-      markAsAnsweredBtn.setVisibility(View.VISIBLE);
-      if(currentProblem.isSolved()) {
-        markAsAnsweredBtn.setEnabled(false);
-      }
+    if(currentProblem.isSolved()) {
+        solvedTv.setText(getString(R.string.answered));
+        solvedTv.setTextColor(getResources().getColor(R.color.answeredProblemColor));
     } else {
-      if(!currentProblem.isSolved()) {
         solvedTv.setText(getString(R.string.not_answered));
         solvedTv.setTextColor(getResources().getColor(R.color.colorPrimary));
-      }
     }
 
     if(currentProblem.getAnswers() != null) {
