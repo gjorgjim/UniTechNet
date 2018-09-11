@@ -15,6 +15,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
+import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ServiceCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Chat;
@@ -40,6 +41,8 @@ public class MessagingBackgroundService extends Service {
   private NotificationCenter notificationCenter;
 
   private Date now;
+
+  public static ServiceCallback callback;
 
   ValueEventListener valueEventListener = new ValueEventListener() {
     @Override
@@ -108,6 +111,7 @@ public class MessagingBackgroundService extends Service {
   @Override
   public void onCreate() {
     super.onCreate();
+    callback = null;
     startServiceWithNotifications();
   }
 
@@ -125,6 +129,12 @@ public class MessagingBackgroundService extends Service {
     databaseService.chatReference(
       authenticationService.getCurrentUser().getUid()
     ).removeEventListener(valueEventListener);
+
+    if(callback != null) {
+      callback.onDone();
+    }
+    callback = null;
+
     super.onDestroy();
   }
 
@@ -134,9 +144,8 @@ public class MessagingBackgroundService extends Service {
     return null;
   }
 
-  void stopMyService() {
-    stopForeground(true);
-    stopSelf();
-    isServiceRunning = false;
+  public static void setCallback(ServiceCallback serviceCallback) {
+    callback = serviceCallback;
   }
+
 }

@@ -38,6 +38,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ProfileChangeCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ProfilePictureCallback;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ServiceCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.MessagingService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
@@ -46,6 +47,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Education;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.services.MessagingBackgroundService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.WaitingDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dialogs.EditUserDetailsDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dialogs.NewEducationDialog;
@@ -128,15 +130,17 @@ public class ProfileFragment extends Fragment{
     experienceViews = new HashMap<>();
     educationViews = new HashMap<>();
 
-    nameTv.setOnClickListener(new View.OnClickListener() {
+    profilePictureIv.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        authenticationService.signOut(getActivity());
+        MessagingBackgroundService.setCallback(new ServiceCallback() {
+          @Override
+          public void onDone() {
+            authenticationService.signOut(getActivity());
+          }
+        });
+        messagingService.stopBackgroundServiceForMessages(getActivity());
       }
-    });
-
-    profilePictureIv.setOnClickListener(v -> {
-      messagingService.stopBackgroundServiceForMessages(getActivity());
     });
 
     plusExperienceIv.setOnClickListener(v -> {
