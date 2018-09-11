@@ -39,6 +39,63 @@
         android:layout_marginTop="8dp"
         android:text="@string/problem_author_placeholder"/>
 
+      <RelativeLayout
+        android:id="@+id/answerAuthorRl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/answerAuthorTv"
+        android:layout_marginTop="24dp"
+        android:paddingStart="24dp"
+        android:paddingBottom="12dp"
+        android:visibility="gone">
+
+        <android.support.v7.widget.AppCompatImageView
+          android:id="@+id/editAnswerIv"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentStart="true"
+          android:src="@drawable/ic_edit_black_24dp"
+          android:elevation="4dp"/>
+
+        <android.support.v7.widget.AppCompatImageView
+          android:id="@+id/deleteAnswerIv"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_toEndOf="@id/editAnswerIv"
+          android:layout_marginStart="16dp"
+          android:src="@drawable/ic_delete_black_24dp"
+          android:elevation="4dp"/>
+
+
+      </RelativeLayout>
+
+
+      <RelativeLayout
+        android:id="@+id/problemAuthorRl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/answerAuthorTv"
+        android:layout_marginTop="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="12dp"
+        android:visibility="gone">
+
+        <android.support.v7.widget.AppCompatTextView
+          android:id="@+id/markAsAnswerTv"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentEnd="true"
+          android:elevation="4dp"
+          style="@style/PrimaryTextStyle"
+          android:textColor="@color/colorPrimary"
+          android:text="@string/mark_as_answer"
+          android:textAllCaps="true"/>
+
+
+      </RelativeLayout>
+
     </RelativeLayout>
 
   </android.support.v7.widget.CardView>

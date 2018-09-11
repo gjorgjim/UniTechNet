@@ -90,6 +90,7 @@
   <string name="password_changed">Your password was successfully changed.</string>
   <string name="not_answered">Not answered</string>
   <string name="answered">Answered</string>
+  <string name="mark_as_answer">Mark as answer</string>
 
   <string-array name="gender_array">
     <item>Not Specified</item>

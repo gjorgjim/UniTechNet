@@ -82,7 +82,11 @@ public class ProblemViewFragment extends Fragment {
 
   private void showAnswers() {
     for(Answer answer : currentProblem.getAnswers().values()) {
-      AnswerView answerView = new AnswerView(getContext(), answer);
+      AnswerView answerView = new AnswerView(
+        getContext(),
+        answer,
+        currentProblem.getAuthor()
+        );
 
       answersLl.addView(answerView);
     }
