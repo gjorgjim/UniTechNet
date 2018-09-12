@@ -189,6 +189,13 @@ public class CourseService {
 
       databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answers").child(answerKey).child("description").setValue(newDescription);
 
+      for(Course currentCourse : allCourses) {
+        if(currentCourse.getCourseId().equals(courseKey)) {
+          currentCourse.getProblems().get(problemKey).getAnswers().get(answerKey).setDescription(newDescription);
+          break;
+        }
+      }
+
       callback.onSuccess();
     } catch (NullPointerException e) {
       callback.onFailure();
@@ -204,6 +211,13 @@ public class CourseService {
       String answerKey = dataManager.getAnswerKey(problem.getAnswers(), answer);
 
       databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answerId").setValue(answerKey);
+
+      for(Course currentCourse : allCourses) {
+        if(currentCourse.getCourseId().equals(courseKey)) {
+          currentCourse.getProblems().get(problemKey).setAnswerid(answerKey);
+          break;
+        }
+      }
 
       callback.onSuccess();
     } catch (NullPointerException e) {
@@ -222,6 +236,13 @@ public class CourseService {
       databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answers").child(answerKey).removeValue();
 
       callback.onSuccess();
+
+      for(Course currentCourse : allCourses) {
+        if(currentCourse.getCourseId().equals(courseKey)) {
+          currentCourse.getProblems().get(problemKey).getAnswers().remove(answerKey);
+          break;
+        }
+      }
     } catch (NullPointerException e) {
       callback.onFailure();
     }

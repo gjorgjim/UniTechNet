@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatTextView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -113,7 +114,9 @@ public class ProblemViewFragment extends Fragment {
   }
 
   public void deleteAnswerView(Answer answer) {
+    Log.d(ProblemViewFragment.class.getSimpleName(), "deleteAnswerView called");
     String answerKey = dataManager.getAnswerKey(currentProblem.getAnswers(), answer);
+    Log.d(ProblemViewFragment.class.getSimpleName(), "deleteAnswerView " + answerKey);
     answersLl.removeView(answerViews.get(answerKey));
   }
 

@@ -142,6 +142,7 @@ public class AnswerView extends RelativeLayout {
             isAnswer = true;
             setupAllViews();
             if(fragment.getCurrentAnswerView() != null) {
+              //TODO: Not working properly
               fragment.getCurrentAnswerView().setNotAnswer();
             }
           }
