@@ -210,17 +210,28 @@ public class CourseService {
       String problemKey = dataManager.getProblemKey(course.getProblems(), problem);
       String answerKey = dataManager.getAnswerKey(problem.getAnswers(), answer);
 
-      databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answerId").setValue(answerKey);
+      databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answerId").setValue(
+        answerKey);
 
-      for(Course currentCourse : allCourses) {
-        if(currentCourse.getCourseId().equals(courseKey)) {
+      databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answers").child(answerKey)
+        .child("isIsAnswer").setValue(true);
+
+      if(problem.getAnswerid() != null) {
+        databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answers").child(problem
+          .getAnswerid()).child("isIsAnswer").setValue(false);
+      }
+
+      for (Course currentCourse : allCourses) {
+        if (currentCourse.getCourseId().equals(courseKey)) {
           currentCourse.getProblems().get(problemKey).setAnswerid(answerKey);
+          currentCourse.getProblems().get(problemKey).getAnswers().get(answerKey).setIsAnswer(true);
           break;
         }
       }
 
       callback.onSuccess();
     } catch (NullPointerException e) {
+      e.printStackTrace();
       callback.onFailure();
     }
   }
@@ -234,6 +245,12 @@ public class CourseService {
       String answerKey = dataManager.getAnswerKey(problem.getAnswers(), answer);
 
       databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answers").child(answerKey).removeValue();
+
+      if(answer.isIsAnswer()) {
+        databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answerId").setValue("false");
+
+        course.getProblems().get(problemKey).setAnswerid("false");
+      }
 
       callback.onSuccess();
 

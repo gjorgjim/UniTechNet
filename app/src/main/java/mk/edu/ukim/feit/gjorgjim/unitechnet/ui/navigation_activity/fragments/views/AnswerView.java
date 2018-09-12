@@ -44,8 +44,6 @@ public class AnswerView extends RelativeLayout {
 
   private HashMap<String, User> problemAuthor;
 
-  private boolean isAnswer;
-
   private AlertDialog confirmationDialog;
 
   private AppCompatTextView answerDescriptionTv;
@@ -60,14 +58,12 @@ public class AnswerView extends RelativeLayout {
   private AppCompatTextView editDescriptionTv;
   private View underlineView;
 
-  public AnswerView(Context context, ProblemViewFragment fragment, Answer answer, HashMap<String, User> problemAuthor,
-    boolean isAnswer) {
+  public AnswerView(Context context, ProblemViewFragment fragment, Answer answer, HashMap<String, User> problemAuthor) {
     super(context);
     this.context = context;
     this.fragment = fragment;
     currentAnswer = answer;
     this.problemAuthor = problemAuthor;
-    this.isAnswer = isAnswer;
     authenticationService = AuthenticationService.getInstance();
     courseService = CourseService.getInstance();
     viewDelegate = ViewDelegate.getInstance();
@@ -136,23 +132,25 @@ public class AnswerView extends RelativeLayout {
     markAsAnswerTv.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        courseService.editProblemsAnswerId(currentAnswer, new SuccessFailureCallback() {
-          @Override
-          public void onSuccess() {
-            isAnswer = true;
-            setupAllViews();
-            if(fragment.getCurrentAnswerView() != null) {
-              //TODO: Not working properly
-              fragment.getCurrentAnswerView().setNotAnswer();
+        if(!currentAnswer.isIsAnswer()) {
+          courseService.editProblemsAnswerId(currentAnswer, new SuccessFailureCallback() {
+            @Override
+            public void onSuccess() {
+              currentAnswer.setIsAnswer(true);
+              setupAllViews();
+              if(fragment.getCurrentAnswerView() != null) {
+                fragment.getCurrentAnswerView().setNotAnswer();
+              }
+              fragment.setCurrentAnswerView(AnswerView.this);
             }
-          }
 
-          @Override
-          public void onFailure() {
-            Toast.makeText(context, "This operation cannot be done at this moment. Try again later.",
-              Toast.LENGTH_SHORT).show();
-          }
-        });
+            @Override
+            public void onFailure() {
+              Toast.makeText(context, "This operation cannot be done at this moment. Try again later.",
+                Toast.LENGTH_SHORT).show();
+            }
+          });
+        }
       }
     });
 
@@ -180,7 +178,7 @@ public class AnswerView extends RelativeLayout {
   }
 
   public void setNotAnswer() {
-    isAnswer = false;
+    currentAnswer.setIsAnswer(false);
     underlineView.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
     markAsAnswerTv.setTextColor(context.getResources().getColor(R.color.colorPrimary));
   }
@@ -224,15 +222,15 @@ public class AnswerView extends RelativeLayout {
   private void showAnswerAuthorView() {
     answerAuthorRl.setVisibility(VISIBLE);
     problemAuthorRl.setVisibility(GONE);
-    if (isAnswer) {
+    if (currentAnswer.isIsAnswer()) {
       underlineView.setBackgroundColor(context.getResources().getColor(R.color.answeredProblemColor));
     }
   }
 
   private void showProblemAuthorView() {
     answerAuthorRl.setVisibility(GONE);
-    if (isAnswer) {
-      markAsAnswerTv.setTextColor(context.getResources().getColor(R.color.ef_grey));
+    if (currentAnswer.isIsAnswer()) {
+      markAsAnswerTv.setTextColor(context.getResources().getColor(R.color.answeredProblemColor));
       underlineView.setBackgroundColor(context.getResources().getColor(R.color.answeredProblemColor));
     }
     problemAuthorRl.setVisibility(VISIBLE);
@@ -240,8 +238,8 @@ public class AnswerView extends RelativeLayout {
 
   private void showBothViews() {
     answerAuthorRl.setVisibility(VISIBLE);
-    if (isAnswer) {
-      markAsAnswerTv.setTextColor(context.getResources().getColor(R.color.ef_grey));
+    if (currentAnswer.isIsAnswer()) {
+      markAsAnswerTv.setTextColor(context.getResources().getColor(R.color.answeredProblemColor));
       underlineView.setBackgroundColor(context.getResources().getColor(R.color.answeredProblemColor));
     }
     problemAuthorRl.setVisibility(VISIBLE);

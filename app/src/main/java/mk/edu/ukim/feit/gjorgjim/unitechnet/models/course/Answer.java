@@ -13,6 +13,7 @@ public class Answer {
   private String description;
   private HashMap<String, User> author;
   private Date date;
+  private boolean isAnswer;
 
   public Answer() {
   }
@@ -39,5 +40,13 @@ public class Answer {
 
   public void setDate(Date date) {
     this.date = date;
+  }
+
+  public boolean isIsAnswer() {
+    return isAnswer;
+  }
+
+  public void setIsAnswer(boolean answer) {
+    isAnswer = answer;
   }
 }

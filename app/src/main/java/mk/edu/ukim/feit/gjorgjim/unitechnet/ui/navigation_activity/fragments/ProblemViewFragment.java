@@ -96,21 +96,20 @@ public class ProblemViewFragment extends Fragment {
 
   private void showAnswers() {
     for (Map.Entry<String, Answer> current : currentProblem.getAnswers().entrySet()) {
-      AnswerView answerView = null;
-      if (currentAnswerView == null && currentProblem.getAnswerid() != null && currentProblem.getAnswerid().equals(current.getKey())) {
-          answerView = new AnswerView(getContext(), this, current.getValue(), currentProblem.getAuthor(), true);
-          currentAnswerView = answerView;
-      } else {
-        answerView = new AnswerView(getContext(), this, current.getValue(), currentProblem.getAuthor(), false);
-      }
-
+      AnswerView answerView = new AnswerView(getContext(), this, current.getValue(), currentProblem.getAuthor());
+      Log.d(ProblemViewFragment.class.getSimpleName(), "current isIsAnswer: " + current.getValue().isIsAnswer());
       answerViews.put(current.getKey(), answerView);
+
       answersLl.addView(answerView);
     }
   }
 
   public AnswerView getCurrentAnswerView() {
     return currentAnswerView;
+  }
+
+  public void setCurrentAnswerView(AnswerView answerView) {
+    currentAnswerView = answerView;
   }
 
   public void deleteAnswerView(Answer answer) {
