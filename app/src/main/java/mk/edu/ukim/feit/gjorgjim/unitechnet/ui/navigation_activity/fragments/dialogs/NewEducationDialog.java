@@ -146,21 +146,21 @@ public class NewEducationDialog extends Dialog {
           schoolEt.getText().toString().trim(),
           degreeEt.getText().toString().trim(),
           gradeEt.getText().toString().trim(),
-          new Date(
+          Date.formatToString(new Date(
             Integer.parseInt(startDate[2]),
             Integer.parseInt(startDate[1]),
             Integer.parseInt(startDate[0])
-          )
+          ))
         );
         if(presentCb.isChecked()) {
           education.setEndDate(null);
         } else {
           String[] endDate = endDateEt.getText().toString().split("/");
-          education.setEndDate(new Date(
+          education.setEndDate(Date.formatToString(new Date(
             Integer.parseInt(endDate[2]),
             Integer.parseInt(endDate[1]),
             Integer.parseInt(endDate[0])
-          ));
+          )));
         }
 
         userService.addEducation(education);

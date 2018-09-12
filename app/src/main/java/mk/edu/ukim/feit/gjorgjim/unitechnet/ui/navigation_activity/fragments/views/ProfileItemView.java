@@ -11,6 +11,7 @@ import java.util.Locale;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Education;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.ProfileFragment;
@@ -77,36 +78,40 @@ public class ProfileItemView<T> extends RelativeLayout {
 
       titleTv.setText(current.getJobTitle());
       descriptionTv.setText(current.getCompany());
+      Date startDateString = Date.formatFromString(current.getStartDate());
       String startDate = String.format(new Locale("en"),
         "%s/%d",
-        formatMonth(current.getStartDate().getMonth()),
-        current.getStartDate().getYear());
+        formatMonth(startDateString.getMonth()),
+        startDateString.getYear());
       String endDate;
       if(current.getEndDate() == null) {
         endDate = "present";
       } else {
+        Date endDateString = Date.formatFromString(current.getEndDate());
         endDate = String.format(new Locale("en"),
           "%s/%d",
-          formatMonth(current.getEndDate().getMonth()),
-          current.getEndDate().getYear());
+          formatMonth(endDateString.getMonth()),
+          endDateString.getYear());
       }
       dateTv.setText(String.format(new Locale("en"), "%s - %s", startDate, endDate));
     } else if(item instanceof Education) {
       Education current = (Education) item;
       titleTv.setText(current.getDegree());
       descriptionTv.setText(current.getSchool());
+      Date startDateString = Date.formatFromString(current.getStartDate());
       String startDate = String.format(new Locale("en"),
         "%s/%d",
-        formatMonth(current.getStartDate().getMonth()),
-        current.getStartDate().getYear());
+        formatMonth(startDateString.getMonth()),
+        startDateString.getYear());
       String endDate;
       if(current.getEndDate() == null) {
         endDate = "present";
       } else {
+        Date endDateString = Date.formatFromString(current.getEndDate());
         endDate = String.format(new Locale("en"),
           "%s/%d",
-          formatMonth(current.getEndDate().getMonth()),
-          current.getEndDate().getYear());
+          formatMonth(endDateString.getMonth()),
+          endDateString.getYear());
       }
       dateTv.setText(String.format(new Locale("en"), "%s - %s", startDate, endDate));
     }

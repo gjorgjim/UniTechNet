@@ -96,11 +96,12 @@ public class EditEducationDialog extends Dialog {
       .minDate(2000, 0, 1);
 
     startDateEt.setOnClickListener(v -> {
+      Date startDate = Date.formatFromString(currentEducation.getStartDate());
       datePickerBuilder
         .defaultDate(
-          currentEducation.getStartDate().getYear(),
-          currentEducation.getStartDate().getMonth() - 1,
-          currentEducation.getStartDate().getDay()
+          startDate.getYear(),
+          startDate.getMonth() - 1,
+          startDate.getDay()
         )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override
@@ -113,11 +114,12 @@ public class EditEducationDialog extends Dialog {
     });
 
     startDateEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
+      Date startDate = Date.formatFromString(currentEducation.getStartDate());
       datePickerBuilder
         .defaultDate(
-          currentEducation.getStartDate().getYear(),
-          currentEducation.getStartDate().getMonth() - 1,
-          currentEducation.getStartDate().getDay()
+          startDate.getYear(),
+          startDate.getMonth() - 1,
+          startDate.getDay()
         )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override
@@ -130,11 +132,15 @@ public class EditEducationDialog extends Dialog {
     });
 
     endDateEt.setOnClickListener(v -> {
+      Date endDate = null;
+      if(currentEducation.getEndDate() != null) {
+        endDate = Date.formatFromString(currentEducation.getEndDate());
+      }
       datePickerBuilder
         .defaultDate(
-          currentEducation.getEndDate() != null ? currentEducation.getEndDate().getYear() : 2017,
-          currentEducation.getEndDate() != null ? currentEducation.getEndDate().getMonth() - 1 : 1,
-          currentEducation.getEndDate() != null ? currentEducation.getEndDate().getDay() : 1
+          endDate != null ? endDate.getYear() : 2017,
+          endDate != null ? endDate.getMonth() - 1 : 1,
+          endDate != null ? endDate.getDay() : 1
         )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override
@@ -147,11 +153,15 @@ public class EditEducationDialog extends Dialog {
     });
 
     endDateEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
+      Date endDate = null;
+      if(currentEducation.getEndDate() != null) {
+        endDate = Date.formatFromString(currentEducation.getEndDate());
+      }
       datePickerBuilder
         .defaultDate(
-          currentEducation.getEndDate() != null ? currentEducation.getEndDate().getYear() : 2017,
-          currentEducation.getEndDate() != null ? currentEducation.getEndDate().getMonth() - 1 : 1,
-          currentEducation.getEndDate() != null ? currentEducation.getEndDate().getDay() : 1
+          endDate != null ? endDate.getYear() : 2017,
+          endDate != null ? endDate.getMonth() - 1 : 1,
+          endDate != null ? endDate.getDay() : 1
         )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override
@@ -170,21 +180,21 @@ public class EditEducationDialog extends Dialog {
           schoolEt.getText().toString().trim(),
           degreeEt.getText().toString().trim(),
           gradeEt.getText().toString().trim(),
-          new Date(
+          Date.formatToString(new Date(
             Integer.parseInt(startDate[2]),
             Integer.parseInt(startDate[1]),
             Integer.parseInt(startDate[0])
-          )
+          ))
         );
         if(presentCb.isChecked()) {
           education.setEndDate(null);
         } else {
           String[] endDate = endDateEt.getText().toString().split("/");
-          education.setEndDate(new Date(
+          education.setEndDate(Date.formatToString(new Date(
             Integer.parseInt(endDate[2]),
             Integer.parseInt(endDate[1]),
             Integer.parseInt(endDate[0])
-          ));
+          )));
         }
 
         userService.saveEducation(key, education);
@@ -232,17 +242,19 @@ public class EditEducationDialog extends Dialog {
     schoolEt.setText(currentEducation.getSchool());
     degreeEt.setText(currentEducation.getDegree());
     gradeEt.setText(currentEducation.getGrade());
+    Date startDate = Date.formatFromString(currentEducation.getStartDate());
     startDateEt.setText(String.format(new Locale("en"),
       "%d/%d/%d",
-      currentEducation.getStartDate().getDay(),
-      currentEducation.getStartDate().getMonth(),
-      currentEducation.getStartDate().getYear()));
+      startDate.getDay(),
+      startDate.getMonth(),
+      startDate.getYear()));
     if(currentEducation.getEndDate() != null) {
+      Date endDate = Date.formatFromString(currentEducation.getEndDate());
       endDateEt.setText(String.format(new Locale("en"),
         "%d/%d/%d",
-        currentEducation.getEndDate().getDay(),
-        currentEducation.getEndDate().getMonth(),
-        currentEducation.getEndDate().getYear()));
+        endDate.getDay(),
+        endDate.getMonth(),
+        endDate.getYear()));
     } else {
       presentCb.setChecked(true);
     }

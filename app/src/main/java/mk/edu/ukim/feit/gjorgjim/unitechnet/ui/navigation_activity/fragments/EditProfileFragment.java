@@ -194,9 +194,10 @@ public class EditProfileFragment extends Fragment {
         user.setUsername(usernameEt.getText().toString().trim());
         user.setTitle(titleEt.getText().toString().trim());
         String[] birthday = birthdayEt.getText().toString().trim().split("/");
-        user.setBirthday(new Date(Integer.parseInt(birthday[2]),
+        user.setBirthday(Date.formatToString(new Date(Integer.parseInt(birthday[2]),
           Integer.parseInt(birthday[1]),
-          Integer.parseInt(birthday[0])));
+          Integer.parseInt(birthday[0]))
+        ));
 
         userService.saveUser(user);
 

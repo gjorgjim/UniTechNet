@@ -43,6 +43,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Problem;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Chat;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Message;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.services.MessagingBackgroundService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.WaitingDialog;
@@ -230,6 +231,9 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
         }
         userService.removeSignInListener();
         messagingService.startBackgroundServiceForMessages(NavigationActivity.this);
+
+        Log.d(LOG_TAG, "Date: " + user.getBirthday());
+        Log.d(LOG_TAG, "Date formatToString" + Date.formatFromString("2018-09-11T10:55:47").toString());
       }
 
       @Override

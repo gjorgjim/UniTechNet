@@ -7,13 +7,13 @@ package mk.edu.ukim.feit.gjorgjim.unitechnet.models.user;
 public class Experience {
   private String jobTitle;
   private String company;
-  private Date startDate;
-  private Date endDate;
+  private String startDate;
+  private String endDate;
 
   public Experience() {
   }
 
-  public Experience(String jobTitle, String company, Date startDate) {
+  public Experience(String jobTitle, String company, String startDate) {
     this.jobTitle = jobTitle;
     this.company = company;
     this.startDate = startDate;
@@ -35,19 +35,19 @@ public class Experience {
     this.company = company;
   }
 
-  public Date getStartDate() {
+  public String getStartDate() {
     return startDate;
   }
 
-  public void setStartDate(Date startDate) {
+  public void setStartDate(String startDate) {
     this.startDate = startDate;
   }
 
-  public Date getEndDate() {
+  public String getEndDate() {
     return endDate;
   }
 
-  public void setEndDate(Date endDate) {
+  public void setEndDate(String endDate) {
     this.endDate = endDate;
   }
 }

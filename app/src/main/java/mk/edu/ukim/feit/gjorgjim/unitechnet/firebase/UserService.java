@@ -6,10 +6,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.LruCache;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,7 +28,6 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ProfileChangeCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ProfilePictureCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Education;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Experience;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
@@ -442,7 +439,7 @@ public class UserService {
     userRef.child(child).setValue(value);
   }
 
-  public void saveUserBirthday(Date value) {
+  public void saveUserBirthday(String value) {
     DatabaseReference userRef = databaseService.userReference(
       authenticationService
         .getCurrentUser()

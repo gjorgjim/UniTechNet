@@ -86,14 +86,16 @@ public class EditUserDetailsDialog extends Dialog {
     java.util.Date date = new java.util.Date();
     String[] today = dateFormat.format(date).split("/");
 
+    Date birthdayString = Date.formatFromString(currentUser.getBirthday());
+
     SpinnerDatePickerDialogBuilder datePickerBuilder = new SpinnerDatePickerDialogBuilder()
       .context(activity)
       .spinnerTheme(R.style.NumberPickerStyle)
       .showTitle(true)
       .defaultDate(
-        currentUser.getBirthday().getYear(),
-        currentUser.getBirthday().getMonth() - 1,
-        currentUser.getBirthday().getDay()
+        birthdayString.getYear(),
+        birthdayString.getMonth() - 1,
+        birthdayString.getDay()
       )
       .maxDate(
         Integer.parseInt(today[0]),
@@ -150,11 +152,11 @@ public class EditUserDetailsDialog extends Dialog {
       }
 
       String[] birthday = birthdayEt.getText().toString().split("/");
-      Date birthDate = new Date(
+      String birthDate = Date.formatToString(new Date(
         Integer.parseInt(birthday[2]),
         Integer.parseInt(birthday[1]),
         Integer.parseInt(birthday[0])
-      );
+      ));
       if(!birthDate.equals(currentUser.getBirthday())) {
         userService.saveUserBirthday(birthDate);
         currentUser.setBirthday(birthDate);
@@ -186,12 +188,13 @@ public class EditUserDetailsDialog extends Dialog {
     lastNameEt.setText(user.getLastName());
     titleEt.setText(user.getTitle());
     usernameEt.setText(user.getUsername());
+    Date birthdayString = Date.formatFromString(user.getBirthday());
     birthdayEt.setText(
       String.format(new Locale("en"),
         "%d/%d/%d",
-        user.getBirthday().getDay(),
-        user.getBirthday().getMonth(),
-        user.getBirthday().getYear())
+        birthdayString.getDay(),
+        birthdayString.getMonth(),
+        birthdayString.getYear())
     );
   }
 

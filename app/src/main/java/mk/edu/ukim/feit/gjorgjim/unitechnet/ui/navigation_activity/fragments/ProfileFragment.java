@@ -2,7 +2,6 @@ package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,16 +17,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.esafirm.imagepicker.features.ImagePicker;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -35,7 +25,6 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ProfileChangeCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ProfilePictureCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ServiceCallback;
@@ -181,7 +170,7 @@ public class ProfileFragment extends Fragment{
     String title = (user.getTitle() != null) ? user.getTitle() : "Title";
     titleTv.setText(String.format("%s", title));
     usernameTv.setText(String.format("%s", user.getUsername()));
-    Date birthday = user.getBirthday();
+    Date birthday = Date.formatFromString(user.getBirthday());
     birthdayTv.setText(String.format(new Locale("en"),
       "%d/%d/%d", birthday.getDay(), birthday.getMonth(), birthday.getYear())
     );
@@ -224,12 +213,13 @@ public class ProfileFragment extends Fragment{
 
   }
 
-  public void setUserDetails(List<String> details, Date birthday){
+  public void setUserDetails(List<String> details, String birthday){
     nameTv.setText(String.format("%s\n    %s", details.get(0), details.get(1)));
     titleTv.setText(details.get(2));
     usernameTv.setText(details.get(3));
+    Date birthdayString = Date.formatFromString(birthday);
     birthdayTv.setText(String.format(new Locale("en"),
-      "%d/%d/%d", birthday.getDay(), birthday.getMonth(), birthday.getYear())
+      "%d/%d/%d", birthdayString.getDay(), birthdayString.getMonth(), birthdayString.getYear())
     );
   }
 

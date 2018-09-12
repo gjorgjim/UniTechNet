@@ -1,7 +1,6 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.models.user;
 
 import java.util.HashMap;
-import java.util.List;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.enums.UserGender;
@@ -16,7 +15,7 @@ public class User {
   private String lastName;
   private String title;
   private String email;
-  private Date birthday;
+  private String birthday;
   private UserGender gender;
   private HashMap<String, Boolean> connections;
   private HashMap<String, Course> courses;
@@ -62,11 +61,11 @@ public class User {
     this.email = email;
   }
 
-  public Date getBirthday() {
+  public String getBirthday() {
     return birthday;
   }
 
-  public void setBirthday(Date birthday) {
+  public void setBirthday(String birthday) {
     this.birthday = birthday;
   }
 

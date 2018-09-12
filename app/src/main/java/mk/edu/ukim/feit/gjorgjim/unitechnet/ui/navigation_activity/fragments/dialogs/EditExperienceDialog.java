@@ -94,11 +94,12 @@ public class EditExperienceDialog extends Dialog {
       .minDate(2000, 0, 1);
 
     startDateEt.setOnClickListener(v -> {
+      Date startDate = Date.formatFromString(currentExperience.getStartDate());
       datePickerBuilder
         .defaultDate(
-          currentExperience.getStartDate().getYear(),
-          currentExperience.getStartDate().getMonth() - 1,
-          currentExperience.getStartDate().getDay()
+          startDate.getYear(),
+          startDate.getMonth() - 1,
+          startDate.getDay()
         )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override
@@ -111,11 +112,12 @@ public class EditExperienceDialog extends Dialog {
     });
 
     startDateEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
+      Date startDate = Date.formatFromString(currentExperience.getStartDate());
       datePickerBuilder
         .defaultDate(
-          currentExperience.getStartDate().getYear(),
-          currentExperience.getStartDate().getMonth() - 1,
-          currentExperience.getStartDate().getDay()
+          startDate.getYear(),
+          startDate.getMonth() - 1,
+          startDate.getDay()
         )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override
@@ -128,11 +130,15 @@ public class EditExperienceDialog extends Dialog {
     });
 
     endDateEt.setOnClickListener(v -> {
+      Date endDate = null;
+      if(currentExperience.getEndDate() != null) {
+        endDate = Date.formatFromString(currentExperience.getEndDate());
+      }
       datePickerBuilder
         .defaultDate(
-          currentExperience.getEndDate() != null ? currentExperience.getEndDate().getYear() : 2017,
-          currentExperience.getEndDate() != null ? currentExperience.getEndDate().getMonth() - 1 : 1,
-          currentExperience.getEndDate() != null ? currentExperience.getEndDate().getDay() : 1
+          endDate != null ? endDate.getYear() : 2017,
+          endDate != null ? endDate.getMonth() - 1 : 1,
+          endDate != null ? endDate.getDay() : 1
         )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override
@@ -145,11 +151,15 @@ public class EditExperienceDialog extends Dialog {
     });
 
     endDateEt.setOnFocusChangeListener( (View v, boolean hasFocus) -> {
+      Date endDate = null;
+      if(currentExperience.getEndDate() != null) {
+        endDate = Date.formatFromString(currentExperience.getEndDate());
+      }
       datePickerBuilder
         .defaultDate(
-          currentExperience.getEndDate() != null ? currentExperience.getEndDate().getYear() : 2017,
-          currentExperience.getEndDate() != null ? currentExperience.getEndDate().getMonth() - 1 : 1,
-          currentExperience.getEndDate() != null ? currentExperience.getEndDate().getDay() : 1
+          endDate != null ? endDate.getYear() : 2017,
+          endDate != null ? endDate.getMonth() - 1 : 1,
+          endDate != null ? endDate.getDay() : 1
         )
         .callback(new DatePickerDialog.OnDateSetListener() {
           @Override
@@ -173,21 +183,21 @@ public class EditExperienceDialog extends Dialog {
         Experience experience = new Experience(
           titleEt.getText().toString().trim(),
           companyEt.getText().toString().trim(),
-          new Date(
+          Date.formatToString(new Date(
             Integer.parseInt(startDate[2]),
             Integer.parseInt(startDate[1]),
             Integer.parseInt(startDate[0])
-          )
+          ))
         );
         if(presentCb.isChecked()) {
           experience.setEndDate(null);
         } else {
           String[] endDate = endDateEt.getText().toString().split("/");
-          experience.setEndDate(new Date(
+          experience.setEndDate(Date.formatToString(new Date(
             Integer.parseInt(endDate[2]),
             Integer.parseInt(endDate[1]),
             Integer.parseInt(endDate[0])
-          ));
+          )));
         }
 
         userService.saveExperience(key, experience);
@@ -233,17 +243,19 @@ public class EditExperienceDialog extends Dialog {
   private void setupUi() {
     titleEt.setText(currentExperience.getJobTitle());
     companyEt.setText(currentExperience.getCompany());
+    Date startDate = Date.formatFromString(currentExperience.getStartDate());
     startDateEt.setText(String.format(new Locale("en"),
       "%d/%d/%d",
-      currentExperience.getStartDate().getDay(),
-      currentExperience.getStartDate().getMonth(),
-      currentExperience.getStartDate().getYear()));
+      startDate.getDay(),
+      startDate.getMonth(),
+      startDate.getYear()));
     if(currentExperience.getEndDate() != null) {
+      Date endDate = Date.formatFromString(currentExperience.getEndDate());
       endDateEt.setText(String.format(new Locale("en"),
         "%d/%d/%d",
-        currentExperience.getEndDate().getDay(),
-        currentExperience.getEndDate().getMonth(),
-        currentExperience.getEndDate().getYear()));
+        endDate.getDay(),
+        endDate.getMonth(),
+        endDate.getYear()));
     } else {
       presentCb.setChecked(true);
     }

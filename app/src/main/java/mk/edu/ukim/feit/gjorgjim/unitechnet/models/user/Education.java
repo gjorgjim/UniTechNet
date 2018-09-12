@@ -8,13 +8,13 @@ public class Education {
   private String school;
   private String degree;
   private String grade;
-  private Date startDate;
-  private Date endDate;
+  private String startDate;
+  private String endDate;
 
   public Education() {
   }
 
-  public Education(String school, String degree, String grade, Date startDate, Date endDate) {
+  public Education(String school, String degree, String grade, String startDate, String endDate) {
     this.school = school;
     this.degree = degree;
     this.grade = grade;
@@ -22,7 +22,7 @@ public class Education {
     this.endDate = endDate;
   }
 
-  public Education(String school, String degree, String grade, Date startDate) {
+  public Education(String school, String degree, String grade, String startDate) {
     this.school = school;
     this.degree = degree;
     this.grade = grade;
@@ -53,19 +53,19 @@ public class Education {
     this.grade = grade;
   }
 
-  public Date getStartDate() {
+  public String getStartDate() {
     return startDate;
   }
 
-  public void setStartDate(Date startDate) {
+  public void setStartDate(String startDate) {
     this.startDate = startDate;
   }
 
-  public Date getEndDate() {
+  public String getEndDate() {
     return endDate;
   }
 
-  public void setEndDate(Date endDate) {
+  public void setEndDate(String endDate) {
     this.endDate = endDate;
   }
 }

@@ -148,21 +148,21 @@ public class NewExperienceDialog extends Dialog {
         Experience experience = new Experience(
           titleEt.getText().toString().trim(),
           companyEt.getText().toString().trim(),
-          new Date(
+          Date.formatToString(new Date(
             Integer.parseInt(startDate[2]),
             Integer.parseInt(startDate[1]),
             Integer.parseInt(startDate[0])
-          )
+          ))
         );
         if(presentCb.isChecked()) {
           experience.setEndDate(null);
         } else {
           String[] endDate = endDateEt.getText().toString().split("/");
-          experience.setEndDate(new Date(
+          experience.setEndDate(Date.formatToString(new Date(
             Integer.parseInt(endDate[2]),
             Integer.parseInt(endDate[1]),
             Integer.parseInt(endDate[0])
-          ));
+          )));
         }
 
         userService.addExperience(experience);
