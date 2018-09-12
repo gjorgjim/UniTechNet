@@ -1,8 +1,5 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.firebase;
 
-import android.util.Log;
-import android.view.View;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -54,11 +51,9 @@ public class CourseService {
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
       for(DataSnapshot data : dataSnapshot.getChildren()) {
-        Log.d("CourseService", data.getValue().toString());
         Course course = data.getValue(Course.class);
         course.setCourseId(data.getKey());
         allCourses.add(course);
-        Log.d(LOG_TAG, "course: " + course.toString());
       }
       allCoursesCallback.onSuccess(allCourses);
       databaseService.coursesReference().removeEventListener(courseListener);
@@ -208,7 +203,9 @@ public class CourseService {
       String problemKey = dataManager.getProblemKey(course.getProblems(), problem);
       String answerKey = dataManager.getAnswerKey(problem.getAnswers(), answer);
 
-      databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answers").child("answerId").setValue(answerKey);
+      databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answerId").setValue(answerKey);
+
+      callback.onSuccess();
     } catch (NullPointerException e) {
       callback.onFailure();
     }
@@ -223,6 +220,8 @@ public class CourseService {
       String answerKey = dataManager.getAnswerKey(problem.getAnswers(), answer);
 
       databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answers").child(answerKey).removeValue();
+
+      callback.onSuccess();
     } catch (NullPointerException e) {
       callback.onFailure();
     }

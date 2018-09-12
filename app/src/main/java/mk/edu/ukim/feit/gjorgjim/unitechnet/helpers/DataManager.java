@@ -1,7 +1,6 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.helpers;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Answer;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Problem;
@@ -21,9 +20,9 @@ public class DataManager {
   }
 
   public String getAnswerKey(HashMap<String, Answer> alLAnswers, Answer answer) {
-    for(Map.Entry<String, Answer> current : alLAnswers.entrySet()) {
-      if(current == answer) {
-        return current.getKey();
+    for(String key : alLAnswers.keySet()) {
+      if(alLAnswers.get(key) == answer) {
+        return key;
       }
     }
 
@@ -31,9 +30,9 @@ public class DataManager {
   }
 
   public String getProblemKey(HashMap<String, Problem> allProblems, Problem problem) {
-    for(Map.Entry<String, Problem> current : allProblems.entrySet()) {
-      if(current == problem) {
-        return current.getKey();
+    for(String key : allProblems.keySet()) {
+      if(allProblems.get(key) == problem) {
+        return key;
       }
     }
 

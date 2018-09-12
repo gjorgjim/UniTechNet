@@ -3,22 +3,21 @@ package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DataManager;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Answer;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Problem;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.views.AnswerView;
 
@@ -37,6 +36,9 @@ public class ProblemViewFragment extends Fragment {
   private LinearLayout answersLl;
   private AppCompatTextView noAnswersTv;
   private AppCompatTextView solvedTv;
+  private FloatingActionButton addAnswerBtn;
+
+  private HashMap<String, AnswerView> answerViews;
 
   private Problem currentProblem;
 
@@ -58,6 +60,9 @@ public class ProblemViewFragment extends Fragment {
     answersLl = view.findViewById(R.id.answersLl);
     noAnswersTv = view.findViewById(R.id.noAnswersTv);
     solvedTv = view.findViewById(R.id.solvedTv);
+    addAnswerBtn = view.findViewById(R.id.addAnswerBtn);
+
+    answerViews = new HashMap<>();
 
     Bundle bundle = getArguments();
     if(bundle != null) {
@@ -91,19 +96,33 @@ public class ProblemViewFragment extends Fragment {
   private void showAnswers() {
     for (Map.Entry<String, Answer> current : currentProblem.getAnswers().entrySet()) {
       AnswerView answerView = null;
-      if (currentAnswerView == null && currentProblem.getAnswerid().equals(current.getKey())) {
+      if (currentAnswerView == null && currentProblem.getAnswerid() != null && currentProblem.getAnswerid().equals(current.getKey())) {
           answerView = new AnswerView(getContext(), this, current.getValue(), currentProblem.getAuthor(), true);
           currentAnswerView = answerView;
       } else {
         answerView = new AnswerView(getContext(), this, current.getValue(), currentProblem.getAuthor(), false);
       }
 
+      answerViews.put(current.getKey(), answerView);
       answersLl.addView(answerView);
     }
   }
 
   public AnswerView getCurrentAnswerView() {
     return currentAnswerView;
+  }
+
+  public void deleteAnswerView(Answer answer) {
+    String answerKey = dataManager.getAnswerKey(currentProblem.getAnswers(), answer);
+    answersLl.removeView(answerViews.get(answerKey));
+  }
+
+  public void showFloatingActionButton() {
+    addAnswerBtn.show();
+  }
+
+  public void hideFloatingActionButton() {
+    addAnswerBtn.hide();
   }
 
 }

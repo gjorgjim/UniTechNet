@@ -19,4 +19,14 @@ public class KeyboardDelegate {
     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
   }
 
+  public static void showSoftKeyboard(Activity activity, View view) {
+    InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+
+    if(view == null) {
+      view = new View(activity);
+    }
+
+    imm.showSoftInput(view, 0);
+  }
+
 }

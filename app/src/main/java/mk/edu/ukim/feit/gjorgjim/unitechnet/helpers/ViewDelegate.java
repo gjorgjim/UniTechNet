@@ -1,6 +1,7 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.helpers;
 
 import android.app.Activity;
+import android.view.WindowManager;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Problem;
@@ -38,6 +39,7 @@ public class ViewDelegate {
 
   public void setCurrentActivity(Activity currentActivity) {
     this.currentActivity = currentActivity;
+    this.currentActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
   }
 
   public Course getCurrentCourse() {

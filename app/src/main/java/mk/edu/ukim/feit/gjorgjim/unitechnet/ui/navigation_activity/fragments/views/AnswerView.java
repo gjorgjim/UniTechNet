@@ -19,6 +19,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.SuccessFailureCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.CourseService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.KeyboardDelegate;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.ViewDelegate;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Answer;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
@@ -45,22 +46,18 @@ public class AnswerView extends RelativeLayout {
 
   private boolean isAnswer;
 
-  private AlertDialog confirmationDialog = new AlertDialog.Builder(context).setTitle("Deleting answer").setMessage(
-    "Are you sure you want to delete this answer?").setNegativeButton("NO", new DialogInterface.OnClickListener() {
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-      confirmationDialog.dismiss();
-    }
-  }).create();
+  private AlertDialog confirmationDialog;
 
   private AppCompatTextView answerDescriptionTv;
   private AppCompatEditText editDescriptionEt;
   private AppCompatTextView answerAuthorTv;
   private RelativeLayout answerAuthorRl;
   private RelativeLayout problemAuthorRl;
+  private RelativeLayout editDescriptionRl;
   private AppCompatImageView editAnswerIv;
   private AppCompatImageView deleteAnswerIv;
   private AppCompatTextView markAsAnswerTv;
+  private AppCompatTextView editDescriptionTv;
   private View underlineView;
 
   public AnswerView(Context context, ProblemViewFragment fragment, Answer answer, HashMap<String, User> problemAuthor,
@@ -82,13 +79,23 @@ public class AnswerView extends RelativeLayout {
 
     answerAuthorTv = view.findViewById(R.id.answerAuthorTv);
     answerDescriptionTv = view.findViewById(R.id.answerDescriptionTv);
-    editDescriptionEt = view.findViewById(R.id.editDescriptionTv);
+    editDescriptionEt = view.findViewById(R.id.editDescriptionEt);
     answerAuthorRl = view.findViewById(R.id.answerAuthorRl);
     problemAuthorRl = view.findViewById(R.id.problemAuthorRl);
+    editDescriptionRl = view.findViewById(R.id.editDescriptionRl);
     editAnswerIv = view.findViewById(R.id.editAnswerIv);
     deleteAnswerIv = view.findViewById(R.id.deleteAnswerIv);
     markAsAnswerTv = view.findViewById(R.id.markAsAnswerTv);
+    editDescriptionTv = view.findViewById(R.id.editDescriptionTv);
     underlineView = view.findViewById(R.id.answerUnderline);
+
+    confirmationDialog = new AlertDialog.Builder(context).setTitle("Deleting answer").setMessage(
+      "Are you sure you want to delete this answer?").setNegativeButton("NO", new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        confirmationDialog.dismiss();
+      }
+    }).create();
 
     setupAllViews();
     view.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -110,7 +117,7 @@ public class AnswerView extends RelativeLayout {
               @Override
               public void onSuccess() {
                 confirmationDialog.dismiss();
-                viewDelegate.getCurrentActivity().onBackPressed();
+                fragment.deleteAnswerView(currentAnswer);
               }
 
               @Override
@@ -129,29 +136,35 @@ public class AnswerView extends RelativeLayout {
     markAsAnswerTv.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        if (isInEditAnswerMode()) {
-          courseService.editAnswerDescription(currentAnswer, editDescriptionEt.getText().toString(),
-            new SuccessFailureCallback() {
-              @Override
-              public void onSuccess() {
-                currentAnswer.setDescription(editDescriptionEt.getText().toString());
-                updateViewsAfterEdit();
-              }
+        courseService.editProblemsAnswerId(currentAnswer, new SuccessFailureCallback() {
+          @Override
+          public void onSuccess() {
+            isAnswer = true;
+            setupAllViews();
+            if(fragment.getCurrentAnswerView() != null) {
+              fragment.getCurrentAnswerView().setNotAnswer();
+            }
+          }
 
-              @Override
-              public void onFailure() {
-                Toast.makeText(context, "This operation cannot be done at this moment. Try again later.",
-                  Toast.LENGTH_SHORT).show();
-              }
-            });
-          setupAllViews();
-        } else {
-          courseService.editProblemsAnswerId(currentAnswer, new SuccessFailureCallback() {
+          @Override
+          public void onFailure() {
+            Toast.makeText(context, "This operation cannot be done at this moment. Try again later.",
+              Toast.LENGTH_SHORT).show();
+          }
+        });
+      }
+    });
+
+    editDescriptionTv.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        KeyboardDelegate.hideSoftKeyboard(viewDelegate.getCurrentActivity(), editDescriptionEt);
+        courseService.editAnswerDescription(currentAnswer, editDescriptionEt.getText().toString(),
+          new SuccessFailureCallback() {
             @Override
             public void onSuccess() {
-              isAnswer = true;
-              setupAllViews();
-              fragment.getCurrentAnswerView().setNotAnswer();
+              currentAnswer.setDescription(editDescriptionEt.getText().toString());
+              updateViewsAfterEdit();
             }
 
             @Override
@@ -160,7 +173,7 @@ public class AnswerView extends RelativeLayout {
                 Toast.LENGTH_SHORT).show();
             }
           });
-        }
+        setupAllViews();
       }
     });
   }
@@ -184,16 +197,17 @@ public class AnswerView extends RelativeLayout {
     return problemAuthor.containsKey(authenticationService.getCurrentUser().getUid());
   }
 
-  private boolean isInEditAnswerMode() {
-    return editDescriptionEt.getVisibility() == VISIBLE;
-  }
-
   private void setupAllViews() {
     answerDescriptionTv.setText(currentAnswer.getDescription());
     answerAuthorTv.setText(String
       .format(new Locale("en"), "%s %s %s", context.getString(R.string.problem_author_placeholder), new ArrayList<>(
         currentAnswer.getAuthor().values()).get(0).getFirstName(), new ArrayList<>(currentAnswer.getAuthor().values())
         .get(0).getLastName()));
+
+    answerDescriptionTv.setVisibility(VISIBLE);
+    answerAuthorTv.setVisibility(VISIBLE);
+
+    editDescriptionRl.setVisibility(GONE);
 
     if (isSameAuthor()) {
       showBothViews();
@@ -202,13 +216,16 @@ public class AnswerView extends RelativeLayout {
     } else if (isProblemAuthor()) {
       showProblemAuthorView();
     } else {
-      throw new UnsupportedOperationException();
+      //do nothing on purpose
     }
   }
 
   private void showAnswerAuthorView() {
     answerAuthorRl.setVisibility(VISIBLE);
     problemAuthorRl.setVisibility(GONE);
+    if (isAnswer) {
+      underlineView.setBackgroundColor(context.getResources().getColor(R.color.answeredProblemColor));
+    }
   }
 
   private void showProblemAuthorView() {
@@ -231,14 +248,19 @@ public class AnswerView extends RelativeLayout {
 
   private void updateViewsAfterEdit() {
     answerDescriptionTv.setText(currentAnswer.getDescription());
-    markAsAnswerTv.setText(context.getString(R.string.mark_as_answer));
+    editDescriptionRl.setVisibility(GONE);
+    fragment.showFloatingActionButton();
   }
 
   private void showEditModeView() {
     answerDescriptionTv.setVisibility(GONE);
     answerAuthorTv.setVisibility(GONE);
-    markAsAnswerTv.setText(context.getString(R.string.save));
-    editDescriptionEt.setVisibility(VISIBLE);
-    showProblemAuthorView();
+    problemAuthorRl.setVisibility(GONE);
+    answerAuthorRl.setVisibility(GONE);
+    fragment.hideFloatingActionButton();
+    editDescriptionEt.setText(currentAnswer.getDescription());
+    editDescriptionRl.setVisibility(VISIBLE);
+    editDescriptionEt.requestFocus();
+    KeyboardDelegate.showSoftKeyboard(viewDelegate.getCurrentActivity(), editDescriptionEt);
   }
 }
