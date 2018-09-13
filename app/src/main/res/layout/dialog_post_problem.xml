@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+  android:padding="8dp">
+
+  <android.support.v7.widget.AppCompatTextView
+    android:id="@+id/postProblemTv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="8dp"
+    style="@style/PrimaryTextStyle"
+    android:textSize="18sp"
+    android:text="@string/post_problem"/>
+
+  <android.support.design.widget.TextInputLayout
+    android:id="@+id/problemNameIl"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingTop="8dp"
+    android:layout_centerHorizontal="true"
+    android:layout_below="@id/postProblemTv">
+
+  <android.support.v7.widget.AppCompatEditText
+    android:id="@+id/problemNameEt"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:ems="10"
+    android:backgroundTint="@color/colorPrimary"
+    style="@style/EditTextPrimaryStyle"
+    android:hint="@string/problem_name_hint"/>
+
+  </android.support.design.widget.TextInputLayout>
+
+    <android.support.v7.widget.AppCompatEditText
+      android:id="@+id/problemDescriptionEt"
+      android:layout_width="match_parent"
+      android:layout_height="128dp"
+      android:layout_below="@id/problemNameIl"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="8dp"
+      android:background="@drawable/text_box_style"
+      style="@style/EditTextPrimaryStyle"
+      android:hint="@string/problem_description_hint"
+      android:padding="8dp"/>
+
+  <android.support.v7.widget.AppCompatButton
+    android:id="@+id/postProblemBtn"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/problemDescriptionEt"
+    android:layout_alignParentEnd="true"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="16dp"
+    style="@style/ButtonPrimaryTextStyle"
+    android:background="@color/colorPrimary"
+    android:text="@string/post"/>
+
+</RelativeLayout>

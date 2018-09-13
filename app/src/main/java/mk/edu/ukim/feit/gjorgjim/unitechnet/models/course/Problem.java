@@ -16,7 +16,6 @@ public class Problem implements Serializable{
   private HashMap<String, User> author;
   private HashMap<String, Answer> answers;
   private String date;
-  private boolean solved;
   private String answerId;
 
   public Problem() {
@@ -60,14 +59,6 @@ public class Problem implements Serializable{
 
   public void setDate(String date) {
     this.date = date;
-  }
-
-  public boolean isSolved() {
-    return solved;
-  }
-
-  public void setSolved(boolean solved) {
-    this.solved = solved;
   }
 
   public String getAnswerid() {

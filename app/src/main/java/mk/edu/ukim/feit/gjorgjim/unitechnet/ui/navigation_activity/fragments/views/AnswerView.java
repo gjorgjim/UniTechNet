@@ -144,6 +144,7 @@ public class AnswerView extends RelativeLayout {
                 fragment.getCurrentAnswerView().setNotAnswer();
               }
               fragment.setCurrentAnswerView(AnswerView.this);
+              fragment.setAnsweredTextView();
             }
 
             @Override

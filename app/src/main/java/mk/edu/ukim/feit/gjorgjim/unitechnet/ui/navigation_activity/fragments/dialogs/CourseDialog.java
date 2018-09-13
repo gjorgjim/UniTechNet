@@ -15,8 +15,6 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ListDatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.CourseService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.CoursesFragment;
 
@@ -59,7 +57,7 @@ public class CourseDialog extends Dialog {
     courseDescription = findViewById(R.id.courseDescriptionTv);
     subscribeBtn = findViewById(R.id.subscribeBtn);
     subscribedUsers = findViewById(R.id.subscribedUsersTv);
-    solvedProblems = findViewById(R.id.solvedProblemsTv);
+    solvedProblems = findViewById(R.id.problemsTv);
 
     courseDescription.setMovementMethod(new ScrollingMovementMethod());
 

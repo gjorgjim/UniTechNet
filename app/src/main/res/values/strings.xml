@@ -53,7 +53,7 @@
   <string name="unsubscribe_button">Unsubscribe</string>
   <string name="subscribed_placeholder">subscribed</string>
   <string name="subscribed_users_placeholder">Subscribed users:</string>
-  <string name="solved_problems_placeholder">Solved problems:</string>
+  <string name="solved_problems_placeholder">Problems:</string>
   <string name="username_msg_placeholder">Kristina Aleksieska</string>
   <string name="last_message_placeholder">Koga ke diplomirame?</string>
   <string name="last_message_time_placeholder">08.08 12:17</string>
@@ -95,6 +95,9 @@
   <string name="answer_post_dialog">Answer..</string>
   <string name="post">Post</string>
   <string name="answer">Answer</string>
+  <string name="post_problem">Post problem</string>
+  <string name="problem_name_hint">Problem name</string>
+  <string name="problem_description_hint">Description</string>
 
   <string-array name="gender_array">
     <item>Not Specified</item>

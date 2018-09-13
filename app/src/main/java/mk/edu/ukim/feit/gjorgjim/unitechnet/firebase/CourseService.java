@@ -218,7 +218,7 @@ public class CourseService {
       databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answers").child(answerKey)
         .child("answer").setValue(true);
 
-      if(problem.getAnswerid() != null) {
+      if(problem.getAnswerid() != null && problem.getAnswers().containsKey(problem.getAnswerid())) {
         databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answers").child(problem
           .getAnswerid()).child("answer").setValue(false);
       }
@@ -305,19 +305,35 @@ public class CourseService {
 
   public void postProblemToCourse(Problem problem, SuccessFailureCallback callback) {
     try {
+      String uid = authenticationService.getCurrentUser().getUid();
+      User user = new User();
+      user.setFirstName(userService.getCurrentUser().getFirstName());
+      user.setLastName(userService.getCurrentUser().getLastName());
+
       Course course = viewDelegate.getCurrentCourse();
       String courseKey = course.getCourseId();
 
       String problemKey = databaseService.courseReference(courseKey).child("problems").push().getKey();
       databaseService.courseReference(courseKey).child("problems").child(problemKey).setValue(problem);
+      databaseService.courseReference(courseKey).child("problems").child(problemKey).child("author").child(uid).setValue(user);
 
       for(Course currentCourse : allCourses) {
         if(currentCourse.getCourseId().equals(courseKey)) {
+          if(currentCourse.getProblems() == null) {
+            currentCourse.setProblems(new HashMap<>());
+          }
+          currentCourse.getProblems().put(problemKey, problem);
+          HashMap<String, User> author = new HashMap<>();
+          author.put(uid, user);
+          currentCourse.getProblems().get(problemKey).setAuthor(author);
           currentCourse.getProblems().put(problemKey, problem);
           break;
         }
       }
+
+      callback.onSuccess();
     } catch (NullPointerException e) {
+      e.printStackTrace();
       callback.onFailure();
     }
   }

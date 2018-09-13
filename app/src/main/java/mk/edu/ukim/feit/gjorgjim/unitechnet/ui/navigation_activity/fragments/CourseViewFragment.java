@@ -3,6 +3,7 @@ package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.AppCompatButton;
@@ -15,8 +16,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ListDatabaseCallback;
@@ -24,6 +27,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.CourseService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Problem;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dialogs.PostProblemDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.views.ProblemView;
 
 import static android.view.View.GONE;
@@ -45,12 +49,18 @@ public class CourseViewFragment extends Fragment {
   private LinearLayout problemsLl;
   private AppCompatTextView hideProblemsTv;
   private ContentLoadingProgressBar progressBar;
+  private FloatingActionButton postProblembtn;
 
   private Course currentCourse;
+
+  private HashMap<String, ProblemView> problemViews;
+
+  private TextView emptyProblems;
 
   public CourseViewFragment() {
     courseService = CourseService.getInstance();
     authenticationService = AuthenticationService.getInstance();
+    problemViews = new HashMap<>();
   }
 
   @Nullable
@@ -62,11 +72,12 @@ public class CourseViewFragment extends Fragment {
     courseNameTv = view.findViewById(R.id.courseNameTv);
     courseDescriptionTv = view.findViewById(R.id.courseDescriptionTv);
     subscribedUsersTv = view.findViewById(R.id.subscribedUsersTv);
-    solvedProblemsTv = view.findViewById(R.id.solvedProblemsTv);
+    solvedProblemsTv = view.findViewById(R.id.problemsTv);
     subscribeButton = view.findViewById(R.id.subscribeBtn);
     problemsLl = view.findViewById(R.id.problemsLl);
     hideProblemsTv = view.findViewById(R.id.hideProblemsTv);
     progressBar = view.findViewById(R.id.waitingPb);
+    postProblembtn = view.findViewById(R.id.postProblemBtn);
 
     Bundle bundle = getArguments();
     if(bundle != null) {
@@ -138,6 +149,13 @@ public class CourseViewFragment extends Fragment {
       }
     });
 
+    postProblembtn.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        new PostProblemDialog(getContext(), getActivity(), CourseViewFragment.this).show();
+      }
+    });
+
     return view;
   }
 
@@ -167,15 +185,20 @@ public class CourseViewFragment extends Fragment {
     hideProblemsTv.setVisibility(View.VISIBLE);
   }
 
-  private void showProblems() {
-    if(currentCourse.getProblems() != null) {
-      for(Problem problem : currentCourse.getProblems().values()) {
-        ProblemView problemView = new ProblemView(getActivity(), problem);
+  public void showProblems() {
+    if(currentCourse.getProblems() != null && currentCourse.getProblems().size() > 0) {
+      problemsLl.removeView(emptyProblems);
+      for(Map.Entry<String, Problem> current : currentCourse.getProblems().entrySet()) {
+        ProblemView problemView = new ProblemView(getActivity(), current.getValue());
 
-        problemsLl.addView(problemView);
+        if(!problemViews.containsKey(current.getKey())) {
+          problemViews.put(current.getKey(), problemView);
+          problemsLl.addView(problemView);
+        }
+
       }
     } else {
-      TextView emptyProblems = new TextView(getContext());
+      emptyProblems = new TextView(getContext());
 
       LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
         LinearLayout.LayoutParams.WRAP_CONTENT,

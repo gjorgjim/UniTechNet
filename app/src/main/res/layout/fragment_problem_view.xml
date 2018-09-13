@@ -87,12 +87,12 @@
 
       <android.support.v7.widget.AppCompatTextView
         android:id="@+id/noAnswersTv"
-        style="@style/SecondaryTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/answersTextTv"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
+        style="@style/SecondaryTextStyle"
         android:text="@string/no_answers"
         android:textStyle="italic"
         android:visibility="gone"/>

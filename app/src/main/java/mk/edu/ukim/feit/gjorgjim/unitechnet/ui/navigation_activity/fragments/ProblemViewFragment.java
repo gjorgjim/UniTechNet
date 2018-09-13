@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,8 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Answer;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Problem;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dialogs.PostAnswerDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.views.AnswerView;
+
+import static android.view.View.GONE;
 
 /**
  * Created by gjmarkov on 09.9.2018.
@@ -76,21 +79,9 @@ public class ProblemViewFragment extends Fragment {
     problemNameTv.setText(currentProblem.getName());
     problemDescription.setText(currentProblem.getDescription());
 
-    if(currentProblem.isSolved()) {
-        solvedTv.setText(getString(R.string.answered));
-        solvedTv.setTextColor(getResources().getColor(R.color.answeredProblemColor));
-    } else {
-        solvedTv.setText(getString(R.string.not_answered));
-        solvedTv.setTextColor(getResources().getColor(R.color.colorPrimary));
-    }
+    setAnsweredTextView();
 
-    if(currentProblem.getAnswers() != null) {
-      noAnswersTv.setVisibility(View.GONE);
-      showAnswers();
-    } else {
-      answersLl.setVisibility(View.GONE);
-      noAnswersTv.setVisibility(View.VISIBLE);
-    }
+    showAnswers();
 
     addAnswerBtn.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -103,16 +94,31 @@ public class ProblemViewFragment extends Fragment {
   }
 
   public void showAnswers() {
-    for (Map.Entry<String, Answer> current : currentProblem.getAnswers().entrySet()) {
-      AnswerView answerView = new AnswerView(getContext(), this, current.getValue(), currentProblem.getAuthor());
+    if(currentProblem.getAnswers() != null && currentProblem.getAnswers().size() > 0) {
+      noAnswersTv.setVisibility(GONE);
+      for (Map.Entry<String, Answer> current : currentProblem.getAnswers().entrySet()) {
+        AnswerView answerView = new AnswerView(getContext(), this, current.getValue(), currentProblem.getAuthor());
 
-      if(!answerViews.containsKey(current.getKey())) {
-        if(current.getValue().isAnswer()) {
-          currentAnswerView = answerView;
+        if (!answerViews.containsKey(current.getKey())) {
+          if (current.getValue().isAnswer()) {
+            currentAnswerView = answerView;
+          }
+          answerViews.put(current.getKey(), answerView);
+          answersLl.addView(answerView);
         }
-        answerViews.put(current.getKey(), answerView);
-        answersLl.addView(answerView);
       }
+    } else {
+      noAnswersTv.setVisibility(View.VISIBLE);
+    }
+  }
+
+  public void setAnsweredTextView() {
+    if(!currentProblem.getAnswerid().equals("false")) {
+      solvedTv.setText(getString(R.string.answered));
+      solvedTv.setTextColor(getResources().getColor(R.color.answeredProblemColor));
+    } else {
+      solvedTv.setText(getString(R.string.not_answered));
+      solvedTv.setTextColor(getResources().getColor(R.color.colorPrimary));
     }
   }
 

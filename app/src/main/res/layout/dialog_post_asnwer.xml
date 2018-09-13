@@ -18,7 +18,7 @@
   <android.support.v7.widget.AppCompatEditText
     android:id="@+id/descriptionEt"
     android:layout_width="match_parent"
-    android:layout_height="126dp"
+    android:layout_height="128dp"
     android:layout_below="@id/postAnswerTv"
     android:layout_centerHorizontal="true"
     android:layout_marginTop="16dp"
