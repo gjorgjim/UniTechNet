@@ -1,5 +1,6 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.models.user;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
@@ -9,7 +10,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.enums.UserGender;
  * Created by gjmarkov on 15.5.2018.
  */
 
-public class User {
+public class User implements Serializable {
   private String username;
   private String firstName;
   private String lastName;
