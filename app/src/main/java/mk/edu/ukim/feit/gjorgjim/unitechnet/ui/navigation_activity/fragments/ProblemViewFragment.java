@@ -20,6 +20,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DataManager;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Answer;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Problem;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dialogs.PostAnswerDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.views.AnswerView;
 
 /**
@@ -91,16 +92,24 @@ public class ProblemViewFragment extends Fragment {
       noAnswersTv.setVisibility(View.VISIBLE);
     }
 
+    addAnswerBtn.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        new PostAnswerDialog(getContext(), ProblemViewFragment.this).show();
+      }
+    });
+
     return view;
   }
 
-  private void showAnswers() {
+  public void showAnswers() {
     for (Map.Entry<String, Answer> current : currentProblem.getAnswers().entrySet()) {
       AnswerView answerView = new AnswerView(getContext(), this, current.getValue(), currentProblem.getAuthor());
-      Log.d(ProblemViewFragment.class.getSimpleName(), "current isIsAnswer: " + current.getValue().isIsAnswer());
-      answerViews.put(current.getKey(), answerView);
 
-      answersLl.addView(answerView);
+      if(!answerViews.containsKey(current.getKey())) {
+        answerViews.put(current.getKey(), answerView);
+        answersLl.addView(answerView);
+      }
     }
   }
 

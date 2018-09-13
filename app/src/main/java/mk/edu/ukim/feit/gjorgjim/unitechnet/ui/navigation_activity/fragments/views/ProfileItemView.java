@@ -139,20 +139,4 @@ public class ProfileItemView<T> extends RelativeLayout {
       default: return "";
     }
   }
-
-  public void setStartDateEducation(int year, int month, int day) {
-    educationDialog.setStartDate(year, month, day);
-  }
-
-  public void setEndDateEducation(int year, int month, int day) {
-    educationDialog.setEndDate(year, month, day);
-  }
-
-  public void setStartDateExperience(int year, int month, int day) {
-    experienceDialog.setStartDate(year, month, day);
-  }
-
-  public void setEndDateExperience(int year, int month, int day) {
-    experienceDialog.setEndDate(year, month, day);
-  }
 }

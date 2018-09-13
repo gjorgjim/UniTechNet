@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp">
+
+  <android.support.v7.widget.AppCompatTextView
+    android:id="@+id/postAnswerTv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="8dp"
+    style="@style/PrimaryTextStyle"
+    android:textSize="18sp"
+    android:text="@string/post_answer"/>
+
+  <android.support.v7.widget.AppCompatEditText
+    android:id="@+id/descriptionEt"
+    android:layout_width="match_parent"
+    android:layout_height="126dp"
+    android:layout_below="@id/postAnswerTv"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="16dp"
+    android:background="@drawable/text_box_style"
+    android:padding="8dp"
+    android:scrollbars="vertical"
+    style="@style/EditTextPrimaryStyle"
+    android:textAlignment="viewStart"
+    android:hint="@string/answer_post_dialog"/>
+
+  <android.support.v7.widget.AppCompatButton
+    android:id="@+id/postBtn"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/descriptionEt"
+    android:layout_alignParentEnd="true"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="16dp"
+    style="@style/ButtonPrimaryTextStyle"
+    android:background="@color/colorPrimary"
+    android:text="@string/post"/>
+
+</RelativeLayout>

@@ -91,6 +91,9 @@
   <string name="not_answered">Not answered</string>
   <string name="answered">Answered</string>
   <string name="mark_as_answer">Mark as answer</string>
+  <string name="post_answer">Post answer</string>
+  <string name="answer_post_dialog">Answer..</string>
+  <string name="post">Post</string>
 
   <string-array name="gender_array">
     <item>Not Specified</item>

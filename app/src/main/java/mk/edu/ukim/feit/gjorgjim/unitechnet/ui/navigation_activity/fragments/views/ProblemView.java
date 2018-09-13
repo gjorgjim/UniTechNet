@@ -7,11 +7,14 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Problem;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.FragmentChangingListener;
 
 /**
@@ -21,6 +24,8 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.Fra
 public class ProblemView extends RelativeLayout {
 
   private Problem currentProblem;
+
+  private AuthenticationService authenticationService;
 
   private Context context;
 
@@ -36,6 +41,7 @@ public class ProblemView extends RelativeLayout {
     this.context = context;
     currentProblem = problem;
     fragmentChangingListener = (FragmentChangingListener) context;
+    authenticationService = AuthenticationService.getInstance();
     init();
   }
 
@@ -53,12 +59,18 @@ public class ProblemView extends RelativeLayout {
 
     problemNameTv.setText(currentProblem.getName());
     problemDescriptionTv.setText(currentProblem.getDescription());
+    String author = "";
+    if(isProblemAuthor()) {
+      author = "You";
+    } else {
+      List<User> authorUser = new ArrayList<>(currentProblem.getAuthor().values());
+      author = String.format("%s %s", authorUser.get(0).getFirstName(), authorUser.get(0).getLastName());
+    }
     problemAuthorTv.setText(String.format(
       new Locale("en"),
-      "%s %s %s",
+      "%s %s",
       context.getString(R.string.problem_author_placeholder),
-      new ArrayList<>(currentProblem.getAuthor().values()).get(0).getFirstName(),
-      new ArrayList<>(currentProblem.getAuthor().values()).get(0).getLastName()
+      author
     ));
     problemDateTv.setText(formatDate(currentProblem.getDate()));
 
@@ -69,6 +81,10 @@ public class ProblemView extends RelativeLayout {
       }
     });
 
+  }
+
+  private boolean isProblemAuthor() {
+    return currentProblem.getAuthor().containsKey(authenticationService.getCurrentUser().getUid());
   }
 
   private String formatDate(String date) {

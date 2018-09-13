@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
@@ -198,10 +199,15 @@ public class AnswerView extends RelativeLayout {
 
   private void setupAllViews() {
     answerDescriptionTv.setText(currentAnswer.getDescription());
+    String author = "";
+    if(isAnswerAuthor()) {
+      author = "You";
+    } else {
+      List<User> authorUser = new ArrayList<>(currentAnswer.getAuthor().values());
+      author = String.format("%s %s", authorUser.get(0).getFirstName(), authorUser.get(0).getLastName());
+    }
     answerAuthorTv.setText(String
-      .format(new Locale("en"), "%s %s %s", context.getString(R.string.problem_author_placeholder), new ArrayList<>(
-        currentAnswer.getAuthor().values()).get(0).getFirstName(), new ArrayList<>(currentAnswer.getAuthor().values())
-        .get(0).getLastName()));
+      .format(new Locale("en"), "%s %s", context.getString(R.string.problem_author_placeholder), author));
 
     answerDescriptionTv.setVisibility(VISIBLE);
     answerAuthorTv.setVisibility(VISIBLE);

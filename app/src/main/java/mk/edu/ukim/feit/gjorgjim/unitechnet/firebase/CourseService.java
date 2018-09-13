@@ -36,12 +36,14 @@ public class CourseService {
     userService = UserService.getInstance();
     viewDelegate = ViewDelegate.getInstance();
     dataManager = DataManager.getInstance();
+    authenticationService = AuthenticationService.getInstance();
   }
 
   private List<Course> allCourses;
 
   private DatabaseService databaseService;
   private UserService userService;
+  private AuthenticationService authenticationService;
 
   private ViewDelegate viewDelegate;
   private DataManager dataManager;
@@ -257,6 +259,61 @@ public class CourseService {
       for(Course currentCourse : allCourses) {
         if(currentCourse.getCourseId().equals(courseKey)) {
           currentCourse.getProblems().get(problemKey).getAnswers().remove(answerKey);
+          break;
+        }
+      }
+    } catch (NullPointerException e) {
+      callback.onFailure();
+    }
+  }
+
+  public void postAnswerToProblem(Answer answer, SuccessFailureCallback callback) {
+    try {
+      String uid = authenticationService.getCurrentUser().getUid();
+      User user = new User();
+      user.setFirstName(userService.getCurrentUser().getFirstName());
+      user.setLastName(userService.getCurrentUser().getLastName());
+
+      Course course = viewDelegate.getCurrentCourse();
+      String courseKey = course.getCourseId();
+      Problem problem = viewDelegate.getCurrentProblem();
+      String problemKey = dataManager.getProblemKey(course.getProblems(), problem);
+
+      String answerKey = databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answers").push().getKey();
+      databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answers").child(answerKey).setValue(answer);
+      databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answers").child(answerKey).child("author").child(uid).setValue(user);
+
+      for(Course currentCourse : allCourses) {
+        if(currentCourse.getCourseId().equals(courseKey)) {
+          if(currentCourse.getProblems().get(problemKey).getAnswers() == null) {
+            currentCourse.getProblems().get(problemKey).setAnswers(new HashMap<>());
+          }
+          currentCourse.getProblems().get(problemKey).getAnswers().put(answerKey, answer);
+          HashMap<String, User> author = new HashMap<>();
+          author.put(uid, user);
+          currentCourse.getProblems().get(problemKey).getAnswers().get(answerKey).setAuthor(author);
+          break;
+        }
+      }
+
+      callback.onSuccess();
+    } catch (NullPointerException e) {
+      e.printStackTrace();
+      callback.onFailure();
+    }
+  }
+
+  public void postProblemToCourse(Problem problem, SuccessFailureCallback callback) {
+    try {
+      Course course = viewDelegate.getCurrentCourse();
+      String courseKey = course.getCourseId();
+
+      String problemKey = databaseService.courseReference(courseKey).child("problems").push().getKey();
+      databaseService.courseReference(courseKey).child("problems").child(problemKey).setValue(problem);
+
+      for(Course currentCourse : allCourses) {
+        if(currentCourse.getCourseId().equals(courseKey)) {
+          currentCourse.getProblems().put(problemKey, problem);
           break;
         }
       }
