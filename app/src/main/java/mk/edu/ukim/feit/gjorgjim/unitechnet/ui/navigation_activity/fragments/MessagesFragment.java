@@ -115,7 +115,7 @@ public class MessagesFragment extends Fragment {
   private Message getMessage(String value) {
     Message message = new Message();
     message.setSenderId(authenticationService.getCurrentUser().getUid());
-    message.setSentDate(getDate());
+    message.setSentDate(mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date.formatToString(getDate()));
     message.setValue(value);
 
     return message;

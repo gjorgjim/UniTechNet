@@ -3,8 +3,6 @@ package mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging;
 import java.io.Serializable;
 import java.util.Locale;
 
-import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
-
 /**
  * Created by gjmarkov on 08.8.2018.
  */
@@ -12,7 +10,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 public class Message implements Serializable{
   private String senderId;
   private String value;
-  private Date sentDate;
+  private String sentDate;
 
   public Message() {
   }
@@ -33,11 +31,11 @@ public class Message implements Serializable{
     this.value = value;
   }
 
-  public Date getSentDate() {
+  public String getSentDate() {
     return sentDate;
   }
 
-  public void setSentDate(Date sentDate) {
+  public void setSentDate(String sentDate) {
     this.sentDate = sentDate;
   }
 

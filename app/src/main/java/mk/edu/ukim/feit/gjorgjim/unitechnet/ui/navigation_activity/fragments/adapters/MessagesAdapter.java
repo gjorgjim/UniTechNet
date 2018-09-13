@@ -10,8 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -80,7 +78,7 @@ public class MessagesAdapter extends ArrayAdapter {
     } else {
       lastMsgTv.setText(String.format("%s: %s", lastMsgTv.getText(),lastMessage.getValue()));
     }
-    lastMsgTimeTv.setText(formatDate(lastMessage.getSentDate()));
+    lastMsgTimeTv.setText(formatDate(Date.formatFromString(lastMessage.getSentDate())));
     //TODO: Get profile picture from Firebase storage using currentKey
 
     return view;

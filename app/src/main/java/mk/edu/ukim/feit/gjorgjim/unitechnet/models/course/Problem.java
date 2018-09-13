@@ -4,7 +4,6 @@ package mk.edu.ukim.feit.gjorgjim.unitechnet.models.course;
 import java.io.Serializable;
 import java.util.HashMap;
 
-import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 
 /**
@@ -16,7 +15,7 @@ public class Problem implements Serializable{
   private String description;
   private HashMap<String, User> author;
   private HashMap<String, Answer> answers;
-  private Date date;
+  private String date;
   private boolean solved;
   private String answerId;
 
@@ -55,11 +54,11 @@ public class Problem implements Serializable{
     this.answers = answers;
   }
 
-  public Date getDate() {
+  public String getDate() {
     return date;
   }
 
-  public void setDate(Date date) {
+  public void setDate(String date) {
     this.date = date;
   }
 

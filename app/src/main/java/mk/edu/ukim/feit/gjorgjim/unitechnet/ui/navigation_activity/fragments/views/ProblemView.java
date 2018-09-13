@@ -1,6 +1,5 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.views;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
@@ -72,13 +71,14 @@ public class ProblemView extends RelativeLayout {
 
   }
 
-  private String formatDate(Date date) {
+  private String formatDate(String date) {
+    Date dateString = Date.formatFromString(date);
     return String.format(
       new Locale("en"),
       "%s.%s.%s",
-      formatNumber(date.getDay()),
-      formatNumber(date.getMonth()),
-      date.getYear()
+      formatNumber(dateString.getDay()),
+      formatNumber(dateString.getMonth()),
+      dateString.getYear()
     );
   }
 

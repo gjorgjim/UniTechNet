@@ -49,7 +49,7 @@ public class MessagingBackgroundService extends Service {
     public void onDataChange(DataSnapshot dataSnapshot) {
       for(DataSnapshot data : dataSnapshot.getChildren()) {
         Chat currentChat = data.getValue(Chat.class);
-        if(currentChat.getLastMessage().getSentDate().isAfter(now)) {
+        if(Date.formatFromString(currentChat.getLastMessage().getSentDate()).isAfter(now)) {
           if(isRunning()) {
             Bundle bundle = new Bundle();
             bundle.putString("key", data.getKey());

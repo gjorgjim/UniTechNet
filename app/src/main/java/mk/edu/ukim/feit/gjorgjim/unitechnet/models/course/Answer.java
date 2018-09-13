@@ -1,6 +1,5 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.models.course;
 
-import java.util.Date;
 import java.util.HashMap;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
@@ -12,7 +11,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 public class Answer {
   private String description;
   private HashMap<String, User> author;
-  private Date date;
+  private String date;
   private boolean isAnswer;
 
   public Answer() {
@@ -34,11 +33,11 @@ public class Answer {
     this.author = author;
   }
 
-  public Date getDate() {
+  public String getDate() {
     return date;
   }
 
-  public void setDate(Date date) {
+  public void setDate(String date) {
     this.date = date;
   }
 
