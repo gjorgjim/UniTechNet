@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -133,11 +134,11 @@ public class AnswerView extends RelativeLayout {
     markAsAnswerTv.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        if(!currentAnswer.isIsAnswer()) {
+        if(!currentAnswer.isAnswer()) {
           courseService.editProblemsAnswerId(currentAnswer, new SuccessFailureCallback() {
             @Override
             public void onSuccess() {
-              currentAnswer.setIsAnswer(true);
+              currentAnswer.setAnswer(true);
               setupAllViews();
               if(fragment.getCurrentAnswerView() != null) {
                 fragment.getCurrentAnswerView().setNotAnswer();
@@ -179,9 +180,10 @@ public class AnswerView extends RelativeLayout {
   }
 
   public void setNotAnswer() {
-    currentAnswer.setIsAnswer(false);
+    currentAnswer.setAnswer(false);
     underlineView.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
     markAsAnswerTv.setTextColor(context.getResources().getColor(R.color.colorPrimary));
+    markAsAnswerTv.setText(context.getString(R.string.mark_as_answer));
   }
 
   private boolean isSameAuthor() {
@@ -228,14 +230,14 @@ public class AnswerView extends RelativeLayout {
   private void showAnswerAuthorView() {
     answerAuthorRl.setVisibility(VISIBLE);
     problemAuthorRl.setVisibility(GONE);
-    if (currentAnswer.isIsAnswer()) {
+    if (currentAnswer.isAnswer()) {
       underlineView.setBackgroundColor(context.getResources().getColor(R.color.answeredProblemColor));
     }
   }
 
   private void showProblemAuthorView() {
     answerAuthorRl.setVisibility(GONE);
-    if (currentAnswer.isIsAnswer()) {
+    if (currentAnswer.isAnswer()) {
       markAsAnswerTv.setTextColor(context.getResources().getColor(R.color.answeredProblemColor));
       underlineView.setBackgroundColor(context.getResources().getColor(R.color.answeredProblemColor));
     }
@@ -244,8 +246,9 @@ public class AnswerView extends RelativeLayout {
 
   private void showBothViews() {
     answerAuthorRl.setVisibility(VISIBLE);
-    if (currentAnswer.isIsAnswer()) {
+    if (currentAnswer.isAnswer()) {
       markAsAnswerTv.setTextColor(context.getResources().getColor(R.color.answeredProblemColor));
+      markAsAnswerTv.setText(context.getString(R.string.answer));
       underlineView.setBackgroundColor(context.getResources().getColor(R.color.answeredProblemColor));
     }
     problemAuthorRl.setVisibility(VISIBLE);

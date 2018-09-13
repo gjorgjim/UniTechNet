@@ -12,7 +12,7 @@ public class Answer {
   private String description;
   private HashMap<String, User> author;
   private String date;
-  private boolean isAnswer;
+  private boolean answer;
 
   public Answer() {
   }
@@ -41,11 +41,11 @@ public class Answer {
     this.date = date;
   }
 
-  public boolean isIsAnswer() {
-    return isAnswer;
+  public boolean isAnswer() {
+    return answer;
   }
 
-  public void setIsAnswer(boolean answer) {
-    isAnswer = answer;
+  public void setAnswer(boolean answer) {
+    this.answer = answer;
   }
 }

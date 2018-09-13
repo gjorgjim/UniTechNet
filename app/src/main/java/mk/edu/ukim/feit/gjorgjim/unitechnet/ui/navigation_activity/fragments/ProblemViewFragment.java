@@ -107,6 +107,9 @@ public class ProblemViewFragment extends Fragment {
       AnswerView answerView = new AnswerView(getContext(), this, current.getValue(), currentProblem.getAuthor());
 
       if(!answerViews.containsKey(current.getKey())) {
+        if(current.getValue().isAnswer()) {
+          currentAnswerView = answerView;
+        }
         answerViews.put(current.getKey(), answerView);
         answersLl.addView(answerView);
       }
@@ -122,9 +125,9 @@ public class ProblemViewFragment extends Fragment {
   }
 
   public void deleteAnswerView(Answer answer) {
-    Log.d(ProblemViewFragment.class.getSimpleName(), "deleteAnswerView called");
+
     String answerKey = dataManager.getAnswerKey(currentProblem.getAnswers(), answer);
-    Log.d(ProblemViewFragment.class.getSimpleName(), "deleteAnswerView " + answerKey);
+
     answersLl.removeView(answerViews.get(answerKey));
   }
 

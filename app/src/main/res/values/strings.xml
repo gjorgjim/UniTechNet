@@ -94,6 +94,7 @@
   <string name="post_answer">Post answer</string>
   <string name="answer_post_dialog">Answer..</string>
   <string name="post">Post</string>
+  <string name="answer">Answer</string>
 
   <string-array name="gender_array">
     <item>Not Specified</item>

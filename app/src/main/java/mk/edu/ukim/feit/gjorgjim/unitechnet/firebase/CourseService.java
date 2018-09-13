@@ -216,17 +216,17 @@ public class CourseService {
         answerKey);
 
       databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answers").child(answerKey)
-        .child("isIsAnswer").setValue(true);
+        .child("answer").setValue(true);
 
       if(problem.getAnswerid() != null) {
         databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answers").child(problem
-          .getAnswerid()).child("isIsAnswer").setValue(false);
+          .getAnswerid()).child("answer").setValue(false);
       }
 
       for (Course currentCourse : allCourses) {
         if (currentCourse.getCourseId().equals(courseKey)) {
           currentCourse.getProblems().get(problemKey).setAnswerid(answerKey);
-          currentCourse.getProblems().get(problemKey).getAnswers().get(answerKey).setIsAnswer(true);
+          currentCourse.getProblems().get(problemKey).getAnswers().get(answerKey).setAnswer(true);
           break;
         }
       }
@@ -248,7 +248,7 @@ public class CourseService {
 
       databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answers").child(answerKey).removeValue();
 
-      if(answer.isIsAnswer()) {
+      if(answer.isAnswer()) {
         databaseService.courseReference(courseKey).child("problems").child(problemKey).child("answerId").setValue("false");
 
         course.getProblems().get(problemKey).setAnswerid("false");

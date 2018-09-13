@@ -55,7 +55,7 @@ public class PostAnswerDialog extends Dialog {
           Answer answer = new Answer();
           answer.setDescription(descriptionEt.getText().toString());
           answer.setDate(Date.formatToString(Date.getDate()));
-          answer.setIsAnswer(false);
+          answer.setAnswer(false);
 
           courseService.postAnswerToProblem(answer, new SuccessFailureCallback() {
             @Override
