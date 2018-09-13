@@ -1,5 +1,6 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.notifications;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -13,6 +14,7 @@ import android.support.v4.app.NotificationCompat;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.cache.ImagesCacher;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.CourseService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.NavigationActivity;
 
 /**
@@ -32,6 +34,8 @@ public class NotificationCenter {
   }
 
   private Context context;
+
+  private CourseService courseService;
 
   private ImagesCacher imagesCacher;
 
@@ -64,6 +68,42 @@ public class NotificationCenter {
     intent.putExtra("info", bundle);
 
     PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
+    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+      .setLargeIcon(imagesCacher.getSmallLogo())
+      .setContentTitle("UniTechNet")
+      .setContentText(message)
+      .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+      .setContentIntent(pendingIntent)
+      .setAutoCancel(true);
+
+    notificationManager.notify(notificationId, builder.build());
+    notificationId++;
+  }
+
+  public void sentNotification(mk.edu.ukim.feit.gjorgjim.unitechnet.models.Notification notification) {
+    if(isNotificationVisible()) {
+      return;
+    }
+
+    Intent intent = new Intent(context, NavigationActivity.class);
+    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+    Bundle bundle = new Bundle();
+    bundle.putString("courseId", notification.getCourseId());
+    bundle.putString("problemId", notification.getProblemId());
+
+    intent.putExtra("info", bundle);
+
+    PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
+    String message = "";
+
+    if(notification.getType().equals(mk.edu.ukim.feit.gjorgjim.unitechnet.models.Notification.NEW_PROBLEM_IN_COURSE)) {
+      message = context.getString(R.string.new_problem_notification);
+    } else {
+      message = context.getString(R.string.new_answer_notification);
+    }
 
     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
       .setLargeIcon(imagesCacher.getSmallLogo())

@@ -46,6 +46,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Message;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.services.MessagingBackgroundService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.services.NotificationBackgroundService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.WaitingDialog;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.delegates.NavigationToolbarDelegate;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.CourseViewFragment;
@@ -89,12 +90,13 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
   private boolean isFirstLogin = false;
   private String startedFromNotificationKey = null;
-  
+
   private android.support.v4.app.FragmentManager fragmentManager;
 
   private List<String> messagesSnackbarShownList;
 
-  private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+  private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+    = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -104,36 +106,36 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
       switch (item.getItemId()) {
         case R.id.navigation_courses:
           transaction.replace(R.id.container, coursesFragment).commit();
-          if(fab.isShown()) {
+          if (fab.isShown()) {
             fab.hide();
           }
           return true;
         case R.id.navigation_messages:
           transaction.replace(R.id.container, messagesFragment).commit();
-          if(fab.isShown()) {
+          if (fab.isShown()) {
             fab.hide();
           }
           return true;
         case R.id.navigation_feed:
           transaction.replace(R.id.container, feedFragment).commit();
-          if(!fab.isShown()) {
+          if (!fab.isShown()) {
             fab.show();
           }
           return true;
         case R.id.navigation_notification:
           transaction.replace(R.id.container, notificationsFragment).commit();
-          if(fab.isShown()) {
+          if (fab.isShown()) {
             fab.hide();
           }
           return true;
         case R.id.navigation_profile:
-          if(isFirstLogin) {
+          if (isFirstLogin) {
             transaction.replace(R.id.container, editProfileFragment).commit();
             isFirstLogin = false;
           } else {
             transaction.replace(R.id.container, profileFragment).commit();
           }
-          if(fab.isShown()) {
+          if (fab.isShown()) {
             fab.hide();
           }
           return true;
@@ -157,7 +159,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     navigationToolbarDelegate = NavigationToolbarDelegate.getInstance();
 
     fragmentManager = getSupportFragmentManager();
-    
+
     waitingDialog = new WaitingDialog(NavigationActivity.this);
 
     navigation = findViewById(R.id.navigation);
@@ -189,9 +191,15 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     });
 
     Bundle bundle = getIntent().getBundleExtra("info");
-    if(bundle != null) {
-      if(bundle.get("key") != null) {
+    if (bundle != null) {
+      if (bundle.get("key") != null) {
         startedFromNotificationKey = bundle.getString("key");
+      } else if(bundle.get("courseId") != null && bundle.get("problemId") != null) {
+        coursesFragment = new CoursesFragment();
+
+        coursesFragment.setArguments(bundle);
+
+        navigation.setSelectedItemId(R.id.navigation_courses);
       }
     }
 
@@ -204,11 +212,11 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
         coursesFragment = new CoursesFragment();
         feedFragment = FeedFragment.getInstance();
-        notificationsFragment = NotificationsFragment.getInstance();
+        notificationsFragment = new NotificationsFragment();
         messagesFragment = new MessagesFragment();
         profileFragment = new ProfileFragment();
 
-        if(user == null){
+        if (user == null) {
           Log.d(LOG_TAG, "User is null");
           editProfileFragment = new EditProfileFragment();
 
@@ -218,7 +226,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
           fab.hide();
         } else {
-          if(!TextUtils.isEmpty(startedFromNotificationKey)) {
+          if (!TextUtils.isEmpty(startedFromNotificationKey)) {
             messagesFragment = new MessagesFragment();
 
             Bundle fragmentBundle = new Bundle();
@@ -240,7 +248,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
       public void onFailure(String message) {
         coursesFragment = new CoursesFragment();
         feedFragment = FeedFragment.getInstance();
-        notificationsFragment = NotificationsFragment.getInstance();
+        notificationsFragment = new NotificationsFragment();
         messagesFragment = new MessagesFragment();
         profileFragment = new ProfileFragment();
 
@@ -336,16 +344,43 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
   }
 
   @Override
+  public void changeToNotificationsFragment() {
+    notificationsFragment = new NotificationsFragment();
+
+    navigation.setSelectedItemId(R.id.navigation_notification);
+  }
+
+  @Override
+  public void changeToProblemViewFragment(Problem problem, Course course) {
+    problemViewFragment = new ProblemViewFragment();
+
+    Bundle bundle = new Bundle();
+    bundle.putSerializable("currentProblem", problem);
+
+    problemViewFragment.setArguments(bundle);
+
+    FragmentTransaction transaction = fragmentManager.beginTransaction();
+    transaction.replace(R.id.container, problemViewFragment).commit();
+
+    viewDelegate.viewCurrentCourse(course);
+    viewDelegate.viewCurrentProblem(problem);
+
+    navigationToolbarDelegate.setLogo(NavigationToolbarDelegate.NavigationToolbarLogo.PROBLEM);
+  }
+
+  @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     Log.d(LOG_TAG, "requestCode: " + requestCode);
-    if(resultCode == Activity.RESULT_OK && (requestCode == ProfileFragment.ImagePickerRequestCode || requestCode == EditProfileFragment.ImagePickerRequestCode)) {
+    if (resultCode == Activity.RESULT_OK && (requestCode == ProfileFragment.ImagePickerRequestCode
+      || requestCode == EditProfileFragment.ImagePickerRequestCode)) {
       Image image = ImagePicker.getFirstImageOrNull(data);
       Log.d(LOG_TAG, "requestCode: " + requestCode);
       try {
-        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.fromFile(new File(image.getPath())));
-        if(requestCode == EditProfileFragment.ImagePickerRequestCode) {
+        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),
+          Uri.fromFile(new File(image.getPath())));
+        if (requestCode == EditProfileFragment.ImagePickerRequestCode) {
           editProfileFragment.setNewProfilePicture(bitmap);
-        } else if(requestCode == ProfileFragment.ImagePickerRequestCode) {
+        } else if (requestCode == ProfileFragment.ImagePickerRequestCode) {
           profileFragment.changeProfilePicture(bitmap);
         }
       } catch (IOException e) {
@@ -355,39 +390,55 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     super.onActivityResult(requestCode, resultCode, data);
   }
 
-  private void showWaitingDialog(String message){
+  private void showWaitingDialog(String message) {
     waitingDialog.showDialog(message);
   }
 
-  private void hideWaitingDialog(){
+  private void hideWaitingDialog() {
     waitingDialog.hideDialog();
   }
 
   private BroadcastReceiver messagesReceiver = new BroadcastReceiver() {
     @Override
     public void onReceive(Context context, Intent intent) {
-      Bundle bundle = intent.getBundleExtra("info");
+      if (intent.getAction().equals(MessagingBackgroundService.ACTION)) {
+        Bundle bundle = intent.getBundleExtra("info");
 
-      String key = bundle.getString("key");
-      String firstName = bundle.getString("firstName");
-      Message lastMessage = (Message) bundle.getSerializable("lastMessage");
+        String key = bundle.getString("key");
+        String firstName = bundle.getString("firstName");
+        Message lastMessage = (Message) bundle.getSerializable("lastMessage");
 
-      if(messagesFragment != null && messagesFragment.isVisible()) {
-        messagesFragment.updateLastMessage(key, lastMessage);
-      } else {
-        if(!messagesSnackbarShownList.contains(key)) {
-          Snackbar.make(findViewById(android.R.id.content), String.format("You have a new message from %s", firstName),
-            Snackbar.LENGTH_SHORT).setAction("VIEW", v -> {
-              messagesFragment = new MessagesFragment();
+        if (messagesFragment != null && messagesFragment.isVisible()) {
+          messagesFragment.updateLastMessage(key, lastMessage);
+        } else {
+          if (!messagesSnackbarShownList.contains(key)) {
+            Snackbar.make(findViewById(android.R.id.content),
+              String.format("You have a new message from %s", firstName), Snackbar.LENGTH_SHORT).setAction("VIEW",
+              v -> {
+                messagesFragment = new MessagesFragment();
 
-              Bundle fragmentBundle = new Bundle();
-              fragmentBundle.putString("key", key);
+                Bundle fragmentBundle = new Bundle();
+                fragmentBundle.putString("key", key);
 
-              messagesFragment.setArguments(bundle);
+                messagesFragment.setArguments(bundle);
 
-            navigation.setSelectedItemId(R.id.navigation_messages);
-          }).show();
-          messagesSnackbarShownList.add(key);
+                navigation.setSelectedItemId(R.id.navigation_messages);
+              }).show();
+            messagesSnackbarShownList.add(key);
+          }
+        }
+      } else if (intent.getAction().equals(NotificationBackgroundService.ACTION)) {
+        if (notificationsFragment != null && notificationsFragment.isVisible()) {
+          notificationsFragment.showNotifications();
+        } else {
+          Snackbar.make(findViewById(android.R.id.content), "You have a new notification", Snackbar.LENGTH_SHORT)
+            .setAction(
+              "VIEW", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                  changeToNotificationsFragment();
+                }
+              }).show();
         }
       }
     }
@@ -408,11 +459,11 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
   @Override
   public void onBackPressed() {
-    if(userMessagingFragment != null && userMessagingFragment.isVisible()) {
+    if (userMessagingFragment != null && userMessagingFragment.isVisible()) {
       changeToMessagesFragment();
-    } else if(courseViewFragment != null && courseViewFragment.isVisible()){
+    } else if (courseViewFragment != null && courseViewFragment.isVisible()) {
       changeToCoursesFragment();
-    } else if(problemViewFragment !=null && problemViewFragment.isAdded()) {
+    } else if (problemViewFragment != null && problemViewFragment.isAdded()) {
       changeToCourseViewFragment(courseViewFragment.getCurrentCourse());
     } else {
       super.onBackPressed();

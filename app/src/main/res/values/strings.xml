@@ -98,6 +98,8 @@
   <string name="post_problem">Post problem</string>
   <string name="problem_name_hint">Problem name</string>
   <string name="problem_description_hint">Description</string>
+  <string name="new_problem_notification">New problem has been posted in a course you are subscribed to.</string>
+  <string name="new_answer_notification">New answer has been posted in one of your problems.</string>
 
   <string-array name="gender_array">
     <item>Not Specified</item>

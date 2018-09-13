@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 
@@ -16,11 +17,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 
 public class NotificationsFragment extends Fragment {
 
-  private static final NotificationsFragment instance = new NotificationsFragment();
-
-  public static NotificationsFragment getInstance() {
-    return instance;
-  }
+  private LinearLayout notificationsLl;
 
   public NotificationsFragment() {
   }
@@ -31,6 +28,12 @@ public class NotificationsFragment extends Fragment {
     @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_notifications, container, false);
 
+    notificationsLl = view.findViewById(R.id.notificationsLl);
+
     return view;
+  }
+
+  public void showNotifications() {
+
   }
 }

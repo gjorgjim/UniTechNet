@@ -15,4 +15,6 @@ public interface FragmentChangingListener {
   void changeToMessagesFragment();
   void changeToCourseViewFragment(Course course);
   void changeToProblemViewFragment(Problem problem);
+  void changeToNotificationsFragment();
+  void changeToProblemViewFragment(Problem problem, Course course);
 }

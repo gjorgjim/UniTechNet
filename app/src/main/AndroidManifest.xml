@@ -12,6 +12,8 @@
     <service
       android:name=".services.MessagingBackgroundService"
       android:exported="false"/>
+    <service android:name=".services.NotificationBackgroundService"
+             android:exported="false"/>
     <activity android:name=".ui.login_activity.LoginActivity"
       android:theme="@style/AppThemeWhite">
       <intent-filter>

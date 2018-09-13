@@ -55,18 +55,32 @@ public class CoursesFragment extends Fragment {
     courseGridView = view.findViewById(R.id.courseGv);
     progressBar = view.findViewById(R.id.coursePb);
 
+    Bundle bundle = getArguments();
+
     courseService.getAllCourses(new ListDatabaseCallback<Course>() {
       @Override
       public void onSuccess(List<Course> list) {
-        adapter = new CourseAdapter(getContext(), list);
-        courseGridView.setAdapter(adapter);
+        if(bundle != null && bundle.get("problemId") != null && bundle.get("courseId") != null) {
+          Course current = new Course();
+          for(Course course : list) {
+            if(course.getCourseId().equals(bundle.getString("courseId"))) {
+              current = course;
+              break;
+            }
+          }
 
-        courseGridView.setOnItemClickListener((parent, view1, position, id) -> {
-          fragmentChangingListener.changeToCourseViewFragment(list.get(position));
-        });
+          fragmentChangingListener.changeToProblemViewFragment(current.getProblems().get(bundle.get("problemId")), current);
+        } else {
+          adapter = new CourseAdapter(getContext(), list);
+          courseGridView.setAdapter(adapter);
 
-        progressBar.setVisibility(View.GONE);
-        courseGridView.setVisibility(View.VISIBLE);
+          courseGridView.setOnItemClickListener((parent, view1, position, id) -> {
+            fragmentChangingListener.changeToCourseViewFragment(list.get(position));
+          });
+
+          progressBar.setVisibility(View.GONE);
+          courseGridView.setVisibility(View.VISIBLE);
+        }
 
         courseService.removeAllCoursesListener();
       }
