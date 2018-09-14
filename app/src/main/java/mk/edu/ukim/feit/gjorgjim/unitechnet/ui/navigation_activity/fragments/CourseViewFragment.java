@@ -148,6 +148,7 @@ public class CourseViewFragment extends Fragment {
               public void onSuccess(List<Course> list) {
                 setupUnsubscribedUser();
                 subscribeButton.setVisibility(View.VISIBLE);
+                problemViews.clear();
               }
 
               @Override
