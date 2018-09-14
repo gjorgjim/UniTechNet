@@ -34,11 +34,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
-import mk.edu.ukim.feit.gjorgjim.unitechnet.cache.ImagesCacher;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.DatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.MessagingService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.NotificationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.ViewDelegate;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.Notification;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Problem;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Chat;
@@ -66,6 +67,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
   private UserService userService;
   private MessagingService messagingService;
+  private NotificationService notificationService;
 
   private ViewDelegate viewDelegate;
 
@@ -89,7 +91,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
   private FloatingActionButton fab;
 
   private boolean isFirstLogin = false;
-  private String startedFromNotificationKey = null;
+  private boolean startedFromNotification = false;
 
   private android.support.v4.app.FragmentManager fragmentManager;
 
@@ -123,6 +125,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
           }
           return true;
         case R.id.navigation_notification:
+          notificationsFragment = new NotificationsFragment();
           transaction.replace(R.id.container, notificationsFragment).commit();
           if (fab.isShown()) {
             fab.hide();
@@ -151,6 +154,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
     userService = UserService.getInstance();
     messagingService = MessagingService.getInstance();
+    notificationService = NotificationService.getInstance();
 
     viewDelegate = ViewDelegate.getInstance();
 
@@ -192,15 +196,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
     Bundle bundle = getIntent().getBundleExtra("info");
     if (bundle != null) {
-      if (bundle.get("key") != null) {
-        startedFromNotificationKey = bundle.getString("key");
-      } else if(bundle.get("courseId") != null && bundle.get("problemId") != null) {
-        coursesFragment = new CoursesFragment();
-
-        coursesFragment.setArguments(bundle);
-
-        navigation.setSelectedItemId(R.id.navigation_courses);
-      }
+      startedFromNotification = true;
     }
 
     showWaitingDialog("Fetching your data...");
@@ -226,19 +222,25 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
           fab.hide();
         } else {
-          if (!TextUtils.isEmpty(startedFromNotificationKey)) {
-            messagesFragment = new MessagesFragment();
+          if (startedFromNotification) {
+            if (bundle.get("key") != null) {
+              messagesFragment = new MessagesFragment();
 
-            Bundle fragmentBundle = new Bundle();
-            fragmentBundle.putString("key", startedFromNotificationKey);
+              messagesFragment.setArguments(bundle);
 
-            messagesFragment.setArguments(bundle);
+              navigation.setSelectedItemId(R.id.navigation_messages);
+            } else if(bundle.getSerializable("notification") != null) {
+              coursesFragment = new CoursesFragment();
 
-            navigation.setSelectedItemId(R.id.navigation_messages);
+              coursesFragment.setArguments(bundle);
+
+              navigation.setSelectedItemId(R.id.navigation_courses);
+            }
           }
         }
         userService.removeSignInListener();
         messagingService.startBackgroundServiceForMessages(NavigationActivity.this);
+        notificationService.startBackgroundServiceForMessages(NavigationActivity.this);
 
         Log.d(LOG_TAG, "Date: " + user.getBirthday());
         Log.d(LOG_TAG, "Date formatToString" + Date.formatFromString("2018-09-11T10:55:47").toString());
@@ -277,6 +279,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
   @Override
   public void changeToCoursesFragment() {
+    coursesFragment = new CoursesFragment();
     navigation.setSelectedItemId(R.id.navigation_courses);
   }
 
@@ -308,11 +311,15 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
   }
 
   @Override
-  public void changeToCourseViewFragment(Course course) {
+  public void changeToCourseViewFragment(Course course, Problem problem) {
     courseViewFragment = new CourseViewFragment();
 
     Bundle bundle = new Bundle();
     bundle.putSerializable("currentCourse", course);
+
+    if(problem != null) {
+      bundle.putSerializable("currentProblem", problem);
+    }
 
     courseViewFragment.setArguments(bundle);
 
@@ -362,7 +369,6 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     FragmentTransaction transaction = fragmentManager.beginTransaction();
     transaction.replace(R.id.container, problemViewFragment).commit();
 
-    viewDelegate.viewCurrentCourse(course);
     viewDelegate.viewCurrentProblem(problem);
 
     navigationToolbarDelegate.setLogo(NavigationToolbarDelegate.NavigationToolbarLogo.PROBLEM);
@@ -401,6 +407,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
   private BroadcastReceiver messagesReceiver = new BroadcastReceiver() {
     @Override
     public void onReceive(Context context, Intent intent) {
+      Log.d(LOG_TAG, "onReceive in messageReceiver called");
       if (intent.getAction().equals(MessagingBackgroundService.ACTION)) {
         Bundle bundle = intent.getBundleExtra("info");
 
@@ -427,10 +434,26 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
             messagesSnackbarShownList.add(key);
           }
         }
-      } else if (intent.getAction().equals(NotificationBackgroundService.ACTION)) {
+      }
+    }
+  };
+
+  private BroadcastReceiver notificationsReceiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      if (intent.getAction().equals(NotificationBackgroundService.ACTION)) {
+        Log.d(LOG_TAG, "Broadcast is from notifications");
+        Bundle bundle = intent.getBundleExtra("info");
+
+        String key = bundle.getString("key");
+
+        Notification notification = (Notification) bundle.getSerializable("notification");
+
         if (notificationsFragment != null && notificationsFragment.isVisible()) {
-          notificationsFragment.showNotifications();
+          Log.d(LOG_TAG, "notificationsFragment is visible");
+          notificationsFragment.addNotification(key, notification);
         } else {
+          Log.d(LOG_TAG, "notificationsFragment is not visible");
           Snackbar.make(findViewById(android.R.id.content), "You have a new notification", Snackbar.LENGTH_SHORT)
             .setAction(
               "VIEW", new View.OnClickListener() {
@@ -448,12 +471,15 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
   protected void onResume() {
     IntentFilter intentFilter = new IntentFilter(MessagingBackgroundService.ACTION);
     LocalBroadcastManager.getInstance(this).registerReceiver(messagesReceiver, intentFilter);
+    IntentFilter intentFilter1 = new IntentFilter(NotificationBackgroundService.ACTION);
+    LocalBroadcastManager.getInstance(this).registerReceiver(notificationsReceiver, intentFilter1);
     super.onResume();
   }
 
   @Override
   protected void onDestroy() {
     LocalBroadcastManager.getInstance(this).unregisterReceiver(messagesReceiver);
+    LocalBroadcastManager.getInstance(this).unregisterReceiver(notificationsReceiver);
     super.onDestroy();
   }
 
@@ -464,7 +490,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     } else if (courseViewFragment != null && courseViewFragment.isVisible()) {
       changeToCoursesFragment();
     } else if (problemViewFragment != null && problemViewFragment.isAdded()) {
-      changeToCourseViewFragment(courseViewFragment.getCurrentCourse());
+      changeToCourseViewFragment(courseViewFragment.getCurrentCourse(), null);
     } else {
       super.onBackPressed();
     }

@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.cache.ImagesCacher;
@@ -70,7 +71,7 @@ public class NotificationCenter {
     PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-      .setLargeIcon(imagesCacher.getSmallLogo())
+      .setSmallIcon(R.drawable.small_logo)
       .setContentTitle("UniTechNet")
       .setContentText(message)
       .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -82,20 +83,22 @@ public class NotificationCenter {
   }
 
   public void sentNotification(mk.edu.ukim.feit.gjorgjim.unitechnet.models.Notification notification) {
+    Log.d(LOG_TAG, "sentNotification called");
     if(isNotificationVisible()) {
       return;
     }
+
+    Log.d(LOG_TAG, "Notification is not visible");
 
     Intent intent = new Intent(context, NavigationActivity.class);
     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
     Bundle bundle = new Bundle();
-    bundle.putString("courseId", notification.getCourseId());
-    bundle.putString("problemId", notification.getProblemId());
+    bundle.putSerializable("notification", notification);
 
     intent.putExtra("info", bundle);
 
-    PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+    PendingIntent pendingIntent = PendingIntent.getActivity(context, 1, intent, 0);
 
     String message = "";
 
@@ -106,7 +109,7 @@ public class NotificationCenter {
     }
 
     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-      .setLargeIcon(imagesCacher.getSmallLogo())
+      .setSmallIcon(R.drawable.small_logo)
       .setContentTitle("UniTechNet")
       .setContentText(message)
       .setPriority(NotificationCompat.PRIORITY_DEFAULT)

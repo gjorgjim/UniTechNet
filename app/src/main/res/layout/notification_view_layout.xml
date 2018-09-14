@@ -1,16 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimaryLight">
 
   <android.support.v7.widget.AppCompatTextView
     android:id="@+id/notificationTv"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="56dp"
     android:layout_alignParentTop="true"
     android:layout_alignParentStart="true"
     android:textAlignment="viewStart"
     style="@style/PrimaryTextStyle"
-    android:text="New problem has been posted in Course 'Calculus 1'."/>
+    android:text="New problem has been posted in Course 'Calculus 1'."
+    android:padding="8dp"/>
+
+  <View
+    android:id="@+id/underline"
+    android:layout_width="match_parent"
+    android:layout_height="2dp"
+    android:layout_below="@id/notificationTv"
+    android:layout_marginTop="4dp"
+    android:background="@drawable/underline_white"/>
 
 </RelativeLayout>

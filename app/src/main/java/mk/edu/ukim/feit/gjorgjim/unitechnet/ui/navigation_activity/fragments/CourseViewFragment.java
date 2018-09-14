@@ -1,5 +1,6 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -57,10 +58,18 @@ public class CourseViewFragment extends Fragment {
 
   private TextView emptyProblems;
 
+  private FragmentChangingListener fragmentChangingListener;
+
   public CourseViewFragment() {
     courseService = CourseService.getInstance();
     authenticationService = AuthenticationService.getInstance();
     problemViews = new HashMap<>();
+  }
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    fragmentChangingListener = (FragmentChangingListener) context;
   }
 
   @Nullable
@@ -83,6 +92,9 @@ public class CourseViewFragment extends Fragment {
     if(bundle != null) {
       if(bundle.get("currentCourse") != null) {
         currentCourse = (Course) bundle.get("currentCourse");
+      }
+      if(bundle.get("currentProblem") != null) {
+        fragmentChangingListener.changeToProblemViewFragment((Problem) bundle.get("currentProblem"), (Course) bundle.get("currentCourse"));
       }
     }
 

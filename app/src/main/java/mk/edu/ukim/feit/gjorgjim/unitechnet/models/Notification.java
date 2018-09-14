@@ -1,10 +1,12 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.models;
 
+import java.io.Serializable;
+
 /**
  * Created by gjmarkov on 13.9.2018.
  */
 
-public class Notification {
+public class Notification implements Serializable{
 
   public static final String NEW_PROBLEM_IN_COURSE = "NEW_PROBLEM_IN_COURSE";
   public static final String NEW_ANSWER_IN_PROBLEM = "NEW_ANSWER_IN_PROBLEM";
@@ -54,5 +56,11 @@ public class Notification {
 
   public void setDate(String date) {
     this.date = date;
+  }
+
+  @Override
+  public String toString() {
+    return "Notification{" + "courseId='" + courseId + '\'' + ", problemId='" + problemId + '\'' + ", type='" + type
+      + '\'' + ", date='" + date + '\'' + '}';
   }
 }

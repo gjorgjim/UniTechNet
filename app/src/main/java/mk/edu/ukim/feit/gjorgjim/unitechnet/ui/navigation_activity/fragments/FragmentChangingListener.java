@@ -13,7 +13,7 @@ public interface FragmentChangingListener {
   void changeToCoursesFragment();
   void changeToUserMessagingFragment(Chat chat, String key);
   void changeToMessagesFragment();
-  void changeToCourseViewFragment(Course course);
+  void changeToCourseViewFragment(Course course, Problem problem);
   void changeToProblemViewFragment(Problem problem);
   void changeToNotificationsFragment();
   void changeToProblemViewFragment(Problem problem, Course course);

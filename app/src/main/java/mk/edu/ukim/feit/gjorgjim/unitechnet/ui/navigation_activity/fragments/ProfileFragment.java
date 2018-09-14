@@ -30,6 +30,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ProfilePictureCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ServiceCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.AuthenticationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.MessagingService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.NotificationService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.UserService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
@@ -54,6 +55,7 @@ public class ProfileFragment extends Fragment{
   private UserService userService;
   private AuthenticationService authenticationService;
   private MessagingService messagingService;
+  private NotificationService notificationService;
 
   private AppCompatTextView nameTv;
   private AppCompatTextView titleTv;
@@ -86,6 +88,7 @@ public class ProfileFragment extends Fragment{
     userService = UserService.getInstance();
     authenticationService = AuthenticationService.getInstance();
     messagingService = MessagingService.getInstance();
+    notificationService = NotificationService.getInstance();
     listenForUserDetailsChanged();
   }
 
@@ -129,6 +132,7 @@ public class ProfileFragment extends Fragment{
           }
         });
         messagingService.stopBackgroundServiceForMessages(getActivity());
+        notificationService.stopBackgroundServiceForMessages(getActivity());
       }
     });
 

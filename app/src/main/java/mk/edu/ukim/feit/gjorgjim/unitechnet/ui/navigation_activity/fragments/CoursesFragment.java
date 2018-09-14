@@ -16,6 +16,7 @@ import java.util.List;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ListDatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.CourseService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.Notification;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.adapters.CourseAdapter;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.dialogs.CourseDialog;
@@ -60,22 +61,23 @@ public class CoursesFragment extends Fragment {
     courseService.getAllCourses(new ListDatabaseCallback<Course>() {
       @Override
       public void onSuccess(List<Course> list) {
-        if(bundle != null && bundle.get("problemId") != null && bundle.get("courseId") != null) {
+        if(bundle != null && bundle.getSerializable("notification") != null) {
+          Notification notification = (Notification) bundle.getSerializable("notification");
           Course current = new Course();
           for(Course course : list) {
-            if(course.getCourseId().equals(bundle.getString("courseId"))) {
+            if(course.getCourseId().equals(notification.getCourseId())) {
               current = course;
               break;
             }
           }
 
-          fragmentChangingListener.changeToProblemViewFragment(current.getProblems().get(bundle.get("problemId")), current);
+          fragmentChangingListener.changeToCourseViewFragment(current , current.getProblems().get(notification.getProblemId()));
         } else {
           adapter = new CourseAdapter(getContext(), list);
           courseGridView.setAdapter(adapter);
 
           courseGridView.setOnItemClickListener((parent, view1, position, id) -> {
-            fragmentChangingListener.changeToCourseViewFragment(list.get(position));
+            fragmentChangingListener.changeToCourseViewFragment(list.get(position), null);
           });
 
           progressBar.setVisibility(View.GONE);
