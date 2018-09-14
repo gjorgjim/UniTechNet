@@ -9,6 +9,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.NotificationCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.Notification;
@@ -77,6 +78,14 @@ public class NotificationService {
   public HashMap<String, Notification> getAllNotifications() {
     Log.d(LOG_TAG, "getAllNotifications called");
     return allNotifications;
+  }
+
+  public void setNotificationsSeen() {
+    for(Map.Entry<String, Notification> current : allNotifications.entrySet()) {
+      current.getValue().setSeen(true);
+      databaseService.userReference(authenticationService.getCurrentUser().getUid())
+        .child("notifications").child(current.getKey()).child("seen").setValue(true);
+    }
   }
 
   public void startBackgroundServiceForMessages(Activity activity) {

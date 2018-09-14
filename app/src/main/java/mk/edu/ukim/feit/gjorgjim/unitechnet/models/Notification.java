@@ -75,7 +75,7 @@ public class Notification implements Serializable{
     this.senderId = senderId;
   }
 
-  public boolean isSeen() {
+  public boolean getSeen() {
     return seen;
   }
 

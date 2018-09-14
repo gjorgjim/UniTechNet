@@ -100,4 +100,10 @@ public class NotificationsFragment extends Fragment {
       notificationsLl.addView(notificationView);
     }
   }
+
+  @Override
+  public void onDestroy() {
+    notificationService.setNotificationsSeen();
+    super.onDestroy();
+  }
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout android:id="@+id/mainLayout"
+  xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorPrimaryLight">
+                android:layout_height="wrap_content">
 
   <android.support.v7.widget.AppCompatTextView
     android:id="@+id/notificationTv"
@@ -21,6 +21,6 @@
     android:layout_height="2dp"
     android:layout_below="@id/notificationTv"
     android:layout_marginTop="4dp"
-    android:background="@drawable/underline_white"/>
+    android:background="@drawable/underline"/>
 
 </RelativeLayout>
