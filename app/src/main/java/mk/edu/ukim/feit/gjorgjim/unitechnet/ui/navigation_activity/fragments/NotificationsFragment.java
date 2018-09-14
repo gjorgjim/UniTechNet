@@ -11,13 +11,19 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.NotificationCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.NotificationService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DataManager;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.Notification;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.views.NotificationView;
 
 /**
@@ -30,10 +36,12 @@ public class NotificationsFragment extends Fragment {
 
   private LinearLayout notificationsLl;
 
-  NotificationService notificationService;
+  private NotificationService notificationService;
+  private DataManager dataManager;
 
   public NotificationsFragment() {
     notificationService = NotificationService.getInstance();
+    dataManager = DataManager.getInstance();
 
     notificationViews = new HashMap<>();
   }
@@ -41,6 +49,8 @@ public class NotificationsFragment extends Fragment {
   private HashMap<String, NotificationView> notificationViews;
 
   private HashMap<String, Notification> allNotifications;
+
+  private List<Notification> notifications = null;
 
   @Nullable
   @Override
@@ -57,12 +67,25 @@ public class NotificationsFragment extends Fragment {
 
   public void showNotifications() {
     Log.d(LOG_TAG, "showNotifications called");
-    for(Map.Entry<String, Notification> notification : allNotifications.entrySet()) {
-      Log.d(LOG_TAG, notification.getKey() + notification.getValue().toString());
-      NotificationView notificationView = new NotificationView(getContext(), notification.getValue());
 
-      if(!notificationViews.containsKey(notification.getKey())) {
-        notificationViews.put(notification.getKey(), notificationView);
+    List<Notification> list = new ArrayList<>(allNotifications.values());
+    Collections.sort(list, new Comparator<Notification>() {
+      @Override
+      public int compare(Notification o1, Notification o2) {
+        if(Date.formatFromString(o1.getDate()).isAfter(Date.formatFromString(o2.getDate()))) {
+          return -1;
+        } else {
+          return 1;
+        }
+      }
+    });
+
+    for(Notification current : list) {
+      NotificationView notificationView = new NotificationView(getContext(), current);
+      String key = dataManager.getNotificationKey(allNotifications, current);
+
+      if(!notificationViews.containsKey(key)) {
+        notificationViews.put(key, notificationView);
         notificationsLl.addView(notificationView);
       }
     }
@@ -97,7 +120,7 @@ public class NotificationsFragment extends Fragment {
 
       notificationViews.put(key, notificationView);
 
-      notificationsLl.addView(notificationView);
+      notificationsLl.addView(notificationView, 0);
     }
   }
 

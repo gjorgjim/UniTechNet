@@ -2,6 +2,7 @@ package mk.edu.ukim.feit.gjorgjim.unitechnet.helpers;
 
 import java.util.HashMap;
 
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.Notification;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Answer;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Problem;
 
@@ -32,6 +33,16 @@ public class DataManager {
   public String getProblemKey(HashMap<String, Problem> allProblems, Problem problem) {
     for(String key : allProblems.keySet()) {
       if(allProblems.get(key) == problem) {
+        return key;
+      }
+    }
+
+    return null;
+  }
+
+  public String getNotificationKey(HashMap<String, Notification> allNotifications, Notification notification) {
+    for(String key : allNotifications.keySet()) {
+      if(allNotifications.get(key) == notification) {
         return key;
       }
     }
