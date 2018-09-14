@@ -100,6 +100,8 @@
   <string name="problem_description_hint">Description</string>
   <string name="new_problem_notification">New problem has been posted in a course you are subscribed to.</string>
   <string name="new_answer_notification">New answer has been posted in one of your problems.</string>
+  <string name="course">Course:</string>
+  <string name="course_title_placeholder">Calculus 1</string>
 
   <string-array name="gender_array">
     <item>Not Specified</item>

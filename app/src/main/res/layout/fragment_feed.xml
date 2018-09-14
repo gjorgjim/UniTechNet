@@ -1,12 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<RelativeLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
-  <android.support.v7.widget.AppCompatTextView
+  <ProgressBar
+    android:id="@+id/progressBar"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="FEED"/>
+    android:layout_alignParentTop="true"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="32dp"/>
 
-</android.support.constraint.ConstraintLayout>
+  <android.support.v4.widget.NestedScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true">
+
+    <LinearLayout
+      android:id="@+id/feedLl"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:visibility="gone">
+
+    </LinearLayout>
+
+  </android.support.v4.widget.NestedScrollView>
+
+</RelativeLayout>
