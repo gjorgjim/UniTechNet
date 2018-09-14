@@ -4,14 +4,20 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
-  <LinearLayout
-    android:id="@+id/notificationsLl"
+  <android.support.v4.widget.NestedScrollView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:layout_alignParentTop="true">
 
+    <LinearLayout
+      android:id="@+id/notificationsLl"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:layout_alignParentTop="true">
 
-  </LinearLayout>
+    </LinearLayout>
+
+  </android.support.v4.widget.NestedScrollView>
 
 </RelativeLayout>

@@ -2,24 +2,32 @@
 <RelativeLayout android:id="@+id/mainLayout"
   xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="56dp">
+
+  <android.support.v7.widget.AppCompatImageView
+    android:id="@+id/imageView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentStart="true"
+    android:layout_centerVertical="true"
+    android:src="@drawable/ic_notifications_black_24dp"/>
 
   <android.support.v7.widget.AppCompatTextView
     android:id="@+id/notificationTv"
     android:layout_width="match_parent"
-    android:layout_height="56dp"
-    android:layout_alignParentTop="true"
-    android:layout_alignParentStart="true"
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true"
+    android:layout_toEndOf="@id/imageView"
+    android:layout_marginStart="12dp"
     android:textAlignment="viewStart"
     style="@style/PrimaryTextStyle"
-    android:text="New problem has been posted in Course 'Calculus 1'."
-    android:padding="8dp"/>
+    android:text="New problem has been posted in Course 'Calculus 1'."/>
 
   <View
     android:id="@+id/underline"
     android:layout_width="match_parent"
     android:layout_height="2dp"
-    android:layout_below="@id/notificationTv"
+    android:layout_alignParentBottom="true"
     android:layout_marginTop="4dp"
     android:background="@drawable/underline"/>
 
