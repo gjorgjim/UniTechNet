@@ -16,6 +16,7 @@ import android.util.Log;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.cache.ImagesCacher;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.CourseService;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.firebase.DatabaseService;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.NavigationActivity;
 
 /**
@@ -36,7 +37,7 @@ public class NotificationCenter {
 
   private Context context;
 
-  private CourseService courseService;
+  private DatabaseService databaseService;
 
   private ImagesCacher imagesCacher;
 
@@ -46,6 +47,7 @@ public class NotificationCenter {
 
   private NotificationCenter() {
     notificationId = 0;
+    databaseService = DatabaseService.getInstance();
   }
 
   public void setContext(Context context) {
@@ -82,8 +84,8 @@ public class NotificationCenter {
     notificationId++;
   }
 
-  public void sentNotification(mk.edu.ukim.feit.gjorgjim.unitechnet.models.Notification notification) {
-    Log.d(LOG_TAG, "sentNotification called");
+  public void sendNotification(mk.edu.ukim.feit.gjorgjim.unitechnet.models.Notification notification) {
+    Log.d(LOG_TAG, "sendNotification called");
     if(isNotificationVisible()) {
       return;
     }
@@ -118,6 +120,11 @@ public class NotificationCenter {
 
     notificationManager.notify(notificationId, builder.build());
     notificationId++;
+  }
+
+  public void sendNotification(mk.edu.ukim.feit.gjorgjim.unitechnet.models.Notification notification, String uid) {
+    String key = databaseService.userReference(uid).child("notifications").push().getKey();
+    databaseService.userReference(uid).child("notifications").child(key).setValue(notification);
   }
 
   private void createNotificationChannel() {

@@ -7,15 +7,19 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ListDatabaseCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.SuccessFailureCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.DataManager;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.helpers.ViewDelegate;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.Notification;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Answer;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Problem;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.notifications.NotificationCenter;
 
 /**
  * Created by gjmarkov on 31.7.2018.
@@ -37,6 +41,7 @@ public class CourseService {
     viewDelegate = ViewDelegate.getInstance();
     dataManager = DataManager.getInstance();
     authenticationService = AuthenticationService.getInstance();
+    notificationCenter = NotificationCenter.getInstance();
   }
 
   private List<Course> allCourses;
@@ -44,6 +49,8 @@ public class CourseService {
   private DatabaseService databaseService;
   private UserService userService;
   private AuthenticationService authenticationService;
+
+  private NotificationCenter notificationCenter;
 
   private ViewDelegate viewDelegate;
   private DataManager dataManager;
@@ -292,6 +299,14 @@ public class CourseService {
           HashMap<String, User> author = new HashMap<>();
           author.put(uid, user);
           currentCourse.getProblems().get(problemKey).getAnswers().get(answerKey).setAuthor(author);
+
+          String problemAuthorId = new ArrayList<String>(currentCourse.getProblems().get(problemKey).getAuthor().keySet()).get(0);
+          if(!authenticationService.getCurrentUser().getUid().equals(problemAuthorId)) {
+            Notification notification = new Notification(currentCourse.getCourseId(),
+              problemKey, Notification.NEW_ANSWER_IN_PROBLEM, Date.formatToString(Date.getDate()));
+            notificationCenter.sendNotification(notification, problemAuthorId);
+          }
+
           break;
         }
       }
@@ -327,6 +342,15 @@ public class CourseService {
           author.put(uid, user);
           currentCourse.getProblems().get(problemKey).setAuthor(author);
           currentCourse.getProblems().put(problemKey, problem);
+
+          for(Map.Entry<String, Boolean> current : currentCourse.getSubscribedUsers().entrySet()) {
+            if(!current.getKey().equals(authenticationService.getCurrentUser().getUid())) {
+              Notification notification = new Notification(currentCourse.getCourseId(), problemKey, Notification.NEW_PROBLEM_IN_COURSE, Date.formatToString(Date.getDate()));
+
+              notificationCenter.sendNotification(notification, current.getKey());
+            }
+          }
+
           break;
         }
       }

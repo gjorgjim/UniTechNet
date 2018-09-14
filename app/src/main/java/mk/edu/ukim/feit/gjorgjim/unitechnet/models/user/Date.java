@@ -170,7 +170,7 @@ public class Date implements Serializable{
         minute = String.format(new Locale("en"), "0%d", date.getMinute());
       }
       String second = String.format(new Locale("en"), "%d", date.getSecond());
-      if(date.getHour() < 10) {
+      if(date.getSecond() < 10) {
         second = String.format(new Locale("en"), "0%d", date.getSecond());
       }
       smallDate = String.format(new Locale("en"), "%s:%s:%s", hour, minute, second);

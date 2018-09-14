@@ -15,8 +15,11 @@ import java.util.List;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.ChatCallback;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.callbacks.MessageCallback;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.Notification;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Chat;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.messaging.Message;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.notifications.NotificationCenter;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.services.MessagingBackgroundService;
 
 /**
@@ -34,12 +37,16 @@ public class MessagingService {
   private DatabaseService databaseService;
   private AuthenticationService authenticationService;
 
+  private NotificationCenter notificationCenter;
+
   private MessageCallback<String, Message> messageCallback;
   private MessageCallback<List<String>, List<Message>> lastMessagesCallback;
 
   private MessagingService() {
     databaseService = DatabaseService.getInstance();
     authenticationService = AuthenticationService.getInstance();
+
+    notificationCenter = NotificationCenter.getInstance();
   }
 
   private ValueEventListener lastMessagesValueEventListener = new ValueEventListener() {
@@ -179,6 +186,14 @@ public class MessagingService {
 
     lastMsgRef.removeValue();
     lastMsgRef.setValue(message);
+
+    sendNotification(authenticationService.getCurrentUser().getUid(), chatKey);
+  }
+
+  private void sendNotification(String myUid, String uid) {
+    Notification notification = new Notification(myUid, Notification.NEW_MESSAGE, Date.formatToString(Date.getDate()));
+
+    notificationCenter.sendNotification(notification, uid);
   }
 
   private Intent messagingIntent;
