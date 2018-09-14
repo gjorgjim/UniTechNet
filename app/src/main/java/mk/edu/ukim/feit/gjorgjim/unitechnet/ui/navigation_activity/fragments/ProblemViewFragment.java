@@ -134,6 +134,11 @@ public class ProblemViewFragment extends Fragment {
 
     String answerKey = dataManager.getAnswerKey(currentProblem.getAnswers(), answer);
 
+    if(answer.isAnswer()) {
+      currentProblem.setAnswerid("false");
+    }
+
+    setAnsweredTextView();
     answersLl.removeView(answerViews.get(answerKey));
   }
 

@@ -240,6 +240,7 @@ public class AnswerView extends RelativeLayout {
     answerAuthorRl.setVisibility(GONE);
     if (currentAnswer.isAnswer()) {
       markAsAnswerTv.setTextColor(context.getResources().getColor(R.color.answeredProblemColor));
+      markAsAnswerTv.setText(context.getString(R.string.answer));
       underlineView.setBackgroundColor(context.getResources().getColor(R.color.answeredProblemColor));
     }
     problemAuthorRl.setVisibility(VISIBLE);
