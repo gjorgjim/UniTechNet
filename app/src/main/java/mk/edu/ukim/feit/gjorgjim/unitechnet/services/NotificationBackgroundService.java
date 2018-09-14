@@ -49,40 +49,13 @@ public class NotificationBackgroundService extends Service {
   private ChildEventListener childEventListener = new ChildEventListener() {
     @Override
     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//      Notification notification = dataSnapshot.getValue(Notification.class);
-//
-//      if(Date.formatFromString(notification.getDate()).isAfter(now)) {
-//        if(notification.getType().equals(Notification.NEW_ANSWER_IN_PROBLEM) ||
-//          notification.getType().equals(Notification.NEW_PROBLEM_IN_COURSE)) {
-//          if(!isRunning()) {
-//            notificationCenter.sentNotification(notification);
-//          } else {
-//            Bundle bundle = new Bundle();
-//
-//            bundle.putString("key", dataSnapshot.getKey());
-//            bundle.putSerializable("notification", notification);
-//
-//            Intent broadcastIntent = new Intent(ACTION);
-//            broadcastIntent.putExtra("info", bundle);
-//
-//            LocalBroadcastManager.getInstance(NotificationBackgroundService.this).sendBroadcast(broadcastIntent);
-//          }
-//        }
-//      }
-    }
-
-    @Override
-    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-      Log.d(LOG_TAG, "onChildChanged called: " + dataSnapshot.toString());
       Notification notification = dataSnapshot.getValue(Notification.class);
 
       if(Date.formatFromString(notification.getDate()).isAfter(now)) {
-        Log.d(LOG_TAG, "Notification is after now");
         if(notification.getType().equals(Notification.NEW_ANSWER_IN_PROBLEM) ||
           notification.getType().equals(Notification.NEW_PROBLEM_IN_COURSE)) {
           if(!isRunning()) {
-            Log.d(LOG_TAG, "App is not running");
-            notificationCenter.sentNotification(notification);
+            notificationCenter.sendNotification(notification);
           } else {
             Bundle bundle = new Bundle();
 
@@ -92,11 +65,15 @@ public class NotificationBackgroundService extends Service {
             Intent broadcastIntent = new Intent(ACTION);
             broadcastIntent.putExtra("info", bundle);
 
-            Log.d(LOG_TAG, "App is running, sending broadcast");
             LocalBroadcastManager.getInstance(NotificationBackgroundService.this).sendBroadcast(broadcastIntent);
           }
         }
       }
+    }
+
+    @Override
+    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
     }
 
     @Override
