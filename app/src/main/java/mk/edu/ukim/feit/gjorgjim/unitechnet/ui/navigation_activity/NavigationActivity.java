@@ -207,7 +207,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
         hideWaitingDialog();
 
         coursesFragment = new CoursesFragment();
-        feedFragment = FeedFragment.getInstance();
+        feedFragment = new FeedFragment();
         notificationsFragment = new NotificationsFragment();
         messagesFragment = new MessagesFragment();
         profileFragment = new ProfileFragment();
@@ -249,7 +249,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
       @Override
       public void onFailure(String message) {
         coursesFragment = new CoursesFragment();
-        feedFragment = FeedFragment.getInstance();
+        feedFragment = new FeedFragment();
         notificationsFragment = new NotificationsFragment();
         messagesFragment = new MessagesFragment();
         profileFragment = new ProfileFragment();
@@ -312,6 +312,7 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
   @Override
   public void changeToCourseViewFragment(Course course, Problem problem) {
+    Log.d(LOG_TAG, "Current Course:" + course.toString());
     courseViewFragment = new CourseViewFragment();
 
     Bundle bundle = new Bundle();
@@ -366,9 +367,14 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
 
     problemViewFragment.setArguments(bundle);
 
+    if(navigation.getSelectedItemId() != R.id.navigation_courses) {
+      navigation.setSelectedItemId(R.id.navigation_courses);
+    }
+
     FragmentTransaction transaction = fragmentManager.beginTransaction();
     transaction.replace(R.id.container, problemViewFragment).commit();
 
+    viewDelegate.viewCurrentCourse(course);
     viewDelegate.viewCurrentProblem(problem);
 
     navigationToolbarDelegate.setLogo(NavigationToolbarDelegate.NavigationToolbarLogo.PROBLEM);
@@ -489,8 +495,8 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
       changeToMessagesFragment();
     } else if (courseViewFragment != null && courseViewFragment.isVisible()) {
       changeToCoursesFragment();
-    } else if (problemViewFragment != null && problemViewFragment.isAdded()) {
-      changeToCourseViewFragment(courseViewFragment.getCurrentCourse(), null);
+    } else if (problemViewFragment != null && problemViewFragment.isVisible()) {
+      changeToCourseViewFragment(viewDelegate.getCurrentCourse(), null);
     } else {
       super.onBackPressed();
     }

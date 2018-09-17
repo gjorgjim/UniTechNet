@@ -17,6 +17,7 @@ import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Course;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.course.Problem;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.Date;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.user.User;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.FragmentChangingListener;
 
 /**
  * Created by gjmarkov on 14.9.2018.
@@ -28,6 +29,8 @@ public class FeedItemView extends RelativeLayout {
 
   private AuthenticationService authenticationService;
 
+  private FragmentChangingListener fragmentChangingListener;
+
   private FeedItem feedItem;
 
   private Course currentCourse;
@@ -38,14 +41,16 @@ public class FeedItemView extends RelativeLayout {
   private AppCompatTextView problemAuthorTv;
   private AppCompatTextView problemDateTv;
   private AppCompatTextView courseNameTv;
+  private RelativeLayout problemInfoRl;
 
-  public FeedItemView(Context context, FeedItem feedItem) {
+  public FeedItemView(Context context, FeedItem feedItem, FragmentChangingListener fragmentChangingListener) {
     super(context);
     this.context = context;
     this.feedItem = feedItem;
     currentCourse = feedItem.getCourse();
     currentProblem = feedItem.getCourse().getProblems().get(feedItem.getProblemId());
     authenticationService = AuthenticationService.getInstance();
+    this.fragmentChangingListener = fragmentChangingListener;
     init();
   }
 
@@ -61,6 +66,7 @@ public class FeedItemView extends RelativeLayout {
     problemAuthorTv = view.findViewById(R.id.problemAuthorTv);
     problemDateTv = view.findViewById(R.id.problemDateTv);
     courseNameTv = view.findViewById(R.id.courseNameTv);
+    problemInfoRl = view.findViewById(R.id.problemInfoRl);
 
     problemNameTv.setText(currentProblem.getName());
     problemDescriptionTv.setText(currentProblem.getDescription());
@@ -73,12 +79,32 @@ public class FeedItemView extends RelativeLayout {
     }
     problemAuthorTv.setText(String.format(
       new Locale("en"),
-      "%s %s",
-      context.getString(R.string.problem_author_placeholder),
+      "%s",
       author
     ));
     problemDateTv.setText(formatDate(currentProblem.getDate()));
     courseNameTv.setText(currentCourse.getName());
+
+    problemInfoRl.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        fragmentChangingListener.changeToProblemViewFragment(currentProblem, currentCourse);
+      }
+    });
+
+    problemAuthorTv.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+
+      }
+    });
+
+    courseNameTv.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        fragmentChangingListener.changeToCourseViewFragment(currentCourse, null);
+      }
+    });
   }
 
   private boolean isProblemAuthor() {

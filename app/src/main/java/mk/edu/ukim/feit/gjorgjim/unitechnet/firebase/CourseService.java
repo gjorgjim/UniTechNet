@@ -340,10 +340,13 @@ public class CourseService {
           currentCourse.getProblems().put(problemKey, problem);
           HashMap<String, User> author = new HashMap<>();
           author.put(uid, user);
-          currentCourse.getProblems().get(problemKey).setAuthor(author);
           currentCourse.getProblems().put(problemKey, problem);
+          currentCourse.getProblems().get(problemKey).setAuthor(author);
 
           for(Map.Entry<String, Boolean> current : currentCourse.getSubscribedUsers().entrySet()) {
+            databaseService.userReference(current.getKey()).child("courses").child(courseKey).child("problems").child(problemKey).setValue(problem);
+            databaseService.userReference(current.getKey()).child("courses").child(courseKey).child("problems").child(problemKey).child("author").child(uid).setValue(user);
+
             if(!current.getKey().equals(authenticationService.getCurrentUser().getUid())) {
               Notification notification = new Notification(currentCourse.getCourseId(), problemKey, Notification.NEW_PROBLEM_IN_COURSE, Date.formatToString(Date.getDate()));
 

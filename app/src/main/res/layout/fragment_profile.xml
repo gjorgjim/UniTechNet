@@ -135,7 +135,7 @@
             android:text="@string/courses_profile"/>
 
           <View
-            android:id="@+id/courseUnderline"
+            android:id="@+id/problemUnderline"
             android:background="@color/colorPrimary"
             android:layout_height="1dp"
             android:layout_width="fill_parent"
@@ -155,7 +155,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_below="@+id/courseUnderline">
+            android:layout_below="@+id/problemUnderline">
           </LinearLayout>
 
         </RelativeLayout>

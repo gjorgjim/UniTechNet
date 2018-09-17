@@ -41,10 +41,13 @@ public class FeedService {
   ValueEventListener valueEventListener = new ValueEventListener() {
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
+      Log.d(FeedService.class.getSimpleName(), "onDataChange called");
+      feed = new HashMap<>();
       for(DataSnapshot data : dataSnapshot.getChildren()) {
         Course course = data.getValue(Course.class);
-
+        Log.d(FeedService.class.getSimpleName(), "Count: " + data.getChildrenCount());
         if(course.getProblems() != null) {
+          Log.d(FeedService.class.getSimpleName(), "Course size problems" + course.getProblems().size());
           for (Map.Entry<String, Problem> problem : course.getProblems().entrySet()) {
             FeedItem feedItem = new FeedItem(course, problem.getKey());
 
@@ -52,6 +55,7 @@ public class FeedService {
           }
         }
       }
+      Log.d(FeedService.class.getSimpleName(), "Feed size in service " + feed.size());
       callback.onSuccess(feed);
     }
 
@@ -62,11 +66,21 @@ public class FeedService {
   };
 
   public void getFeed(FeedCallback callback) {
-    this.callback = callback;
+    if(feed == null || feed.size() == 0) {
+      Log.d(FeedService.class.getSimpleName(), "in if");
 
-    feed = new HashMap<>();
+      this.callback = callback;
 
+      databaseService.userReference(authenticationService.getCurrentUser().getUid())
+        .child("courses").addValueEventListener(valueEventListener);
+    } else {
+      Log.d(FeedService.class.getSimpleName(), "in else");
+      callback.onSuccess(feed);
+    }
+  }
+
+  public void removeListenerFromFeed() {
     databaseService.userReference(authenticationService.getCurrentUser().getUid())
-      .child("courses").addValueEventListener(valueEventListener);
+      .child("courses").removeEventListener(valueEventListener);
   }
 }
