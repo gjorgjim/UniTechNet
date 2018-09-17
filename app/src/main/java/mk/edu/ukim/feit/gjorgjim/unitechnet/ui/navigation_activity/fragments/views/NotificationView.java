@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 
 import mk.edu.ukim.feit.gjorgjim.unitechnet.R;
 import mk.edu.ukim.feit.gjorgjim.unitechnet.models.Notification;
+import mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments.FragmentChangingListener;
 
 /**
  * Created by gjmarkov on 13.9.2018.
@@ -24,10 +25,13 @@ public class NotificationView extends RelativeLayout {
 
   private Notification currentNotification;
 
-  public NotificationView(Context context, Notification notification) {
+  private FragmentChangingListener fragmentChangingListener;
+
+  public NotificationView(Context context, Notification notification, FragmentChangingListener fragmentChangingListener) {
     super(context);
     this.context = context;
     currentNotification = notification;
+    this.fragmentChangingListener = fragmentChangingListener;
     init();
   }
 
@@ -56,7 +60,7 @@ public class NotificationView extends RelativeLayout {
     setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        Log.d(NotificationView.class.getSimpleName(), "onClick called");
+        fragmentChangingListener.changeToCoursesFragment(currentNotification);
       }
     });
   }

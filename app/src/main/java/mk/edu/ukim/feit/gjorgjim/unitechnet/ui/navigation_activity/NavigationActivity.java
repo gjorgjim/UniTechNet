@@ -241,9 +241,6 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
         userService.removeSignInListener();
         messagingService.startBackgroundServiceForMessages(NavigationActivity.this);
         notificationService.startBackgroundServiceForMessages(NavigationActivity.this);
-
-        Log.d(LOG_TAG, "Date: " + user.getBirthday());
-        Log.d(LOG_TAG, "Date formatToString" + Date.formatFromString("2018-09-11T10:55:47").toString());
       }
 
       @Override
@@ -378,6 +375,19 @@ public class NavigationActivity extends AppCompatActivity implements FragmentCha
     viewDelegate.viewCurrentProblem(problem);
 
     navigationToolbarDelegate.setLogo(NavigationToolbarDelegate.NavigationToolbarLogo.PROBLEM);
+  }
+
+  @Override
+  public void changeToCoursesFragment(Notification notification) {
+    Bundle bundle = new Bundle();
+
+    bundle.putSerializable("notification", notification);
+
+    coursesFragment = new CoursesFragment();
+
+    coursesFragment.setArguments(bundle);
+
+    navigation.setSelectedItemId(R.id.navigation_courses);
   }
 
   @Override

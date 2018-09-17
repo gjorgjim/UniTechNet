@@ -1,5 +1,6 @@
 package mk.edu.ukim.feit.gjorgjim.unitechnet.ui.navigation_activity.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -39,6 +40,14 @@ public class NotificationsFragment extends Fragment {
   private NotificationService notificationService;
   private DataManager dataManager;
 
+  private FragmentChangingListener fragmentChangingListener;
+
+  private HashMap<String, NotificationView> notificationViews;
+
+  private HashMap<String, Notification> allNotifications;
+
+  private List<Notification> notifications = null;
+
   public NotificationsFragment() {
     notificationService = NotificationService.getInstance();
     dataManager = DataManager.getInstance();
@@ -46,11 +55,11 @@ public class NotificationsFragment extends Fragment {
     notificationViews = new HashMap<>();
   }
 
-  private HashMap<String, NotificationView> notificationViews;
-
-  private HashMap<String, Notification> allNotifications;
-
-  private List<Notification> notifications = null;
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    fragmentChangingListener = (FragmentChangingListener) context;
+  }
 
   @Nullable
   @Override
@@ -81,7 +90,7 @@ public class NotificationsFragment extends Fragment {
     });
 
     for(Notification current : list) {
-      NotificationView notificationView = new NotificationView(getContext(), current);
+      NotificationView notificationView = new NotificationView(getContext(), current, fragmentChangingListener);
       String key = dataManager.getNotificationKey(allNotifications, current);
 
       if(!notificationViews.containsKey(key)) {
@@ -116,7 +125,7 @@ public class NotificationsFragment extends Fragment {
     if(!allNotifications.containsKey(key)) {
       allNotifications.put(key, notification);
 
-      NotificationView notificationView = new NotificationView(getContext(), notification);
+      NotificationView notificationView = new NotificationView(getContext(), notification, fragmentChangingListener);
 
       notificationViews.put(key, notificationView);
 
